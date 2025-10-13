@@ -11,7 +11,7 @@ export default function LoginPage() {
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    router.push('/dashboard');
+    router.push('/mahasiswa/dashboard_mhs');
   };
 
   return (
@@ -29,7 +29,7 @@ export default function LoginPage() {
             Sistem Surat Menyurat Cepat
           </h1>
           <p className="text-lg md:text-xl font-medium text-center text-gray-900 mt-1">
-            Jurusan Informatika
+            Jurusan Teknik Informatika
           </p>
         </div>
 
