@@ -15,7 +15,7 @@ export default function Home() {
             </p>
             <Link
               href="/login"
-              className="inline-block bg-[#0A1C56] hover:bg-[#ea6a0f] text-white font-medium px-8 py-3 rounded-lg transition-colors text-lg"
+              className="inline-block bg-[#0A1C56] hover:bg-[#00aeff] text-white font-medium px-8 py-3 rounded-lg transition-colors text-lg"
             >
               Masuk
             </Link>
