@@ -11,7 +11,7 @@ export default function LoginPage() {
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    router.push('/mahasiswa/dashboard_mhs');
+    router.push('/mahasiswa/DashboardMhs');
   };
 
   return (
