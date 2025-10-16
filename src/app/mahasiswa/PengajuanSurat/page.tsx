@@ -40,7 +40,8 @@ export default function PengajuanSuratPage() {
   return (
     <div className="flex min-h-screen bg-gray-50 relative">
       <Sidebar />
-      <div className="p-12 pl-18">
+      {/* Added md:pl-24 for desktop only, keeping p-12 for mobile */}
+      <div className="p-16 md:pl-30">
         <h1 className="text-4xl font-bold text-[#0A1C56] mb-12">
           Pilih Jenis Surat
         </h1>
