@@ -1,20 +1,120 @@
+"use client";
+
+import { useRef } from "react";
+import { motion, Variants, useInView } from "framer-motion";
+import CountUp from "react-countup";
+
 interface StatCardProps {
   title: string;
   value: number;
-  variant?: 'submitted' | 'verified' | 'completed';
+  variant?: "submitted" | "verified" | "completed";
+  prefix?: string;
+  suffix?: string;
 }
 
-export default function StatCard({ title, value, variant = 'submitted' }: StatCardProps) {
+const containerVariants: Variants = {
+  hidden: { opacity: 0, y: 8 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: "easeOut" } },
+};
+
+const hoverTap = {
+  whileHover: { scale: 1.02, boxShadow: "0 12px 30px rgba(10,28,86,0.18)" },
+  whileTap: { scale: 0.99 },
+};
+
+export default function StatCard({
+  title,
+  value,
+  variant = "submitted",
+  prefix = "",
+  suffix = "",
+}: StatCardProps) {
   const bgColor = {
-    submitted: 'bg-[#0A1A4A]',
-    verified: 'bg-[#0A1A4A]',
-    completed: 'bg-[#0A1A4A]',
+    submitted: "bg-gradient-to-br from-[#082047] to-[#0A1A4A]",
+    verified: "bg-gradient-to-br from-[#082047] to-[#0A1A4A]",
+    completed: "bg-gradient-to-br from-[#082047] to-[#0A1A4A]",
   }[variant];
 
+  const accentColor = {
+    submitted: "bg-[#FFC107]",
+    verified: "bg-[#1976D2]",
+    completed: "bg-[#4CAF50]",
+  }[variant];
+
+  const ref = useRef<HTMLDivElement | null>(null);
+  const inView = useInView(ref, { once: true, margin: "-10% 0px" });
+
   return (
-    <div className={`${bgColor} text-white rounded-2xl p-6 shadow-lg`}>
-      <h3 className="text-lg font-medium mb-2">{title}</h3>
-      <p className="text-5xl font-bold">{value}</p>
-    </div>
+    <motion.div
+      ref={ref}
+      variants={containerVariants}
+      initial="hidden"
+      animate={inView ? "show" : "hidden"}
+      {...hoverTap}
+      className={`relative overflow-hidden text-white rounded-2xl p-6 shadow-lg ${bgColor}`}
+      role="region"
+    >
+      {/* decorative accent circle top-right */}
+      <div
+        aria-hidden
+        className="absolute -top-8 -right-8 w-36 h-36 rounded-full opacity-10"
+        style={{
+          background:
+            "radial-gradient(circle at 30% 30%, rgba(255,255,255,0.08), rgba(255,255,255,0.00) 40%)",
+        }}
+      />
+
+      {/* header: accent + title in one line */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <motion.div
+            initial={{ scale: 0, opacity: 0 }}
+            animate={inView ? { scale: 1, opacity: 1 } : { scale: 0, opacity: 0 }}
+            transition={{ duration: 0.4, ease: "easeOut", delay: 0.1 }}
+            className={`w-3 h-3 rounded-full ${accentColor}`}
+          />
+          <h3
+            className="text-sm md:text-base font-semibold tracking-wide opacity-95"
+            style={{ letterSpacing: "0.3px" }}
+          >
+            {title}
+          </h3>
+        </div>
+
+
+      </div>
+
+      {/* animated number */}
+      <div className="mt-6">
+        <motion.div
+          initial={{ opacity: 0, y: 6 }}
+          animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 6 }}
+          transition={{ duration: 0.45, ease: "easeOut", delay: 0.06 }}
+          className="flex items-baseline gap-3"
+        >
+          <span className="text-4xl md:text-5xl font-extrabold leading-none tabular-nums">
+            <CountUp
+              start={inView ? 0 : undefined}
+              end={value}
+              duration={1.2}
+              separator="."
+            >
+              {({ countUpRef }) => <span ref={countUpRef} />}
+            </CountUp>
+          </span>
+
+          {suffix && (
+            <motion.span
+              initial={{ opacity: 0, x: 6 }}
+              animate={inView ? { opacity: 0.95, x: 0 } : { opacity: 0, x: 6 }}
+              transition={{ duration: 0.35, delay: 0.12 }}
+              className="text-sm md:text-base font-semibold opacity-90"
+            >
+              {suffix}
+            </motion.span>
+          )}
+        </motion.div>
+      </div>
+    </motion.div>
   );
 }

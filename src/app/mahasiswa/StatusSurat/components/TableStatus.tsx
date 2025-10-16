@@ -1,8 +1,9 @@
-'use client'
+"use client";
+
+import type { Surat } from "../page"; 
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Eye } from "lucide-react";
-import { Surat } from "../page";
 import BadgeStatus from "./BadgeStatus";
 import DetailModal from "./DetailModal";
 
@@ -21,17 +22,15 @@ export default function TableStatus({ suratList }: TableStatusProps) {
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
-    setTimeout(() => setSelectedSurat(null), 200);
+   
+    setTimeout(() => setSelectedSurat(null), 300);
   };
 
   return (
     <>
       <div className="hidden md:block bg-white rounded-2xl shadow-lg overflow-hidden">
         <div className="overflow-x-auto">
-          <table
-            className="w-full"
-            style={{ fontFamily: "Roboto, sans-serif" }}
-          >
+          <table className="w-full" style={{ fontFamily: "Roboto, sans-serif" }}>
             <thead>
               <tr style={{ backgroundColor: "#0A1C56" }}>
                 <th className="px-6 py-4 text-left text-white font-semibold text-sm uppercase tracking-wider">
@@ -61,25 +60,17 @@ export default function TableStatus({ suratList }: TableStatusProps) {
                   className="hover:bg-gray-50 transition-colors"
                 >
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span
-                      className="text-sm font-medium"
-                      style={{ color: "#0A1C56" }}
-                    >
+                    <span className="text-sm font-medium" style={{ color: "#0A1C56" }}>
                       {surat.nomorSurat}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span
-                      className="text-sm font-medium"
-                      style={{ color: "#0A1C56" }}
-                    >
+                    <span className="text-sm font-medium" style={{ color: "#0A1C56" }}>
                       {surat.jenisSurat}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="text-sm text-gray-600">
-                      {surat.tanggal}
-                    </span>
+                    <span className="text-sm text-gray-600">{surat.tanggal}</span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <BadgeStatus status={surat.status} />
@@ -123,10 +114,7 @@ export default function TableStatus({ suratList }: TableStatusProps) {
               <div className="flex items-start justify-between gap-2">
                 <div className="flex-1">
                   <p className="text-xs text-gray-500 mb-1">Nomor Surat</p>
-                  <p
-                    className="text-sm font-semibold"
-                    style={{ color: "#0A1C56" }}
-                  >
+                  <p className="text-sm font-semibold" style={{ color: "#0A1C56" }}>
                     {surat.nomorSurat}
                   </p>
                 </div>
@@ -135,10 +123,7 @@ export default function TableStatus({ suratList }: TableStatusProps) {
 
               <div>
                 <p className="text-xs text-gray-500 mb-1">Jenis Surat</p>
-                <p
-                  className="text-sm font-semibold"
-                  style={{ color: "#0A1C56" }}
-                >
+                <p className="text-sm font-semibold" style={{ color: "#0A1C56" }}>
                   {surat.jenisSurat}
                 </p>
               </div>
@@ -169,11 +154,7 @@ export default function TableStatus({ suratList }: TableStatusProps) {
         )}
       </div>
 
-      <DetailModal
-        surat={selectedSurat}
-        isOpen={isModalOpen}
-        onClose={handleCloseModal}
-      />
+      <DetailModal surat={selectedSurat} isOpen={isModalOpen} onClose={handleCloseModal} />
     </>
   );
 }
