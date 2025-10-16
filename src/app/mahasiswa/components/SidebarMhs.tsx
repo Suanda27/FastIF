@@ -7,9 +7,9 @@ import { usePathname } from 'next/navigation';
 import { Home, FileText, Clock, History, User, LogOut, Menu, X } from 'lucide-react';
 
 const menuItems = [
-  { href: '/mahasiswa/DashboardMhs', label: 'Dashboard', icon: Home },  // update path
+  { href: '/mahasiswa/DashboardMhs', label: 'Dashboard', icon: Home },  
   { href: '/mahasiswa/PengajuanSurat', label: 'Pengajuan Surat', icon: FileText },
-  { href: '/status-surat', label: 'Status Surat', icon: Clock },
+  { href: '/mahasiswa/StatusSurat', label: 'Status Surat', icon: Clock },
   { href: '/riwayat-surat', label: 'Riwayat Surat', icon: History },
   { href: '/profil', label: 'Profil', icon: User },
 ];
@@ -25,10 +25,10 @@ export default function Sidebar() {
 
   return (
     <div className="lg:block">
- 
+
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="lg:hidden fixed top-22 left-4 z-50 bg-[#0A1A4A] text-white p-2 rounded-lg"
+        className="lg:hidden fixed top-4 left-4 z-50 bg-[#0A1A4A] text-white p-2 rounded-lg"
       >
         {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
       </button>
@@ -43,11 +43,20 @@ export default function Sidebar() {
 
 
       <aside
-        className={`fixed top-0 left-0 h-full w-64 bg-[#0A1A4A] z-40 transform transition-transform duration-300 ease-in-out border-r-4 border-black ${
+        className={`fixed top-0 left-0 h-full w-64 bg-[#0A1A4A] z-40 transform transition-transform duration-300 ease-in-out shadow-lg shadow-black ${
           isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
         } lg:relative lg:transform-none`}
       >
-        <nav className="flex-1 px-4 py-6 lg:py-18 pt-30 lg:pt-18">
+              <div className="p-6 flex justify-center border-zinc-700 mb-4">
+        <Image
+          src="/logo-fastif-white.png"
+          alt="FastIF Logo"
+          width={150}
+          height={60}
+          className="h-12 w-auto"
+        />
+      </div>
+        <nav className="flex-1 px-2 py-4 lg:py-12 pt-4 lg:pt-4">
           <ul className="space-y-2">
             {menuItems.map((item) => {
               const Icon = item.icon;
@@ -77,7 +86,7 @@ export default function Sidebar() {
           <Link
             href="/"
             onClick={() => setIsOpen(false)}
-            className="flex items-center gap-3 px-4 py-3 rounded-lg text-white/80 hover:bg-[#1E40AF]/50 hover:text-white transition-colors"
+            className="flex items-center gap-3 px-2 py-8 rounded-lg text-white/80 hover:bg-[#1E40AF]/50 hover:text-white transition-colors"
           >
             <LogOut className="w-5 h-5" />
             <span className="font-medium">Keluar</span>
