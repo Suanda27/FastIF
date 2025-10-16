@@ -8,7 +8,7 @@ import { Home, FileText, Clock, History, User, LogOut, Menu, X } from 'lucide-re
 
 const menuItems = [
   { href: '/mahasiswa/DashboardMhs', label: 'Dashboard', icon: Home },  // update path
-  { href: '/pengajuan-surat', label: 'Pengajuan Surat', icon: FileText },
+  { href: '/mahasiswa/PengajuanSurat', label: 'Pengajuan Surat', icon: FileText },
   { href: '/status-surat', label: 'Status Surat', icon: Clock },
   { href: '/riwayat-surat', label: 'Riwayat Surat', icon: History },
   { href: '/profil', label: 'Profil', icon: User },
@@ -43,7 +43,7 @@ export default function Sidebar() {
 
 
       <aside
-        className={`fixed top-0 left-0 h-full w-64 bg-[#0A1A4A] z-40 transform transition-transform duration-300 ease-in-out ${
+        className={`fixed top-0 left-0 h-full w-64 bg-[#0A1A4A] z-40 transform transition-transform duration-300 ease-in-out border-r-4 border-black ${
           isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
         } lg:relative lg:transform-none`}
       >
