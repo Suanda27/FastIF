@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { motion, Variants, useInView } from "framer-motion";
+import { motion, Variants, useInView, AnimatePresence } from "framer-motion";
 import CountUp from "react-countup";
 
 interface StatCardProps {
@@ -13,13 +13,30 @@ interface StatCardProps {
 }
 
 const containerVariants: Variants = {
-  hidden: { opacity: 0, y: 8 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: "easeOut" } },
+  hidden: { opacity: 0, y: 20 },
+  show: { 
+    opacity: 1, 
+    y: 0, 
+    transition: { 
+      duration: 0.6, 
+      ease: [0.25, 0.46, 0.45, 0.94],
+      staggerChildren: 0.1
+    } 
+  },
+};
+
+const itemVariants: Variants = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0 }
 };
 
 const hoverTap = {
-  whileHover: { scale: 1.02, boxShadow: "0 12px 30px rgba(10,28,86,0.18)" },
-  whileTap: { scale: 0.99 },
+  whileHover: { 
+    scale: 1.03, 
+    boxShadow: "0 12px 30px rgba(10,28,86,0.18)",
+    transition: { duration: 0.2 }
+  },
+  whileTap: { scale: 0.98 },
 };
 
 export default function StatCard({
@@ -55,17 +72,23 @@ export default function StatCard({
       role="region"
     >
       {/* decorative accent circle top-right */}
-      <div
+      <motion.div
         aria-hidden
         className="absolute -top-8 -right-8 w-36 h-36 rounded-full opacity-10"
         style={{
           background:
             "radial-gradient(circle at 30% 30%, rgba(255,255,255,0.08), rgba(255,255,255,0.00) 40%)",
         }}
+        initial={{ scale: 0, rotate: 0 }}
+        animate={inView ? { scale: 1, rotate: 180 } : { scale: 0, rotate: 0 }}
+        transition={{ duration: 0.8, ease: "easeInOut" }}
       />
 
       {/* header: accent + title in one line */}
-      <div className="flex items-center justify-between">
+      <motion.div 
+        className="flex items-center justify-between"
+        variants={itemVariants}
+      >
         <div className="flex items-center gap-2">
           <motion.div
             initial={{ scale: 0, opacity: 0 }}
@@ -80,12 +103,13 @@ export default function StatCard({
             {title}
           </h3>
         </div>
-
-
-      </div>
+      </motion.div>
 
       {/* animated number */}
-      <div className="mt-6">
+      <motion.div 
+        className="mt-6"
+        variants={itemVariants}
+      >
         <motion.div
           initial={{ opacity: 0, y: 6 }}
           animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 6 }}
@@ -114,7 +138,7 @@ export default function StatCard({
             </motion.span>
           )}
         </motion.div>
-      </div>
+      </motion.div>
     </motion.div>
   );
 }

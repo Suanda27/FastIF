@@ -10,8 +10,8 @@ const menuItems = [
   { href: '/mahasiswa/DashboardMhs', label: 'Dashboard', icon: Home },  
   { href: '/mahasiswa/PengajuanSurat', label: 'Pengajuan Surat', icon: FileText },
   { href: '/mahasiswa/StatusSurat', label: 'Status Surat', icon: Clock },
-  { href: '/riwayat-surat', label: 'Riwayat Surat', icon: History },
-  { href: '/profil', label: 'Profil', icon: User },
+  { href: '/mahasiswa/RiwayatSurat', label: 'Riwayat Surat', icon: History },
+  { href: '/mahasiswa/ProfileMhs', label: 'Profil', icon: User },
 ];
 
 export default function Sidebar() {
