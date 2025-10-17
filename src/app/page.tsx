@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import Image from "next/image";
 import Link from "next/link";
@@ -23,10 +23,9 @@ function Header() {
   );
 }
 
-
 function Footer() {
   return (
-    <footer className="bg-[#0A1A4A] py-6 px-6 mt-12">
+    <footer className="bg-[#0A1A4A] py-6 px-6 mt-auto">
       <div className="max-w-7xl mx-auto text-center">
         <p className="text-white text-sm md:text-base">
           © 2025 Fasilitas Surat Informatika. All rights reserved.
@@ -39,14 +38,15 @@ function Footer() {
 export default function Home() {
   return (
     <motion.div
-      className="bg-gray-50"
+      className="min-h-screen flex flex-col bg-gray-50"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.8 }}
     >
       <Header />
-      <section className="max-w-7xl mx-auto px-6 md:px-12 py-12 md:py-20">
-        <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
+
+      <section className="flex-1 max-w-7xl mx-auto px-6 md:px-12 py-12 md:py-20">
+        <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center h-full">
           <motion.div
             className="space-y-6"
             initial={{ x: -50, opacity: 0 }}
@@ -84,6 +84,7 @@ export default function Home() {
           </motion.div>
         </div>
       </section>
+
       <Footer />
     </motion.div>
   );

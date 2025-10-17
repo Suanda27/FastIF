@@ -30,10 +30,10 @@ export default function ProfileMhsPage() {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-50" style={{ fontFamily: 'Roboto, sans-serif' }}>
+    <div className="flex min-h-screen  bg-gray-50" style={{ fontFamily: 'Roboto, sans-serif' }}>
       <SidebarMhs />
 
-      <main className="flex-1 lg:ml-0">
+      <main className="flex-1 pt- lg:ml-0">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
