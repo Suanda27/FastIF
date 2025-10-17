@@ -5,7 +5,9 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Eye } from "lucide-react";
 import BadgeStatus from "./BadgeStatus";
-import DetailModal from "./DetailModal";
+import dynamic from "next/dynamic";
+
+const DetailModal = dynamic(() => import("./DetailModal"), { ssr: false });
 
 interface TableStatusProps {
   suratList: Surat[];
