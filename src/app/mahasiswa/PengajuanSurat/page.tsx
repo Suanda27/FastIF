@@ -5,7 +5,7 @@ import Sidebar from "../components/SidebarMhs";
 import CardSurat from "../components/CardSurat";
 
 const suratTypes = [
-  { title: "Surat Izin Kehadiran", iconName: "Mail", link: "/pengajuan/izin-kehadiran" },
+  { title: "Surat Izin Kehadiran", iconName: "Mail", link: "/mahasiswa/PengajuanSurat/SuratIzinKehadiran" },
   { title: "Surat Survei", iconName: "Globe", link: "/pengajuan/survei" },
   { title: "Surat Pengantar", iconName: "Send", link: "/pengajuan/pengantar" },
   { title: "Surat Beasiswa", iconName: "Award", link: "/pengajuan/beasiswa" },
