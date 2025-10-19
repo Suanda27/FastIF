@@ -33,29 +33,32 @@ export default function ProfileMhsPage() {
     <div className="flex min-h-screen  bg-gray-50" style={{ fontFamily: 'Roboto, sans-serif' }}>
       <SidebarMhs />
 
-      <main className="flex-1 pt- lg:ml-0">
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5 }}
-          className="p-6 lg:p-12"
-        >
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="mb-8"
-          >
-            <h1 className="text-4xl font-bold text-[#0A1C56] mb-2">Profil Mahasiswa</h1>
-            <p className="text-gray-600 text-lg">Kelola informasi profil Anda</p>
-          </motion.div>
+<main className="flex-1 pt-20 lg:pt-0 lg:ml-0">
+  <motion.div
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    transition={{ duration: 0.5 }}
+    className="p-6 lg:p-12"
+  >
+    <motion.div
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.2 }}
+      className="mb-8"
+    >
+      <h1 className="text-4xl font-bold text-[#0A1C56] mb-2">
+        Profil Mahasiswa
+      </h1>
+      <p className="text-gray-600 text-lg">Kelola informasi profil Anda</p>
+    </motion.div>
 
-          <ProfileMhsCard
-            profile={profile}
-            onEditClick={() => setIsEditModalOpen(true)}
-          />
-        </motion.div>
-      </main>
+    <ProfileMhsCard
+      profile={profile}
+      onEditClick={() => setIsEditModalOpen(true)}
+    />
+  </motion.div>
+</main>
+
 
       <EditProfileModal
         isOpen={isEditModalOpen}
