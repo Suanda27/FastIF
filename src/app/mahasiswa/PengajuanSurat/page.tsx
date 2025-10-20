@@ -6,7 +6,7 @@ import CardSurat from "../components/CardSurat";
 
 const suratTypes = [
   { title: "Surat Izin Kehadiran", iconName: "Mail", link: "/mahasiswa/PengajuanSurat/SuratIzinKehadiran" },
-  { title: "Surat Survei", iconName: "Globe", link: "/pengajuan/survei" },
+  { title: "Surat Survei", iconName: "Globe", link: "/mahasiswa/PengajuanSurat/SuratSurvei" },
   { title: "Surat Pengantar", iconName: "Send", link: "/mahasiswa/PengajuanSurat/SuratPengantar" },
   { title: "Surat Beasiswa", iconName: "Award", link: "/pengajuan/beasiswa" },
   { title: "Surat Izin Magang", iconName: "Briefcase", link: "/pengajuan/izin-magang" },
