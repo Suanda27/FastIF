@@ -94,7 +94,7 @@ export default function SuratIzinKehadiranPage() {
                   Pengajuan Surat Izin Kehadiran
                 </h1>
                 <p className="text-sm lg:text-base text-gray-600">
-                  Lengkapi formulir di bawah untuk mengajukan surat izin kehadiran
+                  
                 </p>
               </div>
             </div>
