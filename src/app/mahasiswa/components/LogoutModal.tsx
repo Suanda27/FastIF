@@ -1,7 +1,7 @@
 // components/LogoutModal.tsx
 "use client";
 
-import { motion, AnimatePresence, Variants } from "framer-motion"; // Tambahkan impor Variants
+import { motion, AnimatePresence, Variants } from "framer-motion";
 import { AlertTriangle, X } from "lucide-react";
 
 interface LogoutModalProps {
@@ -40,7 +40,7 @@ const modalContainerVariants: Variants = {
     transition: {
       duration: 0.6,
       ease: [0.25, 0.46, 0.45, 0.94],
-      staggerChildren: 0.15, // Animasi anak-anaknya dimulai dengan jeda waktu
+      staggerChildren: 0.15,
     },
   },
   exit: {
@@ -113,33 +113,39 @@ export default function LogoutModal({ isOpen, onClose, onConfirm }: LogoutModalP
             variants={modalContainerVariants}
             onClick={(e) => e.stopPropagation()}
             style={{
-              // Background dengan gradien dan glassmorphism
-              background: "rgba(255, 255, 255, 0.95)",
+              // Background dengan sentuhan warna utama
+              background: "rgba(255, 255, 255, 0.98)",
               backdropFilter: "blur(20px)",
-              border: "1px solid rgba(255, 255, 255, 0.3)",
+              border: "1px solid rgba(10, 26, 74, 0.2)", // Border dengan warna utama
             }}
           >
-            {/* Header dengan Glassmorphism */}
+            {/* Header dengan Gradien Warna Utama */}
             <motion.div
               variants={itemVariants}
               className="relative flex items-center justify-center p-8 overflow-hidden"
               style={{
-                background: "linear-gradient(135deg, #ff6b6b, #ee5a24)",
+                // Gradien dari warna utama ke biru yang lebih terang
+                background: "linear-gradient(135deg, #0A1A4A, #1E40AF)",
               }}
             >
-              {/* Efek cahaya animasi di belakang ikon */}
-              <div className="absolute inset-0 opacity-30">
-                <div className="absolute top-0 -left-4 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl animate-blob"></div>
-                <div className="absolute top-0 -right-4 w-72 h-72 bg-yellow-300 rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-2000"></div>
-                <div className="absolute -bottom-8 left-20 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-4000"></div>
+              {/* Efek cahaya animasi dengan warna yang selaras */}
+              <div className="absolute inset-0 opacity-20">
+                <div className="absolute top-0 -left-4 w-72 h-72 bg-blue-400 rounded-full mix-blend-screen filter blur-xl animate-blob"></div>
+                <div className="absolute top-0 -right-4 w-72 h-72 bg-indigo-400 rounded-full mix-blend-screen filter blur-xl animate-blob animation-delay-2000"></div>
+                <div className="absolute -bottom-8 left-20 w-72 h-72 bg-cyan-400 rounded-full mix-blend-screen filter blur-xl animate-blob animation-delay-4000"></div>
               </div>
 
+              {/* Ikon dengan latar belakang kontras untuk peringatan */}
               <motion.div
                 variants={iconVariants}
-                animate="pulse" // Animasi pulse berjalan terus-menerus
-                className="relative z-10 flex items-center justify-center w-20 h-20 bg-white/20 rounded-full backdrop-blur-sm border border-white/30"
+                animate="pulse"
+                className="relative z-10 flex items-center justify-center w-20 h-20 rounded-full backdrop-blur-sm border-2"
+                style={{
+                  background: "rgba(251, 191, 36, 0.2)", // Warna kuning/amber untuk peringatan
+                  borderColor: "rgba(251, 191, 36, 0.4)",
+                }}
               >
-                <AlertTriangle className="w-10 h-10 text-white" />
+                <AlertTriangle className="w-10 h-10 text-yellow-300" />
               </motion.div>
             </motion.div>
             
@@ -150,7 +156,8 @@ export default function LogoutModal({ isOpen, onClose, onConfirm }: LogoutModalP
             >
               <motion.h3
                 variants={itemVariants}
-                className="text-2xl font-bold text-gray-900 mb-2"
+                className="text-2xl font-bold mb-2"
+                style={{ color: "#0A1A4A" }} // Judul dengan warna utama
               >
                 Konfirmasi Keluar
               </motion.h3>
@@ -159,7 +166,7 @@ export default function LogoutModal({ isOpen, onClose, onConfirm }: LogoutModalP
                 variants={itemVariants}
                 className="text-gray-600 leading-relaxed"
               >
-                Apakah Anda yakin ingin keluar? Semua perubahan yang belum disimpan akan hilang.
+                Apakah Anda yakin ingin keluar? Semua sesi Anda akan diakhiri.
               </motion.p>
               
               {/* Buttons */}
@@ -176,12 +183,13 @@ export default function LogoutModal({ isOpen, onClose, onConfirm }: LogoutModalP
                   Batal
                 </motion.button>
                 <motion.button
-                  whileHover={{ scale: 1.05, boxShadow: "0 5px 20px rgba(239, 68, 68, 0.4)" }}
+                  whileHover={{ scale: 1.05, boxShadow: "0 5px 20px rgba(10, 26, 74, 0.4)" }}
                   whileTap={{ scale: 0.98 }}
                   onClick={onConfirm}
                   className="relative px-8 py-3 font-semibold text-white rounded-xl transition-all duration-200"
                   style={{
-                    background: "linear-gradient(135deg, #ee5a24, #ff6b6b)",
+                    // Tombol konfirmasi dengan gradien warna utama
+                    background: "linear-gradient(135deg, #0A1A4A, #1E40AF)",
                   }}
                 >
                   Ya, Keluar
