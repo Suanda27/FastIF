@@ -3,8 +3,9 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { Home, FileText, Clock, History, User, LogOut, Menu, X } from 'lucide-react';
+import LogoutModal from './LogoutModal'; // Tambahkan import untuk LogoutModal
 
 const menuItems = [
   { href: '/mahasiswa/DashboardMhs', label: 'Dashboard', icon: Home },
@@ -16,7 +17,9 @@ const menuItems = [
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false); // Tambahkan state untuk modal
 
   useEffect(() => {
     document.body.style.overflow = isOpen ? 'hidden' : '';
@@ -26,6 +29,20 @@ export default function Sidebar() {
   }, [isOpen]);
 
   const isCurrentPath = (href: string) => pathname === href;
+
+  // Tambahkan fungsi untuk menutup modal
+  const handleCloseModal = () => {
+    setIsLogoutModalOpen(false);
+  };
+
+  // Tambahkan fungsi untuk konfirmasi logout
+  const handleConfirmLogout = () => {
+    // Tambahkan logika logout di sini (misal: hapus token dari localStorage)
+    // localStorage.removeItem('authToken');
+    
+    // Arahkan ke halaman login/beranda
+    router.push('/');
+  };
 
   return (
     <div className="lg:block">
@@ -50,17 +67,15 @@ export default function Sidebar() {
         className={`fixed top-0 left-0 h-full w-64 bg-[#0A1A4A] z-[50] transform transition-transform duration-300 ease-in-out
           ${isOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 lg:relative lg:transform-none lg:shadow-none shadow-black`}
       >
-
-
         <div className="p-6 flex justify-center border-zinc-700 mb-4">
           <Link href="/mahasiswa/DashboardMhs">
-          <Image
-            src="/logo-fastif-white.png"
-            alt="FastIF Logo"
-            width={150}
-            height={60}
-            className="h-12 w-auto"
-          />
+            <Image
+              src="/logo-fastif-white.png"
+              alt="FastIF Logo"
+              width={150}
+              height={60}
+              className="h-12 w-auto"
+            />
           </Link>
         </div>
 
@@ -91,16 +106,26 @@ export default function Sidebar() {
         </nav>
 
         <div className="px-4 pb-6">
-          <Link
-            href="/"
-            onClick={() => setIsOpen(false)}
-            className="flex items-center gap-3 px-2 py-8 rounded-lg text-white/80 hover:bg-[#1E40AF]/50 hover:text-white transition-colors"
+          {/* Ganti Link dengan button untuk memicu modal */}
+          <button
+            onClick={() => {
+              setIsOpen(false);
+              setIsLogoutModalOpen(true);
+            }}
+            className="flex items-center gap-3 px-2 py-8 rounded-lg text-white/80 hover:bg-[#1E40AF]/50 hover:text-white transition-colors w-full text-left"
           >
             <LogOut className="w-5 h-5" />
             <span className="font-medium">Keluar</span>
-          </Link>
+          </button>
         </div>
       </aside>
+
+      {/* Tambahkan LogoutModal di luar aside agar bisa menutupi seluruh layar */}
+      <LogoutModal
+        isOpen={isLogoutModalOpen}
+        onClose={handleCloseModal}
+        onConfirm={handleConfirmLogout}
+      />
     </div>
   );
 }
