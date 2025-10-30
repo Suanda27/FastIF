@@ -10,7 +10,7 @@ const suratTypes = [
   { title: "Surat Pengantar", iconName: "Send", link: "/mahasiswa/PengajuanSurat/SuratPengantar" },
   { title: "Surat Beasiswa", iconName: "Award", link: "/mahasiswa/PengajuanSurat/SuratBeasiswa" },
   { title: "Surat Izin Magang", iconName: "Briefcase", link: "/mahasiswa/PengajuanSurat/SuratIzinMagang" },
-  { title: "Surat Keterangan Lulus", iconName: "GraduationCap", link: "/pengajuan/keterangan-lulus" },
+  { title: "Surat Keterangan Lulus", iconName: "GraduationCap", link: "/mahasiswa/PengajuanSurat/SuratKeteranganLulus" },
 ];
 
 export default function PengajuanSuratPage() {
