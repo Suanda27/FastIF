@@ -9,7 +9,7 @@ const suratTypes = [
   { title: "Surat Survei", iconName: "Globe", link: "/mahasiswa/PengajuanSurat/SuratSurvei" },
   { title: "Surat Pengantar", iconName: "Send", link: "/mahasiswa/PengajuanSurat/SuratPengantar" },
   { title: "Surat Beasiswa", iconName: "Award", link: "/mahasiswa/PengajuanSurat/SuratBeasiswa" },
-  { title: "Surat Izin Magang", iconName: "Briefcase", link: "/pengajuan/izin-magang" },
+  { title: "Surat Izin Magang", iconName: "Briefcase", link: "/mahasiswa/PengajuanSurat/SuratIzinMagang" },
   { title: "Surat Keterangan Lulus", iconName: "GraduationCap", link: "/pengajuan/keterangan-lulus" },
 ];
 
