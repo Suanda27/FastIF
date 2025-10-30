@@ -4,6 +4,7 @@ import React, { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Upload, FileCheck, AlertCircle } from "lucide-react";
 import { motion } from "framer-motion";
+import TextAreaField from "../../SuratPengantar/components/TextAreaField";
 
 interface FormErrors {
   keperluan?: string;
@@ -108,34 +109,21 @@ export default function SuratSurveiForm() {
       transition={{ duration: 0.5 }}
       className="w-full max-w-4xl mx-auto"
     >
-      <div className="bg-white rounded-2xl shadow-lg p-8 md:p-12">
+      <div className="bg-white rounded-lg shadow-lg p-8 md:p-12">
         <form onSubmit={handleSubmit} className="space-y-8">
           <div>
-            <label
-              htmlFor="keperluan"
-              className="block text-lg font-medium text-[#0A1C56] mb-3"
-            >
-              Keperluan
-            </label>
-            <textarea
-              id="keperluan"
+            <TextAreaField
+              label="Keperluan"
+              placeholder="Jelaskan tujuan survei / data yang diperlukan..."
+              required
               value={keperluan}
-              onChange={(e) => {
-                setKeperluan(e.target.value);
+              onChange={(val) => {
+                setKeperluan(val);
                 if (errors.keperluan) {
                   setErrors((prev) => ({ ...prev, keperluan: undefined }));
                 }
               }}
-              placeholder="Jelaskan tujuan survei / data yang diperlukan..."
               rows={5}
-              aria-invalid={!!errors.keperluan}
-              aria-describedby={errors.keperluan ? "keperluan-error" : undefined}
-              className={`w-full px-4 py-3 rounded-xl border-2 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#1976D2]/20 ${
-                errors.keperluan
-                  ? "border-red-500 focus:border-red-500"
-                  : "border-gray-200 focus:border-[#1976D2]"
-              }`}
-              style={{ fontFamily: "Roboto, sans-serif" }}
             />
             {errors.keperluan && (
               <motion.p
@@ -153,22 +141,31 @@ export default function SuratSurveiForm() {
           <div>
             <label
               htmlFor="file-upload"
-              className="block text-lg font-medium text-[#0A1C56] mb-3"
+              className="block text-lg font-bold text-[#0A1C56] mb-3"
             >
               Unggah Surat
             </label>
+
             <div
               onDragEnter={handleDragEnter}
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
               onClick={() => fileInputRef.current?.click()}
-              className={`relative border-2 border-dashed rounded-xl p-12 text-center cursor-pointer transition-all duration-200 ${
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  fileInputRef.current?.click();
+                }
+              }}
+              role="button"
+              tabIndex={0}
+              className={`relative border rounded-lg p-6 text-center cursor-pointer transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#1976D2] focus:border-transparent shadow-sm ${
                 isDragging
                   ? "border-[#1976D2] bg-[#1976D2]/5"
                   : errors.file
                   ? "border-red-500 bg-red-50/50"
-                  : "border-gray-300 hover:border-[#1976D2] hover:bg-gray-50/50"
+                  : "border-gray-300 hover:border-[#1976D2] hover:bg-gray-50 bg-white"
               }`}
               aria-invalid={!!errors.file}
               aria-describedby={errors.file ? "file-error" : undefined}
@@ -184,24 +181,28 @@ export default function SuratSurveiForm() {
 
               {selectedFile ? (
                 <motion.div
-                  initial={{ scale: 0.8, opacity: 0 }}
+                  initial={{ scale: 0.95, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   className="flex flex-col items-center gap-3"
                 >
-                  <FileCheck className="w-12 h-12 text-[#1976D2]" />
-                  <p className="text-[#0A1C56] font-medium">{selectedFile.name}</p>
+                  <FileCheck className="w-6 h-6 text-[#1976D2]" />
+                  <p className="text-[#0A1C56] font-medium text-sm break-all">
+                    {selectedFile.name}
+                  </p>
                   <p className="text-sm text-gray-500">
                     {(selectedFile.size / 1024).toFixed(2)} KB
                   </p>
                 </motion.div>
               ) : (
                 <div className="flex flex-col items-center gap-3">
-                  <Upload className="w-12 h-12 text-gray-400" />
+                  <Upload className="w-6 h-6 text-gray-400" />
                   <div>
-                    <p className="text-gray-600 font-medium">
+                    <p className="text-gray-900 font-medium text-sm">
                       Tarik & lepas, atau klik untuk memilih file
                     </p>
-                    <p className="text-sm text-gray-500 mt-2">Format: WORD (.doc, .docx)</p>
+                    <p className="text-sm text-gray-500 mt-2">
+                      Format: WORD (.doc, .docx)
+                    </p>
                   </div>
                 </div>
               )}
@@ -224,10 +225,10 @@ export default function SuratSurveiForm() {
             disabled={isSubmitting}
             whileHover={{ scale: isSubmitting ? 1 : 1.02 }}
             whileTap={{ scale: isSubmitting ? 1 : 0.98 }}
-            className={`px-8 py-3 bg-[#0A1C56] text-white font-medium rounded-xl transition-all duration-200 ${
+            className={`px-8 py-3 bg-[#1976D2] text-white font-medium rounded-lg transition-all duration-200 ${
               isSubmitting
                 ? "opacity-75 cursor-not-allowed"
-                : "hover:bg-[#0A1C56]/90 shadow-lg hover:shadow-xl"
+                : "hover:bg-[#0A1C56] shadow-lg hover:shadow-xl"
             }`}
             style={{ fontFamily: "Roboto, sans-serif" }}
           >

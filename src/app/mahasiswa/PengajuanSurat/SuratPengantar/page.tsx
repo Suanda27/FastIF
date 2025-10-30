@@ -67,16 +67,6 @@ export default function SuratPengantarPage() {
                 </p>
               </div>
 
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                className="hidden lg:flex items-center gap-3 bg-white px-4 py-3 rounded-xl shadow-md"
-              >
-                <UserCircle className="w-8 h-8 text-[#1976D2]" />
-                <div>
-                  <p className="text-sm text-gray-600">Mahasiswa</p>
-                  <p className="font-semibold text-[#0A1C56]">John Doe</p>
-                </div>
-              </motion.div>
             </div>
           </motion.div>
 
