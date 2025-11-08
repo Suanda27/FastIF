@@ -52,14 +52,48 @@ function Footer() {
 
 export default function LoginPage() {
   const router = useRouter();
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false); // ⬅️ Tambahkan di sini
   const reduce = useReducedMotion();
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    // sementara redirect statis dulu lek 
-    router.push('/mahasiswa/DashboardMhs');
+
+    try {
+      const res = await fetch("http://localhost:8001/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include", // penting buat kirim session cookie
+        body: JSON.stringify({
+          username,
+          password,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        alert(
+          data.message || "Login gagal, periksa kembali username & password"
+        );
+        return;
+      }
+
+      // ✅ Jika login berhasil
+      if (data.user.role === "admin") {
+        router.push("/admin/dashboard");
+      } else if (data.user.role === "mahasiswa") {
+        router.push("/mahasiswa/DashboardMhs");
+      } else {
+        alert("Role tidak dikenali!");
+      }
+    } catch (err) {
+      console.error("Login error:", err);
+      alert("Terjadi kesalahan saat login. Pastikan server backend berjalan.");
+    }
   };
 
   const cardVariants = {
@@ -74,10 +108,10 @@ export default function LoginPage() {
       <main className="flex-grow flex items-center justify-center px-6 py-12">
         <motion.div
           className="bg-white rounded-2xl shadow-lg p-6 md:p-12 w-full max-w-md"
-          initial={reduce ? {} : 'hidden'}
-          animate={reduce ? {} : 'visible'}
+          initial={reduce ? {} : "hidden"}
+          animate={reduce ? {} : "visible"}
           variants={cardVariants}
-          transition={{ duration: 0.5, ease: 'easeOut' }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
         >
           <div className="flex flex-col items-center mb-6 md:mb-8">
             <Image
@@ -120,12 +154,17 @@ export default function LoginPage() {
 
             <motion.button
               type="submit"
+              disabled={loading}
               whileHover={reduce ? {} : { scale: 1.02 }}
               whileTap={reduce ? {} : { scale: 0.99 }}
-              transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-              className="w-full bg-[#0A1C56] hover:bg-[#00aeff]/90 text-white font-medium py-3 rounded-lg transition-colors"
+              transition={{ type: "spring", stiffness: 300, damping: 20 }}
+              className={`w-full ${
+                loading
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-[#0A1C56] hover:bg-[#00aeff]/90"
+              } text-white font-medium py-3 rounded-lg transition-colors`}
             >
-              Masuk
+              {loading ? "Memproses..." : "Masuk"}
             </motion.button>
           </form>
 

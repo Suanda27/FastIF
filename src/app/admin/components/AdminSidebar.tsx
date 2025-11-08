@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation"; // ✅ tambahkan useRouter
 import { useEffect, useState } from "react";
-import { LogOut } from "lucide-react"; // ✅ Tambahan ikon keluar
+import { LogOut } from "lucide-react"; // ✅ ikon keluar
 
 // === ICON COMPONENTS ===
 const DashboardIcon = ({ color }: { color: string }) => (
@@ -56,6 +56,7 @@ const ArsipIcon = ({ color }: { color: string }) => (
 
 export default function AdminSidebar() {
   const pathname = usePathname();
+  const router = useRouter(); // ✅ router untuk redirect
   const [activeIndex, setActiveIndex] = useState(0);
   const [itemHeight, setItemHeight] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
@@ -90,8 +91,21 @@ export default function AdminSidebar() {
     if (window.innerWidth < 768) setIsOpen(false);
   };
 
-  const handleLogout = () => {
-    alert("Berhasil keluar! (Nanti bisa diarahkan ke halaman login)");
+  // ✅ BAGIAN LOGOUT YANG DIMODIFIKASI
+  const handleLogout = async () => {
+    try {
+      const res = await fetch("http://localhost:8001/api/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+
+      if (!res.ok) throw new Error("Gagal logout");
+      alert("Berhasil keluar!");
+      router.push("/"); // ✅ redirect ke homepage
+    } catch (err) {
+      console.error("Logout error:", err);
+      alert("Terjadi kesalahan saat logout!");
+    }
   };
 
   return (
@@ -174,7 +188,7 @@ export default function AdminSidebar() {
             onClick={handleLogout}
             className="w-full flex items-center gap-3 px-4 py-3 text-[#061A55] hover:text-[#318FEB] hover:bg-[#F0F7FF] transition-all duration-300 ease-in-out"
           >
-            <LogOut
+            <LogOut 
               size={22}
               className="text-[#061A55] group-hover:text-[#318FEB]"
             />
