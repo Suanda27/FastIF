@@ -9,6 +9,7 @@ import dotenv from "dotenv";
 
 dotenv.config();
 console.log("SESSION_SECRET =", process.env.SESSION_SECRET);
+
 const app = express();
 
 // ==== Middleware dasar ====
@@ -26,7 +27,7 @@ app.use(
     cookie: {
       httpOnly: true,
       sameSite: "lax",
-      secure: false, // false karena localhost (kalau https nanti ubah ke true)
+      secure: false, // ubah ke true kalau pakai https
       maxAge: 1000 * 60 * 30, // 30 menit
     },
   })
@@ -45,7 +46,7 @@ const fakeUsers = [
   { username: "mahasiswa", password: "12345", role: "mahasiswa" },
 ];
 
-// ==== Route login (dummy) ====
+// ==== Route login ====
 app.post("/api/login", loginLimiter, (req, res) => {
   const { username, password } = req.body;
 
@@ -69,8 +70,9 @@ app.post("/api/login", loginLimiter, (req, res) => {
 
 // ==== Route cek profil (hanya jika login) ====
 app.get("/api/profile", (req, res) => {
-  if (!req.session.user)
+  if (!req.session.user) {
     return res.status(401).json({ success: false, message: "Belum login" });
+  }
 
   res.json({
     success: true,
@@ -79,18 +81,21 @@ app.get("/api/profile", (req, res) => {
   });
 });
 
-// ==== Route logout ====
+// ==== ✅ Route logout (versi lebih kuat) ====
 app.post("/api/logout", (req, res) => {
   req.session.destroy(() => {
+    res.clearCookie("connect.sid"); // ✅ hapus cookie dari browser
     res.json({ success: true, message: "Logout berhasil" });
   });
 });
+
 
 // ==== Jalankan server ====
 const PORT = process.env.PORT || 8001;
 app.get("/", (req, res) => {
   res.send("Server FASTIF aktif 🚀");
 });
+
 app.listen(PORT, () =>
   console.log(`✅ FASTIF Backend running at http://localhost:${PORT}`)
 );

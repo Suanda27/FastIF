@@ -1,18 +1,31 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
-import { usePathname, useRouter } from 'next/navigation';
-import { Home, FileText, Clock, History, User, LogOut, Menu, X } from 'lucide-react';
-import LogoutModal from './LogoutModal'; // Tambahkan import untuk LogoutModal
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { usePathname, useRouter } from "next/navigation";
+import {
+  Home,
+  FileText,
+  Clock,
+  History,
+  User,
+  LogOut,
+  Menu,
+  X,
+} from "lucide-react";
+import LogoutModal from "./LogoutModal"; // Tambahkan import untuk LogoutModal
 
 const menuItems = [
-  { href: '/mahasiswa/DashboardMhs', label: 'Dashboard', icon: Home },
-  { href: '/mahasiswa/PengajuanSurat', label: 'Pengajuan Surat', icon: FileText },
-  { href: '/mahasiswa/StatusSurat', label: 'Status Surat', icon: Clock },
-  { href: '/mahasiswa/RiwayatSurat', label: 'Riwayat Surat', icon: History },
-  { href: '/mahasiswa/ProfileMhs', label: 'Profil', icon: User },
+  { href: "/mahasiswa/DashboardMhs", label: "Dashboard", icon: Home },
+  {
+    href: "/mahasiswa/PengajuanSurat",
+    label: "Pengajuan Surat",
+    icon: FileText,
+  },
+  { href: "/mahasiswa/StatusSurat", label: "Status Surat", icon: Clock },
+  { href: "/mahasiswa/RiwayatSurat", label: "Riwayat Surat", icon: History },
+  { href: "/mahasiswa/ProfileMhs", label: "Profil", icon: User },
 ];
 
 export default function Sidebar() {
@@ -22,9 +35,9 @@ export default function Sidebar() {
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false); // Tambahkan state untuk modal
 
   useEffect(() => {
-    document.body.style.overflow = isOpen ? 'hidden' : '';
+    document.body.style.overflow = isOpen ? "hidden" : "";
     return () => {
-      document.body.style.overflow = '';
+      document.body.style.overflow = "";
     };
   }, [isOpen]);
 
@@ -35,13 +48,30 @@ export default function Sidebar() {
     setIsLogoutModalOpen(false);
   };
 
-  // Tambahkan fungsi untuk konfirmasi logout
-  const handleConfirmLogout = () => {
-    // Tambahkan logika logout di sini (misal: hapus token dari localStorage)
-    // localStorage.removeItem('authToken');
-    
-    // Arahkan ke halaman login/beranda
-    router.push('/');
+  // 🔹 Fungsi logout diperbarui (tanpa ubah tampilan)
+  const handleConfirmLogout = async () => {
+    try {
+      const res = await fetch("http://localhost:8001/api/logout", {
+        method: "POST",
+        credentials: "include", // penting agar cookie session dikirim
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        // Bersihkan storage lokal (jika ada)
+        localStorage.clear();
+        sessionStorage.clear();
+
+        // Arahkan ke halaman login
+        router.push("/login");
+      } else {
+        alert("Logout gagal, silakan coba lagi.");
+      }
+    } catch (error) {
+      console.error("Logout error:", error);
+      alert("Terjadi kesalahan saat logout.");
+    }
   };
 
   return (
@@ -49,14 +79,16 @@ export default function Sidebar() {
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="lg:hidden fixed top-4 left-4 z-[60] bg-[#0A1A4A] text-white p-2 rounded-lg shadow"
-        aria-label={isOpen ? 'Tutup menu' : 'Buka menu'}
+        aria-label={isOpen ? "Tutup menu" : "Buka menu"}
       >
         {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
       </button>
 
       <div
         className={`fixed inset-0 lg:hidden bg-black/50 transition-opacity duration-200 ${
-          isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+          isOpen
+            ? "opacity-100 pointer-events-auto"
+            : "opacity-0 pointer-events-none"
         }`}
         style={{ zIndex: 40 }}
         onClick={() => setIsOpen(false)}
@@ -65,7 +97,9 @@ export default function Sidebar() {
 
       <aside
         className={`fixed top-0 left-0 h-full w-64 bg-[#0A1A4A] z-[50] transform transition-transform duration-300 ease-in-out
-          ${isOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 lg:relative lg:transform-none lg:shadow-none shadow-black`}
+          ${
+            isOpen ? "translate-x-0" : "-translate-x-full"
+          } lg:translate-x-0 lg:relative lg:transform-none lg:shadow-none shadow-black`}
       >
         <div className="p-6 flex justify-center border-zinc-700 mb-4">
           <Link href="/mahasiswa/DashboardMhs">
@@ -92,8 +126,8 @@ export default function Sidebar() {
                     onClick={() => setIsOpen(false)}
                     className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
                       isActive
-                        ? 'bg-[#1E40AF] text-white'
-                        : 'text-white/80 hover:bg-[#1E40AF]/50 hover:text-white'
+                        ? "bg-[#1E40AF] text-white"
+                        : "text-white/80 hover:bg-[#1E40AF]/50 hover:text-white"
                     }`}
                   >
                     <Icon className="w-5 h-5" />

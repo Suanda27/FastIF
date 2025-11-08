@@ -7,27 +7,24 @@ export async function middleware(req: NextRequest) {
 
   console.log("🔍 Middleware jalan di:", req.nextUrl.pathname);
 
-
   async function checkSession() {
     try {
       const res = await fetch(`${req.nextUrl.origin}/api/check-session`, {
-        headers: {
-          cookie: req.headers.get("cookie") || "",
-        },
+        headers: { cookie: req.headers.get("cookie") || "" },
+        cache: "no-store", // ✅ jangan cache session lama
       });
-
       if (!res.ok) return null;
       const data = await res.json();
       return data;
-    } catch (err) {
-      console.error("Middleware fetch error:", err);
+    } catch {
       return null;
     }
   }
 
-  // 1️⃣ Kalau sedang di /login
+  const session = await checkSession();
+
+  // 🔹 Kalau buka /login tapi sudah login → arahkan ke dashboard sesuai role
   if (path === "/login") {
-    const session = await checkSession();
     if (session?.user) {
       const redirectUrl =
         session.user.role === "admin"
@@ -38,14 +35,10 @@ export async function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-  // 2️⃣ Kalau halaman butuh login
+  // 🔹 Kalau belum login dan mau akses /admin atau /mahasiswa → arahkan ke login
   const isProtected = protectedPaths.some((p) => path.startsWith(p));
-  if (isProtected) {
-    const session = await checkSession();
-    if (!session?.user) {
-      // Belum login → arahkan ke /login
-      return NextResponse.redirect(new URL("/login", req.url));
-    }
+  if (isProtected && !session?.user) {
+    return NextResponse.redirect(new URL("/login", req.url));
   }
 
   return NextResponse.next();
