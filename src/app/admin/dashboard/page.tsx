@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Mail, RefreshCcw, CheckSquare } from "lucide-react";
 import { motion } from "framer-motion";
 import CountUp from "react-countup";
@@ -15,51 +15,6 @@ interface Surat {
   status: StatusSurat;
 }
 
-const dataSurat: Surat[] = [
-  {
-    nama: "Muhammad Faiz Difa Suanda",
-    nim: "3312411018",
-    jurusan: "Teknik Informatika",
-    jenis: "Surat Beasiswa",
-    status: "Diproses",
-  },
-  {
-    nama: "Muhammad Faiz Difa Suanda",
-    nim: "3312411018",
-    jurusan: "Teknik Informatika",
-    jenis: "Surat Beasiswa",
-    status: "Diterima",
-  },
-  {
-    nama: "Muhammad Faiz Difa Suanda",
-    nim: "3312411018",
-    jurusan: "Teknik Informatika",
-    jenis: "Surat Beasiswa",
-    status: "Ditangguhkan",
-  },
-  {
-    nama: "Muhammad Faiz Difa Suanda",
-    nim: "3312411018",
-    jurusan: "Teknik Informatika",
-    jenis: "Surat Beasiswa",
-    status: "Diterima",
-  },
-  {
-    nama: "Muhammad Faiz Difa Suanda",
-    nim: "3312411018",
-    jurusan: "Teknik Informatika",
-    jenis: "Surat Beasiswa",
-    status: "Diproses",
-  },
-  {
-    nama: "Muhammad Faiz Difa Suanda",
-    nim: "3312411018",
-    jurusan: "Teknik Informatika",
-    jenis: "Surat Beasiswa",
-    status: "Ditangguhkan",
-  },
-];
-
 const statusColor: Record<StatusSurat, string> = {
   Diproses: "bg-blue-500",
   Diterima: "bg-green-500",
@@ -67,6 +22,39 @@ const statusColor: Record<StatusSurat, string> = {
 };
 
 export default function DashboardPage() {
+  // nilai awal semua 0
+  const [stats, setStats] = useState({
+    pengajuan: 0,
+    verifikasi: 0,
+    selesai: 0,
+  });
+
+  const [dataSurat, setDataSurat] = useState<Surat[]>([]);
+
+  // ambil data dari API nanti (placeholder dulu)
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await fetch("/api/cardadmin"); // endpoint backend kamu nanti
+        if (!res.ok) throw new Error("Gagal mengambil data");
+        const data = await res.json();
+
+        // contoh respons API:
+        // { pengajuan: 10, verifikasi: 5, selesai: 2, dataSurat: [...] }
+        setStats({
+          pengajuan: data.pengajuan || 0,
+          verifikasi: data.verifikasi || 0,
+          selesai: data.selesai || 0,
+        });
+        setDataSurat(data.dataSurat || []);
+      } catch (error) {
+        console.error("Error mengambil data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   return (
     <motion.div
       className="space-y-8"
@@ -86,19 +74,19 @@ export default function DashboardPage() {
             title: "Pengajuan Surat",
             gradient: "bg-gradient-to-br from-blue-400 to-blue-600",
             icon: <Mail size={22} />,
-            value: 25,
+            value: stats.pengajuan,
           },
           {
             title: "Verifikasi Surat",
             gradient: "bg-gradient-to-br from-yellow-400 to-orange-500",
             icon: <RefreshCcw size={22} />,
-            value: 12,
+            value: stats.verifikasi,
           },
           {
             title: "Surat Selesai",
             gradient: "bg-gradient-to-br from-green-400 to-emerald-600",
             icon: <CheckSquare size={22} />,
-            value: 8,
+            value: stats.selesai,
           },
         ].map((card, index) => (
           <motion.div
@@ -147,29 +135,40 @@ export default function DashboardPage() {
               </tr>
             </thead>
             <tbody>
-              {dataSurat.map((item, index) => (
-                <motion.tr
-                  key={index}
-                  className={`border-b border-[#A2A2A2] ${
-                    index % 2 === 0 ? "bg-white" : "bg-[#F5F5F5]"
-                  } hover:bg-[#E9E9E9] transition-colors duration-300`}
-                  whileHover={{ scale: 1.005 }}
-                >
-                  <td className="px-4 py-3 text-gray-800">{item.nama}</td>
-                  <td className="px-4 py-3 text-gray-800">{item.nim}</td>
-                  <td className="px-4 py-3 text-gray-800">{item.jurusan}</td>
-                  <td className="px-4 py-3 text-gray-800">{item.jenis}</td>
-                  <td className="px-4 py-3">
-                    <span
-                      className={`text-white px-3 py-1 rounded-full text-xs font-medium shadow-sm ${
-                        statusColor[item.status]
-                      }`}
-                    >
-                      {item.status}
-                    </span>
+              {dataSurat.length > 0 ? (
+                dataSurat.map((item, index) => (
+                  <motion.tr
+                    key={index}
+                    className={`border-b border-[#A2A2A2] ${
+                      index % 2 === 0 ? "bg-white" : "bg-[#F5F5F5]"
+                    } hover:bg-[#E9E9E9] transition-colors duration-300`}
+                    whileHover={{ scale: 1.005 }}
+                  >
+                    <td className="px-4 py-3 text-gray-800">{item.nama}</td>
+                    <td className="px-4 py-3 text-gray-800">{item.nim}</td>
+                    <td className="px-4 py-3 text-gray-800">{item.jurusan}</td>
+                    <td className="px-4 py-3 text-gray-800">{item.jenis}</td>
+                    <td className="px-4 py-3">
+                      <span
+                        className={`text-white px-3 py-1 rounded-full text-xs font-medium shadow-sm ${
+                          statusColor[item.status]
+                        }`}
+                      >
+                        {item.status}
+                      </span>
+                    </td>
+                  </motion.tr>
+                ))
+              ) : (
+                <tr>
+                  <td
+                    colSpan={5}
+                    className="text-center text-gray-500 py-6 italic"
+                  >
+                    Belum ada data surat
                   </td>
-                </motion.tr>
-              ))}
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
