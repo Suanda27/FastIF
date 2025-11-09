@@ -6,6 +6,9 @@ import helmet from "helmet";
 import morgan from "morgan";
 import rateLimit from "express-rate-limit";
 import dotenv from "dotenv";
+import multer from "multer";
+import path from "path";
+import fs from "fs";
 
 dotenv.config();
 console.log("SESSION_SECRET =", process.env.SESSION_SECRET);
@@ -89,13 +92,132 @@ app.post("/api/logout", (req, res) => {
   });
 });
 
+// ===========================================
+// ========== 📂 Upload & Formulir ===========
+// ===========================================
 
-// ==== Jalankan server ====
-const PORT = process.env.PORT || 8001;
+// Pastikan folder uploads ada
+const uploadsDir = path.join(process.cwd(), "uploads");
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
+
+// Konfigurasi penyimpanan multer
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, uploadsDir),
+  filename: (req, file, cb) => {
+    const uniqueName = `${Date.now()}-${file.originalname.replace(
+      /\s+/g,
+      "_"
+    )}`;
+    cb(null, uniqueName);
+  },
+});
+
+const upload = multer({ storage });
+
+// Biar file bisa diakses langsung via URL
+app.use("/uploads", express.static(uploadsDir));
+
+// Dummy data sementara
+let formulirData = [
+  {
+    id: 1,
+    title: "Surat Izin Kehadiran",
+    fileName: null,
+    templateFileName: null,
+  },
+  { id: 2, title: "Surat Survey", fileName: null, templateFileName: null },
+  { id: 3, title: "Surat Pengantar", fileName: null, templateFileName: null },
+  { id: 4, title: "Surat Izin Magang", fileName: null, templateFileName: null },
+];
+
+// GET semua formulir
+app.get("/api/formulir", (req, res) => {
+  res.json({ success: true, data: formulirData });
+});
+
+// ✅ POST upload file (pakai multer)
+app.post("/api/formulir", upload.single("file"), (req, res) => {
+  try {
+    const { id, isTemplate } = req.body;
+    const parsedId = Number(id);
+    const templateFlag = isTemplate === "true" || isTemplate === true;
+
+    if (!req.file) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Tidak ada file yang diunggah." });
+    }
+
+    const fileName = req.file.filename;
+
+    formulirData = formulirData.map((item) =>
+      item.id === parsedId
+        ? {
+            ...item,
+            ...(templateFlag ? { templateFileName: fileName } : { fileName }),
+          }
+        : item
+    );
+
+    console.log("📤 Upload berhasil:", {
+      id: parsedId,
+      isTemplate: templateFlag,
+      fileName,
+    });
+
+    res.json({
+      success: true,
+      message: templateFlag
+        ? "File template berhasil diupload!"
+        : "File contoh berhasil diupload!",
+      data: formulirData,
+    });
+  } catch (err) {
+    console.error("Error POST /api/formulir:", err);
+    res
+      .status(500)
+      .json({ success: false, message: "Terjadi kesalahan server." });
+  }
+});
+
+// ✅ DELETE file
+app.delete("/api/formulir", express.json(), (req, res) => {
+  try {
+    const { id, isTemplate } = req.body;
+    const parsedId = Number(id);
+    const templateFlag = isTemplate === true || isTemplate === "true";
+
+    formulirData = formulirData.map((item) =>
+      item.id === parsedId
+        ? {
+            ...item,
+            ...(templateFlag ? { templateFileName: null } : { fileName: null }),
+          }
+        : item
+    );
+
+    console.log("🗑 Hapus file:", { id: parsedId, isTemplate: templateFlag });
+    res.json({
+      success: true,
+      message: "File berhasil dihapus!",
+      data: formulirData,
+    });
+  } catch (err) {
+    console.error("Error DELETE /api/formulir:", err);
+    res
+      .status(500)
+      .json({ success: false, message: "Terjadi kesalahan server." });
+  }
+});
+
+// === Route testing root ===
 app.get("/", (req, res) => {
   res.send("Server FASTIF aktif 🚀");
 });
 
+const PORT = process.env.PORT || 8001;
 app.listen(PORT, () =>
   console.log(`✅ FASTIF Backend running at http://localhost:${PORT}`)
 );

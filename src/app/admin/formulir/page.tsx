@@ -19,6 +19,23 @@ export default function FormulirSuratPage() {
   } | null>(null);
   const [fadeIn, setFadeIn] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+  const [formulirData, setFormulirData] = useState<any[]>([]);
+  const [selectedFormId, setSelectedFormId] = useState<number | null>(null);
+  const [isTemplateUpload, setIsTemplateUpload] = useState(false);
+
+  // ✅ Fetch data dari API dummy internal
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await fetch("/api/formulir");
+        const data = await res.json();
+        setFormulirData(data.data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchData();
+  }, []);
 
   useEffect(() => setIsMounted(true), []);
   useEffect(() => {
@@ -29,35 +46,16 @@ export default function FormulirSuratPage() {
     document.body.style.overflow = showModal ? "hidden" : "auto";
   }, [showModal]);
 
-  const formulirList = [
-    {
-      icon: Calendar,
-      title: "Surat Izin Kehadiran",
-      desc: "Permohonan izin untuk tidak mengikuti perkuliahan",
-    },
-    {
-      icon: ClipboardList,
-      title: "Surat Survey",
-      desc: "Pengajuan izin survei lapangan",
-    },
-    {
-      icon: FileText,
-      title: "Surat Pengantar",
-      desc: "Surat pengantar resmi fakultas",
-    },
-    {
-      icon: Briefcase,
-      title: "Surat Izin Magang",
-      desc: "Izin magang mahasiswa",
-    },
-  ];
-
-  const handleUploadClick = () => {
+  // buka modal upload
+  const handleUploadClick = (id: number, isTemplate: boolean = false) => {
+    setSelectedFormId(id);
+    setIsTemplateUpload(isTemplate);
     setShowModal(true);
     setUploadProgress(0);
     setSelectedFile(null);
   };
 
+  // tutup modal
   const handleCloseModal = () => {
     setClosing(true);
     setTimeout(() => {
@@ -66,12 +64,14 @@ export default function FormulirSuratPage() {
     }, 300);
   };
 
+  // pilih file
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files?.[0]) setSelectedFile(e.target.files[0]);
   };
 
-  const handleUpload = () => {
-    if (!selectedFile) {
+  // upload ke API dummy internal
+  const handleUpload = async () => {
+    if (!selectedFile || selectedFormId === null) {
       setToast({ message: "❌ Pilih file terlebih dahulu!", type: "error" });
       setTimeout(() => setToast(null), 2500);
       return;
@@ -82,14 +82,55 @@ export default function FormulirSuratPage() {
       setUploadProgress((prev) => {
         if (prev >= 100) {
           clearInterval(interval);
-          setToast({ message: "✅ File berhasil diupload!", type: "success" });
-          setTimeout(() => setToast(null), 3000);
           return 100;
         }
         return prev + 10;
       });
     }, 150);
+
+    try {
+      const formData = new FormData();
+      formData.append("file", selectedFile);
+      formData.append("id", selectedFormId.toString());
+      formData.append("isTemplate", isTemplateUpload.toString());
+
+      const res = await fetch("/api/formulir", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await res.json();
+      if (!data.success) throw new Error();
+
+      setToast({ message: "✅ " + data.message, type: "success" });
+      setTimeout(() => setToast(null), 3000);
+      setFormulirData(data.data);
+      setShowModal(false);
+    } catch (error) {
+      setToast({ message: "❌ Gagal upload file", type: "error" });
+      setTimeout(() => setToast(null), 2500);
+    }
   };
+
+  // hapus file (simulasi API DELETE)
+  const handleDeleteFile = async (id: number, isTemplate: boolean = false) => {
+    try {
+      const res = await fetch("/api/formulir", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, isTemplate }),
+      });
+
+      const data = await res.json();
+      setFormulirData(data.data);
+      setToast({ message: "🗑️ File dihapus!", type: "success" });
+      setTimeout(() => setToast(null), 2500);
+    } catch {
+      setToast({ message: "❌ Gagal menghapus file", type: "error" });
+      setTimeout(() => setToast(null), 2500);
+    }
+  };
+
 
   if (!isMounted) return null;
 
@@ -102,15 +143,32 @@ export default function FormulirSuratPage() {
       <h1 className="text-2xl font-bold text-gray-800">Formulir Surat</h1>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-        {formulirList.map((item, i) => (
-          <FormulirCard
-            key={i}
-            icon={item.icon}
-            title={item.title}
-            desc={item.desc}
-            onUploadClick={handleUploadClick}
-          />
-        ))}
+        {formulirData.map((item) => {
+          const iconMap: Record<string, any> = {
+            "Surat Izin Kehadiran": Calendar,
+            "Surat Survey": ClipboardList,
+            "Surat Pengantar": FileText,
+            "Surat Izin Magang": Briefcase,
+          };
+
+          const Icon = iconMap[item.title] || FileText;
+
+          return (
+            <FormulirCard
+              key={item.id}
+              icon={Icon}
+              title={item.title}
+              desc={`Formulir untuk ${item.title.toLowerCase()}`}
+              onUploadClick={() => handleUploadClick(item.id)} // contoh file
+              onUploadTemplateClick={() => handleUploadClick(item.id, true)} // ✅ template file
+              fileUploaded={!!item.fileName}
+              templateUploaded={!!item.templateFileName} // ✅ baru
+              onDeleteFile={(isTemplate?: boolean) =>
+                handleDeleteFile(item.id, isTemplate)
+              } // ✅ ubah sedikit
+            />
+          );
+        })}
       </div>
 
       {showModal &&
