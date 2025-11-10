@@ -1,9 +1,0 @@
-{
-  "/admin/dashboard/page": "app/admin/dashboard/page.js",
-  "/api/cardadmin/route": "app/api/cardadmin/route.js",
-  "/api/check-session/route": "app/api/check-session/route.js",
-  "/favicon.ico/route": "app/favicon.ico/route.js",
-  "/login/page": "app/login/page.js",
-  "/mahasiswa/DashboardMhs/page": "app/mahasiswa/DashboardMhs/page.js",
-  "/page": "app/page.js"
-}
