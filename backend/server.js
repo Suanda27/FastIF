@@ -9,6 +9,9 @@ import dotenv from "dotenv";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
+import mysql from "mysql2";
+import db from "./config/db.js";
+import bcrypt from "bcrypt";
 
 dotenv.config();
 console.log("SESSION_SECRET =", process.env.SESSION_SECRET);
@@ -43,7 +46,7 @@ const loginLimiter = rateLimit({
   message: "Terlalu banyak percobaan login, coba lagi nanti.",
 });
 
-// ==== Dummy user data (sementara sebelum LDAP) ====
+/* // ==== Dummy user data (sementara sebelum LDAP) ====
 const fakeUsers = [
   { username: "admin", password: "admin123", role: "admin" },
   { username: "mahasiswa", password: "12345", role: "mahasiswa" },
@@ -69,7 +72,60 @@ app.post("/api/login", loginLimiter, (req, res) => {
     message: "Login berhasil",
     user: req.session.user,
   });
+}); */
+
+// ==== Route login (pakai database MySQL) ====
+app.post("/api/login", loginLimiter, async (req, res) => {
+  const { username, password } = req.body;
+
+  if (!username || !password) {
+    return res.status(400).json({ success: false, message: "Isi semua field!" });
+  }
+
+  // Cek user di database (berdasarkan email atau nama)
+  const query = "SELECT * FROM user WHERE email = ? OR nama = ? LIMIT 1";
+
+  db.query(query, [username, username], async (err, results) => {
+    if (err) {
+      console.error("❌ Database error:", err);
+      return res.status(500).json({ success: false, message: "Server error." });
+    }
+
+    if (results.length === 0) {
+      return res.status(401).json({ success: false, message: "User tidak ditemukan." });
+    }
+
+    const user = results[0];
+
+    // 💡 Kalau database belum pakai bcrypt
+    let passwordValid = password === user.password;
+
+    // 💡 Kalau nanti ubah jadi bcrypt:
+    // const passwordValid = await bcrypt.compare(password, user.password);
+
+    if (!passwordValid) {
+      return res.status(401).json({ success: false, message: "Password salah." });
+    }
+
+    // Simpan session user
+    req.session.user = {
+      id_user: user.id_user,
+      nama: user.nama,
+      email: user.email,
+      role: user.role || "mahasiswa", // sesuaikan dengan kolom tabel
+    };
+
+    console.log("✅ Login berhasil untuk:", user.nama);
+
+    res.json({
+      success: true,
+      message: "Login berhasil",
+      user: req.session.user,
+    });
+  });
 });
+
+
 
 // ==== Route cek profil (hanya jika login) ====
 app.get("/api/profile", (req, res) => {
