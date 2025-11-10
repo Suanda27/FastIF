@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 10, 2025 at 10:27 AM
+-- Generation Time: Nov 10, 2025 at 05:27 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -137,6 +137,7 @@ CREATE TABLE `user` (
   `password` varchar(255) DEFAULT NULL,
   `role` enum('mahasiswa','admin') DEFAULT 'mahasiswa',
   `nim` varchar(20) DEFAULT NULL,
+  `jurusan` varchar(100) DEFAULT NULL,
   `nip` varchar(20) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -144,12 +145,12 @@ CREATE TABLE `user` (
 -- Dumping data for table `user`
 --
 
-INSERT INTO `user` (`id_user`, `nama`, `email`, `password`, `role`, `nim`, `nip`) VALUES
-(1, 'Budi Santoso', 'budi@student.ac.id', 'budi123', 'mahasiswa', '20221001', NULL),
-(2, 'Dewi Kartika', 'dewi@student.ac.id', 'dewi123', 'mahasiswa', '20221002', NULL),
-(3, 'Rizky Pratama', 'rizky@student.ac.id', 'rizki123', 'mahasiswa', '20221003', NULL),
-(4, 'Doni Saputra', 'doni@student.ac.id', 'doni123', 'mahasiswa', '20221004', NULL),
-(5, 'admin', 'admin@kampus.ac.id', 'admin123', 'admin', NULL, '19870001');
+INSERT INTO `user` (`id_user`, `nama`, `email`, `password`, `role`, `nim`, `jurusan`, `nip`) VALUES
+(1, 'Budi Santoso', 'budi@student.ac.id', 'budi123', 'mahasiswa', '20221001', 'Rekayasa Perangkat Lunak', NULL),
+(2, 'Dewi Kartika', 'dewi@student.ac.id', 'dewi123', 'mahasiswa', '20221002', 'Sistem Informasi', NULL),
+(3, 'Rizky Pratama', 'rizky@student.ac.id', 'rizki123', 'mahasiswa', '20221003', 'Informatika', NULL),
+(4, 'Doni Saputra', 'doni@student.ac.id', 'doni123', 'mahasiswa', '20221004', 'Terapan Teknologi Permainan', NULL),
+(5, 'admin', 'admin@kampus.ac.id', 'admin123', 'admin', NULL, NULL, '19870001');
 
 -- --------------------------------------------------------
 
