@@ -33,27 +33,38 @@ export default function DashboardPage() {
 
   // ambil data dari API nanti (placeholder dulu)
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await fetch("/api/cardadmin"); // endpoint backend kamu nanti
-        if (!res.ok) throw new Error("Gagal mengambil data");
-        const data = await res.json();
+  const fetchData = async () => {
+    try {
+      const res = await fetch("http://localhost:8001/api/cardadmin"); // endpoint backend kamu
+      if (!res.ok) throw new Error("Gagal mengambil data");
+      const data = await res.json();
 
-        // contoh respons API:
-        // { pengajuan: 10, verifikasi: 5, selesai: 2, dataSurat: [...] }
-        setStats({
-          pengajuan: data.pengajuan || 0,
-          verifikasi: data.verifikasi || 0,
-          selesai: data.selesai || 0,
-        });
-        setDataSurat(data.dataSurat || []);
-      } catch (error) {
-        console.error("Error mengambil data:", error);
-      }
-    };
+      setStats({
+        pengajuan: data.pengajuan || 0,
+        verifikasi: data.verifikasi || 0,
+        selesai: data.selesai || 0,
+      });
 
-    fetchData();
-  }, []);
+      setDataSurat(
+        data.dataSurat.map((item: any) => ({
+          ...item,
+          jurusan: item.jurusan || "-", // sementara belum ada
+          status:
+            item.status === "diproses"
+              ? "Diproses"
+              : item.status === "diterima"
+              ? "Diterima"
+              : "Ditangguhkan",
+        }))
+      );
+    } catch (error) {
+      console.error("Error mengambil data:", error);
+    }
+  };
+
+  fetchData();
+}, []);
+
 
   return (
     <motion.div

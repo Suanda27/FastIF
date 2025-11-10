@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 10, 2025 at 08:07 AM
+-- Generation Time: Nov 10, 2025 at 10:27 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -29,17 +29,25 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `form_surat_izin` (
   `id_form_izin` int(11) NOT NULL,
-  `id_surat` int(11) NOT NULL,
-  `nama_nohp_orangtua` varchar(100) NOT NULL,
-  `kelas_perkuliahan` varchar(50) NOT NULL,
-  `jenis_perizinan` varchar(50) NOT NULL,
-  `tanggal_mulai` date NOT NULL,
-  `tanggal_selesai` date NOT NULL,
+  `id_surat` int(11) DEFAULT NULL,
+  `nama_nohp_orangtua` varchar(20) DEFAULT NULL,
+  `kelas_perkuliahan` varchar(20) DEFAULT NULL,
+  `jenis_perizinan` varchar(50) DEFAULT NULL,
+  `tanggal_mulai` date DEFAULT NULL,
+  `tanggal_selesai` date DEFAULT NULL,
   `file_chat_dosen_wali` varchar(255) DEFAULT NULL,
   `file_chat_dosen_pengajar` varchar(255) DEFAULT NULL,
   `file_pendukung` varchar(255) DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `created_at` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `form_surat_izin`
+--
+
+INSERT INTO `form_surat_izin` (`id_form_izin`, `id_surat`, `nama_nohp_orangtua`, `kelas_perkuliahan`, `jenis_perizinan`, `tanggal_mulai`, `tanggal_selesai`, `file_chat_dosen_wali`, `file_chat_dosen_pengajar`, `file_pendukung`, `created_at`) VALUES
+(1, 1, '081234567890', 'IF-7A', 'Izin Kegiatan', '2025-11-12', '2025-11-13', 'chat_wali.jpg', 'chat_pengajar.jpg', 'poster_event.jpg', '2025-11-10 15:35:42'),
+(2, 2, '081298765432', 'IF-7B', 'Izin Sakit', '2025-11-10', '2025-11-11', 'chat_wali_sakit.jpg', 'chat_pengajar_sakit.jpg', 'surat_dokter.pdf', '2025-11-10 15:35:42');
 
 -- --------------------------------------------------------
 
@@ -49,12 +57,24 @@ CREATE TABLE `form_surat_izin` (
 
 CREATE TABLE `pengajuan_surat` (
   `id_pengajuan` int(11) NOT NULL,
-  `id_surat` int(11) NOT NULL,
-  `keperluan` text NOT NULL,
+  `id_surat` int(11) DEFAULT NULL,
+  `keperluan` text DEFAULT NULL,
   `file_surat` varchar(255) DEFAULT NULL,
   `deskripsi` text DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `created_at` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `pengajuan_surat`
+--
+
+INSERT INTO `pengajuan_surat` (`id_pengajuan`, `id_surat`, `keperluan`, `file_surat`, `deskripsi`, `created_at`) VALUES
+(1, 1, 'Mengikuti lomba tingkat nasional', 'surat_kegiatan.pdf', 'Perlu surat izin kegiatan kampus', '2025-11-10 15:35:42'),
+(2, 2, 'Sakit flu berat', 'izin_sakit.pdf', 'Tidak dapat hadir kelas selama 2 hari', '2025-11-10 15:35:42'),
+(3, 3, 'Kegiatan magang perusahaan', 'pengajuan_magang.pdf', 'Diajukan untuk surat pengantar magang', '2025-11-10 15:35:42'),
+(4, 1, 'Mengikuti lomba tingkat nasional', 'surat_kegiatan.pdf', 'Perlu surat izin kegiatan kampus', '2025-11-10 15:35:42'),
+(5, 2, 'Sakit flu berat', 'izin_sakit.pdf', 'Tidak dapat hadir kelas selama 2 hari', '2025-11-10 15:35:42'),
+(6, 3, 'Kegiatan magang perusahaan', 'pengajuan_magang.pdf', 'Diajukan untuk surat pengantar magang', '2025-11-10 15:35:42');
 
 -- --------------------------------------------------------
 
@@ -64,14 +84,23 @@ CREATE TABLE `pengajuan_surat` (
 
 CREATE TABLE `surat` (
   `id_surat` int(11) NOT NULL,
-  `id_user` int(11) NOT NULL,
+  `id_user` int(11) DEFAULT NULL,
   `id_template` int(11) DEFAULT NULL,
-  `jenis_surat` varchar(50) NOT NULL,
-  `tanggal_pengajuan` datetime DEFAULT current_timestamp(),
-  `status` enum('menunggu','disetujui','ditolak') DEFAULT 'menunggu',
+  `jenis_surat` varchar(50) DEFAULT NULL,
+  `tanggal_pengajuan` datetime DEFAULT NULL,
+  `status` varchar(50) DEFAULT NULL,
   `keterangan` text DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `created_at` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `surat`
+--
+
+INSERT INTO `surat` (`id_surat`, `id_user`, `id_template`, `jenis_surat`, `tanggal_pengajuan`, `status`, `keterangan`, `created_at`) VALUES
+(1, 1, 1, 'izin kegiatan', '2025-11-10 10:00:00', 'diproses', 'Menunggu verifikasi admin', '2025-11-10 15:35:42'),
+(2, 2, 2, 'izin tidak hadir', '2025-11-10 09:30:00', 'ditolak', 'Berkas tidak lengkap', '2025-11-10 15:35:42'),
+(3, 3, 3, 'magang', '2025-11-09 14:21:00', 'diterima', 'Verified by admin', '2025-11-10 15:35:42');
 
 -- --------------------------------------------------------
 
@@ -81,10 +110,19 @@ CREATE TABLE `surat` (
 
 CREATE TABLE `template_surat` (
   `id_template` int(11) NOT NULL,
-  `nama_template` varchar(100) NOT NULL,
+  `nama_template` varchar(100) DEFAULT NULL,
   `deskripsi` text DEFAULT NULL,
   `file_template` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `template_surat`
+--
+
+INSERT INTO `template_surat` (`id_template`, `nama_template`, `deskripsi`, `file_template`) VALUES
+(1, 'Surat Izin Kegiatan', 'Template untuk izin kegiatan luar kampus', 'izin_kegiatan.docx'),
+(2, 'Surat Izin Tidak Hadir Kelas', 'Template izin tidak masuk kuliah', 'izin_tidak_hadir.docx'),
+(3, 'Surat Magang', 'Permohonan kegiatan magang', 'surat_magang.docx');
 
 -- --------------------------------------------------------
 
@@ -94,10 +132,10 @@ CREATE TABLE `template_surat` (
 
 CREATE TABLE `user` (
   `id_user` int(11) NOT NULL,
-  `nama` varchar(100) NOT NULL,
-  `email` varchar(100) NOT NULL,
-  `password` varchar(255) NOT NULL,
-  `role` enum('mahasiswa','admin') NOT NULL DEFAULT 'mahasiswa',
+  `nama` varchar(100) DEFAULT NULL,
+  `email` varchar(100) DEFAULT NULL,
+  `password` varchar(255) DEFAULT NULL,
+  `role` enum('mahasiswa','admin') DEFAULT 'mahasiswa',
   `nim` varchar(20) DEFAULT NULL,
   `nip` varchar(20) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -107,9 +145,11 @@ CREATE TABLE `user` (
 --
 
 INSERT INTO `user` (`id_user`, `nama`, `email`, `password`, `role`, `nim`, `nip`) VALUES
-(1, 'Ilham', 'ilham@test.com', '12345', 'mahasiswa', '2311411003', NULL),
-(2, 'Admin Sistem', 'admin@fastif.ac.id', 'test123', 'admin', NULL, NULL),
-(3, 'Mahasiswa Uji', 'mhs@fastif.ac.id', '12345', 'mahasiswa', NULL, NULL);
+(1, 'Budi Santoso', 'budi@student.ac.id', 'budi123', 'mahasiswa', '20221001', NULL),
+(2, 'Dewi Kartika', 'dewi@student.ac.id', 'dewi123', 'mahasiswa', '20221002', NULL),
+(3, 'Rizky Pratama', 'rizky@student.ac.id', 'rizki123', 'mahasiswa', '20221003', NULL),
+(4, 'Doni Saputra', 'doni@student.ac.id', 'doni123', 'mahasiswa', '20221004', NULL),
+(5, 'admin', 'admin@kampus.ac.id', 'admin123', 'admin', NULL, '19870001');
 
 -- --------------------------------------------------------
 
@@ -119,12 +159,21 @@ INSERT INTO `user` (`id_user`, `nama`, `email`, `password`, `role`, `nim`, `nip`
 
 CREATE TABLE `verifikasi` (
   `id_verifikasi` int(11) NOT NULL,
-  `id_surat` int(11) NOT NULL,
-  `id_user` int(11) NOT NULL,
-  `tanggal_verifikasi` datetime DEFAULT current_timestamp(),
+  `id_surat` int(11) DEFAULT NULL,
+  `id_user` int(11) DEFAULT NULL,
+  `tanggal_verifikasi` datetime DEFAULT NULL,
   `catatan` text DEFAULT NULL,
-  `status_verifikasi` enum('menunggu','disetujui','ditolak') DEFAULT 'menunggu'
+  `status_verifikasi` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `verifikasi`
+--
+
+INSERT INTO `verifikasi` (`id_verifikasi`, `id_surat`, `id_user`, `tanggal_verifikasi`, `catatan`, `status_verifikasi`) VALUES
+(1, 1, 5, '2025-11-10 11:00:00', 'Sedang ditinjau', 'pending'),
+(2, 2, 5, '2025-11-10 10:00:00', 'File kurang lengkap', 'ditolak'),
+(3, 3, 5, '2025-11-09 15:00:00', 'Semua dokumen lengkap', 'diterima');
 
 --
 -- Indexes for dumped tables
@@ -135,22 +184,22 @@ CREATE TABLE `verifikasi` (
 --
 ALTER TABLE `form_surat_izin`
   ADD PRIMARY KEY (`id_form_izin`),
-  ADD KEY `id_surat` (`id_surat`);
+  ADD KEY `fk_form_surat` (`id_surat`);
 
 --
 -- Indexes for table `pengajuan_surat`
 --
 ALTER TABLE `pengajuan_surat`
   ADD PRIMARY KEY (`id_pengajuan`),
-  ADD KEY `id_surat` (`id_surat`);
+  ADD KEY `fk_pengajuan_surat` (`id_surat`);
 
 --
 -- Indexes for table `surat`
 --
 ALTER TABLE `surat`
   ADD PRIMARY KEY (`id_surat`),
-  ADD KEY `id_user` (`id_user`),
-  ADD KEY `id_template` (`id_template`);
+  ADD KEY `fk_surat_user` (`id_user`),
+  ADD KEY `fk_surat_template` (`id_template`);
 
 --
 -- Indexes for table `template_surat`
@@ -172,8 +221,8 @@ ALTER TABLE `user`
 --
 ALTER TABLE `verifikasi`
   ADD PRIMARY KEY (`id_verifikasi`),
-  ADD KEY `id_surat` (`id_surat`),
-  ADD KEY `id_user` (`id_user`);
+  ADD KEY `fk_verif_surat` (`id_surat`),
+  ADD KEY `fk_verif_user` (`id_user`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -183,37 +232,37 @@ ALTER TABLE `verifikasi`
 -- AUTO_INCREMENT for table `form_surat_izin`
 --
 ALTER TABLE `form_surat_izin`
-  MODIFY `id_form_izin` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_form_izin` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `pengajuan_surat`
 --
 ALTER TABLE `pengajuan_surat`
-  MODIFY `id_pengajuan` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_pengajuan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `surat`
 --
 ALTER TABLE `surat`
-  MODIFY `id_surat` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_surat` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `template_surat`
 --
 ALTER TABLE `template_surat`
-  MODIFY `id_template` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_template` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `verifikasi`
 --
 ALTER TABLE `verifikasi`
-  MODIFY `id_verifikasi` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_verifikasi` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- Constraints for dumped tables
@@ -223,27 +272,27 @@ ALTER TABLE `verifikasi`
 -- Constraints for table `form_surat_izin`
 --
 ALTER TABLE `form_surat_izin`
-  ADD CONSTRAINT `form_surat_izin_ibfk_1` FOREIGN KEY (`id_surat`) REFERENCES `surat` (`id_surat`) ON DELETE CASCADE;
+  ADD CONSTRAINT `fk_form_surat` FOREIGN KEY (`id_surat`) REFERENCES `surat` (`id_surat`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `pengajuan_surat`
 --
 ALTER TABLE `pengajuan_surat`
-  ADD CONSTRAINT `pengajuan_surat_ibfk_1` FOREIGN KEY (`id_surat`) REFERENCES `surat` (`id_surat`) ON DELETE CASCADE;
+  ADD CONSTRAINT `fk_pengajuan_surat` FOREIGN KEY (`id_surat`) REFERENCES `surat` (`id_surat`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `surat`
 --
 ALTER TABLE `surat`
-  ADD CONSTRAINT `surat_ibfk_1` FOREIGN KEY (`id_user`) REFERENCES `user` (`id_user`) ON DELETE CASCADE,
-  ADD CONSTRAINT `surat_ibfk_2` FOREIGN KEY (`id_template`) REFERENCES `template_surat` (`id_template`) ON DELETE SET NULL;
+  ADD CONSTRAINT `fk_surat_template` FOREIGN KEY (`id_template`) REFERENCES `template_surat` (`id_template`) ON DELETE SET NULL ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_surat_user` FOREIGN KEY (`id_user`) REFERENCES `user` (`id_user`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `verifikasi`
 --
 ALTER TABLE `verifikasi`
-  ADD CONSTRAINT `verifikasi_ibfk_1` FOREIGN KEY (`id_surat`) REFERENCES `surat` (`id_surat`) ON DELETE CASCADE,
-  ADD CONSTRAINT `verifikasi_ibfk_2` FOREIGN KEY (`id_user`) REFERENCES `user` (`id_user`) ON DELETE CASCADE;
+  ADD CONSTRAINT `fk_verif_surat` FOREIGN KEY (`id_surat`) REFERENCES `surat` (`id_surat`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_verif_user` FOREIGN KEY (`id_user`) REFERENCES `user` (`id_user`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

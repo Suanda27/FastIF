@@ -268,6 +268,51 @@ app.delete("/api/formulir", express.json(), (req, res) => {
   }
 });
 
+// admin dsahboard route
+app.get("/api/cardadmin", (req, res) => {
+  const statsQuery = `
+    SELECT
+      (SELECT COUNT(*) FROM surat WHERE status = 'diproses') AS pengajuan,
+      (SELECT COUNT(*) FROM surat WHERE status = 'ditolak') AS verifikasi,
+      (SELECT COUNT(*) FROM surat WHERE status = 'diterima') AS selesai
+  `;
+
+  db.query(statsQuery, (err, statsResult) => {
+    if (err) {
+      console.error("DB Error (stats):", err);
+      return res.status(500).json({ success: false, message: "DB Error (stats)" });
+    }
+
+    const tableQuery = `
+      SELECT 
+        u.nama,
+        u.nim,
+        u.jurusan,
+        s.jenis_surat AS jenis,
+        s.status
+      FROM surat s
+      JOIN user u ON s.id_user = u.id_user
+      ORDER BY s.created_at DESC
+    `;
+
+    db.query(tableQuery, (err, tableResult) => {
+      if (err) {
+        console.error("DB Error (table):", err);
+        return res.status(500).json({ success: false, message: "DB Error (table)" });
+      }
+
+      res.json({
+        success: true,
+        pengajuan: statsResult[0].pengajuan,
+        verifikasi: statsResult[0].verifikasi,
+        selesai: statsResult[0].selesai,
+        dataSurat: tableResult,
+      });
+    });
+  });
+});
+
+
 // === Route testing root ===
 app.get("/", (req, res) => {
   res.send("Server FASTIF aktif 🚀");
