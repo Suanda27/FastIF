@@ -78,7 +78,6 @@ export default function VerifikasiSuratPage() {
       className="space-y-6"
     >
       <div className="flex items-center gap-3">
-        <FileCheck2 className="text-blue-600 w-6 h-6" />
         <h1 className="text-2xl font-semibold text-gray-800">
           Verifikasi Surat Mahasiswa
         </h1>

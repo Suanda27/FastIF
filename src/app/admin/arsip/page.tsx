@@ -56,7 +56,6 @@ export default function ArsipSuratPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
-        <FileArchive className="w-6 h-6 text-blue-600" />
         <h1 className="text-2xl font-semibold text-gray-800">Arsip Surat</h1>
       </div>
 
