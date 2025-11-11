@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation"; // ✅ tambahkan useRouter
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { LogOut } from "lucide-react"; // ✅ ikon keluar
+import { LogOut } from "lucide-react";
 
 // === ICON COMPONENTS ===
 const DashboardIcon = ({ color }: { color: string }) => (
@@ -54,9 +54,12 @@ const ArsipIcon = ({ color }: { color: string }) => (
   </svg>
 );
 
-export default function AdminSidebar() {
+export default function AdminSidebar({
+  onLogoutClick,
+}: {
+  onLogoutClick: () => void;
+}) {
   const pathname = usePathname();
-  const router = useRouter(); // ✅ router untuk redirect
   const [activeIndex, setActiveIndex] = useState(0);
   const [itemHeight, setItemHeight] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
@@ -91,23 +94,6 @@ export default function AdminSidebar() {
     if (window.innerWidth < 768) setIsOpen(false);
   };
 
-  // ✅ BAGIAN LOGOUT YANG DIMODIFIKASI
-  const handleLogout = async () => {
-    try {
-      const res = await fetch("http://localhost:8001/api/logout", {
-        method: "POST",
-        credentials: "include",
-      });
-
-      if (!res.ok) throw new Error("Gagal logout");
-      alert("Berhasil keluar!");
-      router.push("/"); // ✅ redirect ke homepage
-    } catch (err) {
-      console.error("Logout error:", err);
-      alert("Terjadi kesalahan saat logout!");
-    }
-  };
-
   return (
     <>
       {/* === TOGGLE BUTTON (Mobile) === */}
@@ -120,26 +106,26 @@ export default function AdminSidebar() {
           className={`h-1 w-full rounded-full bg-[#0A1A55] transition-all duration-300 ${
             isOpen ? "rotate-45 translate-y-2.5 bg-[#318FEB]" : ""
           }`}
-        ></span>
+        />
         <span
           className={`h-1 w-full rounded-full bg-[#0A1A55] transition-all duration-300 ${
             isOpen ? "opacity-0" : ""
           }`}
-        ></span>
+        />
         <span
           className={`h-1 w-full rounded-full bg-[#0A1A55] transition-all duration-300 ${
             isOpen ? "-rotate-45 -translate-y-2.5 bg-[#318FEB]" : ""
           }`}
-        ></span>
+        />
       </button>
 
       {/* === SIDEBAR === */}
       <aside
-        className={`fixed left-0 top-0 flex flex-col bg-white shadow-lg min-h-screen w-60 z-40 overflow-hidden
-        transform transition-transform duration-500 ease-in-out
-        ${isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}`}
+        className={`fixed left-0 top-0 flex flex-col bg-white shadow-lg min-h-screen w-60 z-40 overflow-hidden transform transition-transform duration-500 ease-in-out ${
+          isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
+        }`}
       >
-        {/* === LOGO AREA === */}
+        {/* === LOGO === */}
         <div className="h-16 flex items-center justify-center border-b border-gray-200 bg-gradient-to-r from-[#0A1A55] via-[#1B4DE3] to-[#318FEB] shadow-sm">
           <img
             src="/logo_login.svg"
@@ -168,10 +154,9 @@ export default function AdminSidebar() {
                   <Link
                     href={item.href}
                     onClick={handleLinkClick}
-                    className={`group relative flex items-center gap-3 px-4 py-3 rounded-xl
-                    ${active ? "bg-[#E8F1FA] text-[#318FEB]" : "text-[#061A55]"}
-                    hover:bg-[#F0F7FF] hover:text-[#318FEB]
-                    transition-all duration-300 ease-in-out`}
+                    className={`group relative flex items-center gap-3 px-4 py-3 rounded-xl ${
+                      active ? "bg-[#E8F1FA] text-[#318FEB]" : "text-[#061A55]"
+                    } hover:bg-[#F0F7FF] hover:text-[#318FEB] transition-all duration-300 ease-in-out`}
                   >
                     <Icon color={active ? "#318FEB" : "#061A55"} />
                     <span className="font-medium">{item.name}</span>
@@ -185,10 +170,10 @@ export default function AdminSidebar() {
         {/* === LOGOUT BUTTON === */}
         <div className="mt-auto border-t border-gray-200">
           <button
-            onClick={handleLogout}
+            onClick={onLogoutClick}
             className="w-full flex items-center gap-3 px-4 py-3 text-[#061A55] hover:text-[#318FEB] hover:bg-[#F0F7FF] transition-all duration-300 ease-in-out"
           >
-            <LogOut 
+            <LogOut
               size={22}
               className="text-[#061A55] group-hover:text-[#318FEB]"
             />
