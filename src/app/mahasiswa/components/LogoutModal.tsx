@@ -1,4 +1,3 @@
-// components/LogoutModal.tsx
 "use client";
 
 import { motion, AnimatePresence, Variants } from "framer-motion";
@@ -10,7 +9,6 @@ interface LogoutModalProps {
   onConfirm: () => void;
 }
 
-// Animasi untuk latar belakang (backdrop) dengan anotasi tipe
 const backdropVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
@@ -23,7 +21,6 @@ const backdropVariants: Variants = {
   },
 };
 
-// Animasi utama untuk kontainer modal dengan anotasi tipe
 const modalContainerVariants: Variants = {
   hidden: {
     scale: 0.5,
@@ -52,7 +49,6 @@ const modalContainerVariants: Variants = {
   },
 };
 
-// Variasi animasi untuk elemen-elemen di dalam modal dengan anotasi tipe
 const itemVariants: Variants = {
   hidden: { y: 20, opacity: 0 },
   visible: {
@@ -62,7 +58,6 @@ const itemVariants: Variants = {
   },
 };
 
-// Variasi khusus untuk ikon dengan efek pulse dengan anotasi tipe
 const iconVariants: Variants = {
   hidden: { scale: 0, rotate: -180 },
   visible: {
@@ -104,44 +99,37 @@ export default function LogoutModal({ isOpen, onClose, onConfirm }: LogoutModalP
           exit="exit"
           onClick={handleBackdropClick}
         >
-          {/* Backdrop dengan efek blur yang lebih kuat */}
           <div className="absolute inset-0 bg-black/70 backdrop-blur-md" />
-          
-          {/* Modal Content Container */}
+
           <motion.div
             className="relative z-10 w-full max-w-md overflow-hidden rounded-2xl shadow-2xl"
             variants={modalContainerVariants}
             onClick={(e) => e.stopPropagation()}
             style={{
-              // Background dengan sentuhan warna utama
               background: "rgba(255, 255, 255, 0.98)",
               backdropFilter: "blur(20px)",
-              border: "1px solid rgba(10, 26, 74, 0.2)", // Border dengan warna utama
+              border: "1px solid rgba(10, 26, 74, 0.2)",
             }}
           >
-            {/* Header dengan Gradien Warna Utama */}
             <motion.div
               variants={itemVariants}
               className="relative flex items-center justify-center p-8 overflow-hidden"
               style={{
-                // Gradien dari warna utama ke biru yang lebih terang
                 background: "linear-gradient(135deg, #0A1A4A, #1E40AF)",
               }}
             >
-              {/* Efek cahaya animasi dengan warna yang selaras */}
               <div className="absolute inset-0 opacity-20">
                 <div className="absolute top-0 -left-4 w-72 h-72 bg-blue-400 rounded-full mix-blend-screen filter blur-xl animate-blob"></div>
                 <div className="absolute top-0 -right-4 w-72 h-72 bg-indigo-400 rounded-full mix-blend-screen filter blur-xl animate-blob animation-delay-2000"></div>
                 <div className="absolute -bottom-8 left-20 w-72 h-72 bg-cyan-400 rounded-full mix-blend-screen filter blur-xl animate-blob animation-delay-4000"></div>
               </div>
 
-              {/* Ikon dengan latar belakang kontras untuk peringatan */}
               <motion.div
                 variants={iconVariants}
                 animate="pulse"
                 className="relative z-10 flex items-center justify-center w-20 h-20 rounded-full backdrop-blur-sm border-2"
                 style={{
-                  background: "rgba(251, 191, 36, 0.2)", // Warna kuning/amber untuk peringatan
+                  background: "rgba(251, 191, 36, 0.2)",
                   borderColor: "rgba(251, 191, 36, 0.4)",
                 }}
               >
@@ -149,7 +137,6 @@ export default function LogoutModal({ isOpen, onClose, onConfirm }: LogoutModalP
               </motion.div>
             </motion.div>
             
-            {/* Body */}
             <motion.div
               variants={itemVariants}
               className="p-8 text-center"
@@ -157,7 +144,7 @@ export default function LogoutModal({ isOpen, onClose, onConfirm }: LogoutModalP
               <motion.h3
                 variants={itemVariants}
                 className="text-2xl font-bold mb-2"
-                style={{ color: "#0A1A4A" }} // Judul dengan warna utama
+                style={{ color: "#0A1A4A" }}
               >
                 Konfirmasi Keluar
               </motion.h3>
@@ -169,7 +156,6 @@ export default function LogoutModal({ isOpen, onClose, onConfirm }: LogoutModalP
                 Apakah Anda yakin ingin keluar? Semua sesi Anda akan diakhiri.
               </motion.p>
               
-              {/* Buttons */}
               <motion.div
                 variants={itemVariants}
                 className="flex gap-4 justify-center mt-8"

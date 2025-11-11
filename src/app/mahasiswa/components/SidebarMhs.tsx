@@ -19,7 +19,7 @@ export default function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
-  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false); // Tambahkan state untuk modal
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false); 
 
   useEffect(() => {
     document.body.style.overflow = isOpen ? 'hidden' : '';
@@ -30,17 +30,12 @@ export default function Sidebar() {
 
   const isCurrentPath = (href: string) => pathname === href;
 
-  // Tambahkan fungsi untuk menutup modal
   const handleCloseModal = () => {
     setIsLogoutModalOpen(false);
   };
 
-  // Tambahkan fungsi untuk konfirmasi logout
   const handleConfirmLogout = () => {
-    // Tambahkan logika logout di sini (misal: hapus token dari localStorage)
-    // localStorage.removeItem('authToken');
-    
-    // Arahkan ke halaman login/beranda
+
     router.push('/');
   };
 
@@ -106,7 +101,6 @@ export default function Sidebar() {
         </nav>
 
         <div className="px-4 pb-6">
-          {/* Ganti Link dengan button untuk memicu modal */}
           <button
             onClick={() => {
               setIsOpen(false);
@@ -120,7 +114,6 @@ export default function Sidebar() {
         </div>
       </aside>
 
-      {/* Tambahkan LogoutModal di luar aside agar bisa menutupi seluruh layar */}
       <LogoutModal
         isOpen={isLogoutModalOpen}
         onClose={handleCloseModal}

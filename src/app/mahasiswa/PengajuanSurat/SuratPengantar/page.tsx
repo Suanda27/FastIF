@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { UserCircle, Send, CheckCircle } from 'lucide-react';
 import SidebarMhs from '../../components/SidebarMhs';
 import TextAreaField from './components/TextAreaField';
-import FileUpload from '../SuratIzinKehadiran/components/FileUpload';
+import SuratSurveiForm from '../SuratSurvei/components/SuratSurveiForm';
 
 interface FormData {
   keperluan: string;
@@ -70,60 +70,10 @@ export default function SuratPengantarPage() {
             </div>
           </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="max-w-4xl mx-auto"
-          >
-            <form
-              onSubmit={handleSubmit}
-              className="bg-white rounded-xl lg:rounded-2xl shadow-xl p-6 sm:p-8 lg:p-10 space-y-6"
-            >
-              <TextAreaField
-                label="Keperluan"
-                placeholder="Jelaskan keperluan surat pengantar..."
-                required
-                value={formData.keperluan}
-                onChange={(val) => updateFormData('keperluan', val)}
-                rows={8}
-              />
-
-              <FileUpload
-                label="Unggah Surat"
-                required
-                accept=".pdf,.jpg,.jpeg,.png"
-                onChange={(file) => updateFormData('suratFile', file)}
-              />
-
-              <div className="flex justify-start pt-4">
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  type="submit"
-                  disabled={isSubmitting}
-                  className={`flex items-center gap-2 px-8 py-3 rounded-lg font-semibold text-white shadow-lg transition-all ${
-                    isSubmitting
-                      ? 'bg-gray-400 cursor-not-allowed'
-                      : 'bg-[#0A1C56] hover:bg-[#1976D2]'
-                  }`}
-                >
-                  {isSubmitting ? (
-                    <>
-                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                      Mengirim...
-                    </>
-                  ) : (
-                    <>
-                      <Send className="w-5 h-5" />
-                      Ajukan
-                    </>
-                  )}
-                </motion.button>
-              </div>
-            </form>
-          </motion.div>
+          
+              <SuratSurveiForm/>
         </div>
+              
       </main>
 
       {showSuccess && (

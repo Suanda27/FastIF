@@ -2,7 +2,7 @@
 
 import React, { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { Upload, FileCheck, AlertCircle } from "lucide-react";
+import { Upload, FileCheck, X, AlertCircle, Send } from "lucide-react";
 import { motion } from "framer-motion";
 import TextAreaField from "../../SuratPengantar/components/TextAreaField";
 
@@ -53,24 +53,7 @@ export default function SuratSurveiForm() {
     }
   };
 
-  const handleDragEnter = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragging(true);
-  };
-
-  const handleDragLeave = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragging(false);
-  };
-
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-  };
-
-  const handleDrop = (e: React.DragEvent) => {
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
     setIsDragging(false);
@@ -91,14 +74,10 @@ export default function SuratSurveiForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!validateForm()) {
-      return;
-    }
+    if (!validateForm()) return;
 
     setIsSubmitting(true);
-
     await new Promise((resolve) => setTimeout(resolve, 1500));
-
     router.push("/mahasiswa/StatusSurat");
   };
 
@@ -114,7 +93,7 @@ export default function SuratSurveiForm() {
           <div>
             <TextAreaField
               label="Keperluan"
-              placeholder="Jelaskan tujuan survei / data yang diperlukan..."
+              placeholder="Jelaskan tujuan / data yang diperlukan..."
               required
               value={keperluan}
               onChange={(val) => {
@@ -147,28 +126,22 @@ export default function SuratSurveiForm() {
             </label>
 
             <div
-              onDragEnter={handleDragEnter}
-              onDragOver={handleDragOver}
-              onDragLeave={handleDragLeave}
               onDrop={handleDrop}
+              onDragOver={(e) => e.preventDefault()}
+              onDragEnter={() => setIsDragging(true)}
+              onDragLeave={() => setIsDragging(false)}
               onClick={() => fileInputRef.current?.click()}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  e.preventDefault();
-                  fileInputRef.current?.click();
-                }
-              }}
               role="button"
               tabIndex={0}
-              className={`relative border rounded-lg p-6 text-center cursor-pointer transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#1976D2] focus:border-transparent shadow-sm ${
+              className={`relative border-2 border-dashed rounded-xl transition-all overflow-hidden ${
                 isDragging
-                  ? "border-[#1976D2] bg-[#1976D2]/5"
+                  ? "border-[#1976D2] bg-blue-50"
+                  : selectedFile
+                  ? "border-green-500 bg-green-50"
                   : errors.file
-                  ? "border-red-500 bg-red-50/50"
-                  : "border-gray-300 hover:border-[#1976D2] hover:bg-gray-50 bg-white"
+                  ? "border-red-500 bg-red-50"
+                  : "border-gray-300 bg-gray-50 hover:bg-gray-100"
               }`}
-              aria-invalid={!!errors.file}
-              aria-describedby={errors.file ? "file-error" : undefined}
             >
               <input
                 ref={fileInputRef}
@@ -179,34 +152,49 @@ export default function SuratSurveiForm() {
                 className="hidden"
               />
 
-              {selectedFile ? (
-                <motion.div
-                  initial={{ scale: 0.95, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  className="flex flex-col items-center gap-3"
-                >
-                  <FileCheck className="w-6 h-6 text-[#1976D2]" />
-                  <p className="text-[#0A1C56] font-medium text-sm break-all">
-                    {selectedFile.name}
+              {!selectedFile ? (
+                <label className="flex flex-col items-center justify-center py-10 px-4 cursor-pointer transition-colors">
+                  <motion.div
+                    whileHover={{ scale: 1.1 }}
+                    className="p-3 bg-[#1976D2] rounded-full mb-3"
+                  >
+                    <Upload className="w-6 h-6 text-white" />
+                  </motion.div>
+                  <p className="text-sm font-medium text-gray-700 mb-1">
+                    Tarik dan Lepas
                   </p>
-                  <p className="text-sm text-gray-500">
-                    {(selectedFile.size / 1024).toFixed(2)} KB
+                  <p className="text-xs text-gray-500">
+                    atau klik untuk memilih file (.doc / .docx)
                   </p>
-                </motion.div>
+                </label>
               ) : (
-                <div className="flex flex-col items-center gap-3">
-                  <Upload className="w-6 h-6 text-gray-400" />
-                  <div>
-                    <p className="text-gray-900 font-medium text-sm">
-                      Tarik & lepas, atau klik untuk memilih file
-                    </p>
-                    <p className="text-sm text-gray-500 mt-2">
-                      Format: WORD (.doc, .docx)
-                    </p>
+                <div className="flex items-center justify-between p-4">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-[#1976D2] rounded-lg">
+                      <FileCheck className="w-5 h-5 text-white" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-gray-900 truncate">
+                        {selectedFile.name}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {(selectedFile.size / 1024).toFixed(2)} KB
+                      </p>
+                    </div>
                   </div>
+                  <motion.button
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    type="button"
+                    onClick={() => setSelectedFile(null)}
+                    className="p-1 hover:bg-red-100 rounded-full transition-colors"
+                  >
+                    <X className="w-5 h-5 text-red-500" />
+                  </motion.button>
                 </div>
               )}
             </div>
+
             {errors.file && (
               <motion.p
                 initial={{ opacity: 0, y: -10 }}
@@ -220,20 +208,30 @@ export default function SuratSurveiForm() {
             )}
           </div>
 
-          <motion.button
-            type="submit"
-            disabled={isSubmitting}
-            whileHover={{ scale: isSubmitting ? 1 : 1.02 }}
-            whileTap={{ scale: isSubmitting ? 1 : 0.98 }}
-            className={`px-8 py-3 bg-[#1976D2] text-white font-medium rounded-lg transition-all duration-200 ${
-              isSubmitting
-                ? "opacity-75 cursor-not-allowed"
-                : "hover:bg-[#0A1C56] shadow-lg hover:shadow-xl"
-            }`}
-            style={{ fontFamily: "Roboto, sans-serif" }}
-          >
-            {isSubmitting ? "Mengirim..." : "Ajukan"}
-          </motion.button>
+          {/* Tombol Submit */}
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  type="submit"
+                  disabled={isSubmitting}
+                  className={`flex items-center gap-2 px-8 py-3 rounded-lg font-semibold text-white shadow-lg transition-all ${
+                    isSubmitting
+                      ? 'bg-gray-400 cursor-not-allowed'
+                      : 'bg-[#0A1C56] hover:bg-[#1976D2]'
+                  }`}
+                >
+                  {isSubmitting ? (
+                    <>
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      Mengirim...
+                    </>
+                  ) : (
+                    <>
+                      <Send className="w-5 h-5" />
+                      Ajukan
+                    </>
+                  )}
+                </motion.button>
         </form>
       </div>
     </motion.div>

@@ -25,24 +25,6 @@ export default function SuratIzinMagangPage() {
       />
 
       <div className="flex-1 flex flex-col">
-        <header className="bg-white border-b border-gray-200 px-4 lg:px-8 py-4 flex items-center justify-between sticky top-0 z-30 shadow-sm">
-          <button
-            onClick={() => setSidebarOpen(true)}
-            className="lg:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors"
-            aria-label="Open menu"
-          >
-            <Menu className="w-6 h-6 text-gray-700" />
-          </button>
-
-          <div className="flex-1" />
-
-          <button
-            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-            aria-label="User profile"
-          >
-            <User className="w-6 h-6 text-gray-700" />
-          </button>
-        </header>
 
         <main className="flex-1 p-4 md:p-8 lg:p-12">
           <motion.div

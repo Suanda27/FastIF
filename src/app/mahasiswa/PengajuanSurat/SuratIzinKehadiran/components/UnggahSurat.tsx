@@ -1,0 +1,176 @@
+"use client";
+
+import React, { useState, useRef } from "react";
+import { useRouter } from "next/navigation";
+import { Upload, FileCheck, X, AlertCircle, Send } from "lucide-react";
+import { motion } from "framer-motion";
+import TextAreaField from "../../SuratPengantar/components/TextAreaField";
+
+interface FormErrors {
+  keperluan?: string;
+  file?: string;
+}
+
+export default function UnggahSurat() {
+  const router = useRouter();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const [keperluan, setKeperluan] = useState("");
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+
+  const validateForm = (): boolean => {
+    const newErrors: FormErrors = {};
+
+    if (!keperluan.trim()) {
+      newErrors.keperluan = "Keperluan harus diisi";
+    }
+
+    if (!selectedFile) {
+      newErrors.file = "File harus diunggah";
+    } else if (!selectedFile.name.match(/\.(doc|docx)$/i)) {
+      newErrors.file = "Format file harus WORD (.doc atau .docx)";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleFileChange = (file: File | null) => {
+    if (file) {
+      if (file.name.match(/\.(doc|docx)$/i)) {
+        setSelectedFile(file);
+        setErrors((prev) => ({ ...prev, file: undefined }));
+      } else {
+        setSelectedFile(null);
+        setErrors((prev) => ({
+          ...prev,
+          file: "Format file harus WORD (.doc atau .docx)",
+        }));
+      }
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+
+    const files = e.dataTransfer.files;
+    if (files && files.length > 0) {
+      handleFileChange(files[0]);
+    }
+  };
+
+  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      handleFileChange(files[0]);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!validateForm()) return;
+
+    setIsSubmitting(true);
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+    router.push("/mahasiswa/StatusSurat");
+  };
+
+  return (
+    <div>
+      <label
+        htmlFor="file-upload"
+        className="block text-lg font-bold text-[#0A1C56] mb-3"
+      >
+        Unggah Surat
+      </label>
+
+      <div
+        onDrop={handleDrop}
+        onDragOver={(e) => e.preventDefault()}
+        onDragEnter={() => setIsDragging(true)}
+        onDragLeave={() => setIsDragging(false)}
+        onClick={() => fileInputRef.current?.click()}
+        role="button"
+        tabIndex={0}
+        className={`relative border-2 border-dashed rounded-xl transition-all overflow-hidden ${
+          isDragging
+            ? "border-[#1976D2] bg-blue-50"
+            : selectedFile
+            ? "border-green-500 bg-green-50"
+            : errors.file
+            ? "border-red-500 bg-red-50"
+            : "border-gray-300 bg-gray-50 hover:bg-gray-100"
+        }`}
+      >
+        <input
+          ref={fileInputRef}
+          id="file-upload"
+          type="file"
+          accept=".doc,.docx"
+          onChange={handleFileInputChange}
+          className="hidden"
+        />
+
+        {!selectedFile ? (
+          <label className="flex flex-col items-center justify-center py-10 px-4 cursor-pointer transition-colors">
+            <motion.div
+              whileHover={{ scale: 1.1 }}
+              className="p-3 bg-[#1976D2] rounded-full mb-3"
+            >
+              <Upload className="w-6 h-6 text-white" />
+            </motion.div>
+            <p className="text-sm font-medium text-gray-700 mb-1">
+              Tarik dan Lepas
+            </p>
+            <p className="text-xs text-gray-500">
+              atau klik untuk memilih file (.doc / .docx)
+            </p>
+          </label>
+        ) : (
+          <div className="flex items-center justify-between p-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-[#1976D2] rounded-lg">
+                <FileCheck className="w-5 h-5 text-white" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-gray-900 truncate">
+                  {selectedFile.name}
+                </p>
+                <p className="text-xs text-gray-500">
+                  {(selectedFile.size / 1024).toFixed(2)} KB
+                </p>
+              </div>
+            </div>
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              type="button"
+              onClick={() => setSelectedFile(null)}
+              className="p-1 hover:bg-red-100 rounded-full transition-colors"
+            >
+              <X className="w-5 h-5 text-red-500" />
+            </motion.button>
+          </div>
+        )}
+      </div>
+
+      {errors.file && (
+        <motion.p
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          id="file-error"
+          className="mt-2 text-sm text-red-500 flex items-center gap-1"
+        >
+          <AlertCircle className="w-4 h-4" />
+          {errors.file}
+        </motion.p>
+      )}
+    </div>
+  );
+}

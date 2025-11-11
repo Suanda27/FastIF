@@ -82,7 +82,7 @@ export default function StatusSuratPage() {
                 <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#0A1C56] mb-1 lg:mb-2">
                   Status Surat
                 </h1>
-                <p className="text-sm lg:text-base text-gray-600">Pantau pengajuan surat Anda</p>
+                <p className="text-sm lg:text-base text-gray-600"></p>
               </div>
             </div>
           </motion.div>

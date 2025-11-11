@@ -2,15 +2,16 @@
 
 import React, { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { Upload, FileCheck, AlertCircle } from "lucide-react";
+import { Upload, FileCheck, X, AlertCircle, Send } from "lucide-react";
 import { motion } from "framer-motion";
+import TextAreaField from "../../SuratPengantar/components/TextAreaField";
 
 interface FormErrors {
   keperluan?: string;
   file?: string;
 }
 
-export default function SuratIzinMagangForm() {
+export default function SuratSurveiForm() {
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -24,7 +25,7 @@ export default function SuratIzinMagangForm() {
     const newErrors: FormErrors = {};
 
     if (!keperluan.trim()) {
-      newErrors.keperluan = "Keperluan harus diisi";
+      newErrors.keperluan = "Jelaskan tujuan izin magang";
     }
 
     if (!selectedFile) {
@@ -52,24 +53,7 @@ export default function SuratIzinMagangForm() {
     }
   };
 
-  const handleDragEnter = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragging(true);
-  };
-
-  const handleDragLeave = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragging(false);
-  };
-
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-  };
-
-  const handleDrop = (e: React.DragEvent) => {
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
     setIsDragging(false);
@@ -90,14 +74,10 @@ export default function SuratIzinMagangForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!validateForm()) {
-      return;
-    }
+    if (!validateForm()) return;
 
     setIsSubmitting(true);
-
     await new Promise((resolve) => setTimeout(resolve, 1500));
-
     router.push("/mahasiswa/StatusSurat");
   };
 
@@ -108,34 +88,21 @@ export default function SuratIzinMagangForm() {
       transition={{ duration: 0.5 }}
       className="w-full max-w-4xl mx-auto"
     >
-      <div className="bg-white rounded-2xl shadow-lg p-8 md:p-12">
+      <div className="bg-white rounded-lg shadow-lg p-8 md:p-12">
         <form onSubmit={handleSubmit} className="space-y-8">
           <div>
-            <label
-              htmlFor="keperluan"
-              className="block text-lg font-medium text-[#0A1C56] mb-3"
-            >
-              Keperluan
-            </label>
-            <textarea
-              id="keperluan"
+            <TextAreaField
+              label="Keperluan"
+              placeholder="Jelaskan tujuan izin magang / data yang diperlukan..."
+              required
               value={keperluan}
-              onChange={(e) => {
-                setKeperluan(e.target.value);
+              onChange={(val) => {
+                setKeperluan(val);
                 if (errors.keperluan) {
                   setErrors((prev) => ({ ...prev, keperluan: undefined }));
                 }
               }}
-              placeholder="Jelaskan tujuan izin magang..."
               rows={5}
-              aria-invalid={!!errors.keperluan}
-              aria-describedby={errors.keperluan ? "keperluan-error" : undefined}
-              className={`w-full px-4 py-3 rounded-xl border-2 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#1976D2]/20 ${
-                errors.keperluan
-                  ? "border-red-500 focus:border-red-500"
-                  : "border-gray-200 focus:border-[#1976D2]"
-              }`}
-              style={{ fontFamily: "Roboto, sans-serif" }}
             />
             {errors.keperluan && (
               <motion.p
@@ -153,25 +120,28 @@ export default function SuratIzinMagangForm() {
           <div>
             <label
               htmlFor="file-upload"
-              className="block text-lg font-medium text-[#0A1C56] mb-3"
+              className="block text-lg font-bold text-[#0A1C56] mb-3"
             >
               Unggah Surat
             </label>
+
             <div
-              onDragEnter={handleDragEnter}
-              onDragOver={handleDragOver}
-              onDragLeave={handleDragLeave}
               onDrop={handleDrop}
+              onDragOver={(e) => e.preventDefault()}
+              onDragEnter={() => setIsDragging(true)}
+              onDragLeave={() => setIsDragging(false)}
               onClick={() => fileInputRef.current?.click()}
-              className={`relative border-2 border-dashed rounded-xl p-12 text-center cursor-pointer transition-all duration-200 ${
+              role="button"
+              tabIndex={0}
+              className={`relative border-2 border-dashed rounded-xl transition-all overflow-hidden ${
                 isDragging
-                  ? "border-[#1976D2] bg-[#1976D2]/5"
+                  ? "border-[#1976D2] bg-blue-50"
+                  : selectedFile
+                  ? "border-green-500 bg-green-50"
                   : errors.file
-                  ? "border-red-500 bg-red-50/50"
-                  : "border-gray-300 hover:border-[#1976D2] hover:bg-gray-50/50"
+                  ? "border-red-500 bg-red-50"
+                  : "border-gray-300 bg-gray-50 hover:bg-gray-100"
               }`}
-              aria-invalid={!!errors.file}
-              aria-describedby={errors.file ? "file-error" : undefined}
             >
               <input
                 ref={fileInputRef}
@@ -182,30 +152,49 @@ export default function SuratIzinMagangForm() {
                 className="hidden"
               />
 
-              {selectedFile ? (
-                <motion.div
-                  initial={{ scale: 0.8, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  className="flex flex-col items-center gap-3"
-                >
-                  <FileCheck className="w-12 h-12 text-[#1976D2]" />
-                  <p className="text-[#0A1C56] font-medium">{selectedFile.name}</p>
-                  <p className="text-sm text-gray-500">
-                    {(selectedFile.size / 1024).toFixed(2)} KB
+              {!selectedFile ? (
+                <label className="flex flex-col items-center justify-center py-10 px-4 cursor-pointer transition-colors">
+                  <motion.div
+                    whileHover={{ scale: 1.1 }}
+                    className="p-3 bg-[#1976D2] rounded-full mb-3"
+                  >
+                    <Upload className="w-6 h-6 text-white" />
+                  </motion.div>
+                  <p className="text-sm font-medium text-gray-700 mb-1">
+                    Tarik dan Lepas
                   </p>
-                </motion.div>
+                  <p className="text-xs text-gray-500">
+                    atau klik untuk memilih file (.doc / .docx)
+                  </p>
+                </label>
               ) : (
-                <div className="flex flex-col items-center gap-3">
-                  <Upload className="w-12 h-12 text-gray-400" />
-                  <div>
-                    <p className="text-gray-600 font-medium">
-                      Tarik & lepas, atau klik untuk memilih file
-                    </p>
-                    <p className="text-sm text-gray-500 mt-2">Format: WORD (.doc, .docx)</p>
+                <div className="flex items-center justify-between p-4">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-[#1976D2] rounded-lg">
+                      <FileCheck className="w-5 h-5 text-white" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-gray-900 truncate">
+                        {selectedFile.name}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {(selectedFile.size / 1024).toFixed(2)} KB
+                      </p>
+                    </div>
                   </div>
+                  <motion.button
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    type="button"
+                    onClick={() => setSelectedFile(null)}
+                    className="p-1 hover:bg-red-100 rounded-full transition-colors"
+                  >
+                    <X className="w-5 h-5 text-red-500" />
+                  </motion.button>
                 </div>
               )}
             </div>
+
             {errors.file && (
               <motion.p
                 initial={{ opacity: 0, y: -10 }}
@@ -219,20 +208,30 @@ export default function SuratIzinMagangForm() {
             )}
           </div>
 
-          <motion.button
-            type="submit"
-            disabled={isSubmitting}
-            whileHover={{ scale: isSubmitting ? 1 : 1.02 }}
-            whileTap={{ scale: isSubmitting ? 1 : 0.98 }}
-            className={`px-8 py-3 bg-[#0A1C56] text-white font-medium rounded-xl transition-all duration-200 ${
-              isSubmitting
-                ? "opacity-75 cursor-not-allowed"
-                : "hover:bg-[#0A1C56]/90 shadow-lg hover:shadow-xl"
-            }`}
-            style={{ fontFamily: "Roboto, sans-serif" }}
-          >
-            {isSubmitting ? "Mengirim..." : "Ajukan"}
-          </motion.button>
+          {/* Tombol Submit */}
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  type="submit"
+                  disabled={isSubmitting}
+                  className={`flex items-center gap-2 px-8 py-3 rounded-lg font-semibold text-white shadow-lg transition-all ${
+                    isSubmitting
+                      ? 'bg-gray-400 cursor-not-allowed'
+                      : 'bg-[#0A1C56] hover:bg-[#1976D2]'
+                  }`}
+                >
+                  {isSubmitting ? (
+                    <>
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      Mengirim...
+                    </>
+                  ) : (
+                    <>
+                      <Send className="w-5 h-5" />
+                      Ajukan
+                    </>
+                  )}
+                </motion.button>
         </form>
       </div>
     </motion.div>

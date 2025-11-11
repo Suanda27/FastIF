@@ -59,20 +59,10 @@ export default function SuratBeasiswaPage() {
                   Pengajuan Surat Beasiswa
                 </h1>
                 <p className="text-sm lg:text-base text-gray-600">
-                  Lengkapi formulir di bawah untuk mengajukan surat beasiswa
+
                 </p>
               </div>
 
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                className="hidden lg:flex items-center gap-3 bg-white px-4 py-3 rounded-xl shadow-md"
-              >
-                <UserCircle className="w-8 h-8 text-[#1976D2]" />
-                <div>
-                  <p className="text-sm text-gray-600">Mahasiswa</p>
-                  <p className="font-semibold text-[#0A1C56]">John Doe</p>
-                </div>
-              </motion.div>
             </div>
           </motion.div>
 
@@ -95,7 +85,7 @@ export default function SuratBeasiswaPage() {
                 rows={10}
               />
 
-              <div className="flex justify-center pt-4">
+              <div className="flex justify-start pt-4">
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
