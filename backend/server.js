@@ -285,6 +285,7 @@ app.get("/api/cardadmin", (req, res) => {
 
     const tableQuery = `
       SELECT 
+        s.id_surat,
         u.nama,
         u.nim,
         u.jurusan,
@@ -311,6 +312,29 @@ app.get("/api/cardadmin", (req, res) => {
     });
   });
 });
+
+// === Route verifikasi surat ===
+app.post("/api/verifikasi", (req, res) => {
+  const { id_surat, status } = req.body;
+  
+  if (!id_surat || !status) {
+    return res.status(400).json({ success: false, message: "Data tidak lengkap." });
+  }
+
+  db.query(
+    "UPDATE surat SET status = ? WHERE id_surat = ?",
+    [status, id_surat],
+    (err, result) => {
+      if (err) {
+        console.error("DB Error (update):", err);
+        return res.status(500).json({ success: false, message: "Gagal update status." });
+      }
+
+      return res.json({ success: true, message: "Status berhasil diubah." });
+    }
+  );
+});
+
 
 
 // === Route testing root ===

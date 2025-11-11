@@ -27,9 +27,9 @@ export default function VerifikasiTable({
         </thead>
         <tbody>
           {data.length > 0 ? (
-            data.map((row) => (
+            data.map((row, index) => (
               <tr
-                key={row.id}
+                key={row.id ?? `row-${index}`}
                 className="border-t hover:bg-gray-50 transition-all duration-200"
               >
                 <td className="py-3 px-4 font-medium text-gray-800">

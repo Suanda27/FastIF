@@ -1,4 +1,4 @@
-export type Status = "Diproses" | "Diterima" | "Ditangguhkan";
+export type Status = "diproses" | "diterima" | "ditolak" | "Diproses" | "Diterima" | "Ditolak";
 
 export type SuratRow = {
   id: string;
