@@ -5,6 +5,7 @@ import { Menu, User } from "lucide-react";
 import { motion } from "framer-motion";
 import SidebarMhs from "../../components/SidebarMhs";
 import SuratSurveiForm from "./components/SuratSurveiForm";
+import StudentHeader from "../../components/StudentHeader";
 
 export default function SuratSurveiPage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -16,7 +17,8 @@ export default function SuratSurveiPage() {
 
       <div className="flex-1 flex flex-col">
 
-        <main className="flex-1 p-4 md:p-8 lg:p-12">
+        <main className="flex-1 p-4 md:p-8 lg:p-4">
+          <StudentHeader/>
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}

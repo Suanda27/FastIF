@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import Sidebar from "../components/SidebarMhs";
 import TableStatus from "./components/TableStatus";
+import StudentHeader from "../components/StudentHeader";
 
 export type StatusType = "Diproses" | "Ditangguhkan" | "Selesai";
 
@@ -71,6 +72,7 @@ export default function StatusSuratPage() {
     <div className="flex min-h-screen">
       <Sidebar />
       <main className="flex-1 bg-gray-50 lg:ml-0">
+      <StudentHeader/>
         <div className="p-4 sm:p-6 lg:p-8 pt-16 lg:pt-8">
           <motion.div
             initial={{ opacity: 0, y: -20 }}

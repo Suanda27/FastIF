@@ -5,6 +5,7 @@ import DashboardHeader from '../components/DashboardHeaderMhs';
 import StatCard from '../components/StatCardMhs';
 import ActivityTable from '../components/ActivityTableMhs';
 import LetterCard from '../components/LetterCardMhs';
+import StudentHeader from '../components/StudentHeader';
 
 const mockActivities = [
   { date: '11-10-2025', type: 'Surat Izin', status: 'Selesai' as const },
@@ -26,12 +27,9 @@ export default function DashboardMhsPage() {
       <Sidebar />
 
       <div className="flex-1 flex flex-col min-h-screen w-full">
-        <DashboardHeader
-          title="Fasilitas Surat Informatika"
-          userName="Mahasiswa"
-        />
+        <StudentHeader/>
 
-        <main className="flex-1 p-4 md:p-8 pt-16 lg:pt-8">
+        <main className="flex-1 p-4 md:p-8">
           <div className="mb-6 md:mb-8 text-center">
             <h2 className="text-xl md:text-2xl font-bold text-[#0A1C56] mb-2">
               Selamat Datang di FastIF

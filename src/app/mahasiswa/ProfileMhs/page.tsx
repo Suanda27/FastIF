@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import SidebarMhs from '../components/SidebarMhs';
 import ProfileMhsCard from './components/ProfileMhsCard';
 import EditProfileModal from './components/EditProfileModal';
+import StudentHeader from '../components/StudentHeader';
 
 interface ProfileData {
   name: string;
@@ -33,7 +34,8 @@ export default function ProfileMhsPage() {
     <div className="flex min-h-screen  bg-gray-50" style={{ fontFamily: 'Roboto, sans-serif' }}>
       <SidebarMhs />
 
-<main className="flex-1 pt-20 lg:pt-0 lg:ml-0">
+<main className="flex-1 pt-2 lg:pt-0 lg:ml-0">
+  <StudentHeader/>
   <motion.div
     initial={{ opacity: 0 }}
     animate={{ opacity: 1 }}

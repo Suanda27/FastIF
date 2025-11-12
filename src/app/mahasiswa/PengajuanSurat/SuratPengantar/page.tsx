@@ -6,6 +6,7 @@ import { UserCircle, Send, CheckCircle } from 'lucide-react';
 import SidebarMhs from '../../components/SidebarMhs';
 import TextAreaField from './components/TextAreaField';
 import SuratSurveiForm from '../SuratSurvei/components/SuratSurveiForm';
+import StudentHeader from '../../components/StudentHeader';
 
 interface FormData {
   keperluan: string;
@@ -51,6 +52,7 @@ export default function SuratPengantarPage() {
       <SidebarMhs />
 
       <main className="flex-1 lg:ml-0">
+      <StudentHeader/>
         <div className="p-4 sm:p-6 lg:p-8 pt-16 lg:pt-6">
           <motion.div
             initial={{ opacity: 0, y: -20 }}

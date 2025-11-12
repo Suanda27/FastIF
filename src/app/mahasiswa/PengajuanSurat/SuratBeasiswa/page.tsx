@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { UserCircle, Send, CheckCircle } from 'lucide-react';
 import SidebarMhs from '../../components/SidebarMhs';
 import TextAreaField from '../SuratPengantar/components/TextAreaField';
-
+import StudentHeader from '../../components/StudentHeader';
 interface FormData {
   deskripsi: string;
 }
@@ -47,6 +47,7 @@ export default function SuratBeasiswaPage() {
       <SidebarMhs />
 
       <main className="flex-1 lg:ml-0">
+        <StudentHeader/>
         <div className="p-4 sm:p-6 lg:p-8 pt-16 lg:pt-6">
           <motion.div
             initial={{ opacity: 0, y: -20 }}
