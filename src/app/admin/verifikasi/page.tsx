@@ -5,7 +5,7 @@ import { createPortal } from "react-dom";
 import { motion } from "framer-motion";
 import { FileCheck2 } from "lucide-react";
 
-import { SuratRow } from "./data";
+import { SuratRow, Status } from "./data"; // ✅ tambahkan Status
 import FilterBar from "./components/FilterBar";
 import VerifikasiTable from "./components/VerifikasiTable";
 import ConfirmModal from "./components/ConfirmModal";
@@ -28,22 +28,22 @@ export default function VerifikasiSuratPage() {
   useEffect(() => setMounted(true), []);
 
   useEffect(() => {
-  fetch("http://localhost:8001/api/cardadmin")
-    .then((res) => res.json())
-    .then((result) => {
-      setData(
-        (result.dataSurat || []).map((item: any) => ({
-          id: item.id_surat,
-          nama: item.nama,
-          nim: item.nim,
-          jenis: item.jenis,
-          jurusan: item.jurusan,
-          status: item.status,
-        }))
-      );
-    })
-    .catch((err) => console.error("Gagal fetch:", err));
-}, []);
+    fetch("http://localhost:8001/api/cardadmin")
+      .then((res) => res.json())
+      .then((result) => {
+        setData(
+          (result.dataSurat || []).map((item: any) => ({
+            id: item.id_surat,
+            nama: item.nama,
+            nim: item.nim,
+            jenis: item.jenis,
+            jurusan: item.jurusan,
+            status: item.status as Status, // ✅ perbaikan di sini
+          }))
+        );
+      })
+      .catch((err) => console.error("Gagal fetch:", err));
+  }, []);
 
   const closeModal = (setter: Function) => {
     setClosing(true);
@@ -54,69 +54,69 @@ export default function VerifikasiSuratPage() {
   };
 
   const handleConfirm = async () => {
-  if (!confirmAction) return;
+    if (!confirmAction) return;
 
-  const newStatus =
-    confirmAction.type === "accept" ? "diterima" : "ditolak";
+    const newStatus =
+      confirmAction.type === "accept" ? "diterima" : "ditolak";
 
-  try {
-    const res = await fetch("http://localhost:8001/api/verifikasi", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        id_surat: confirmAction.row.id,
-        status: newStatus,
-      }),
-    });
+    try {
+      const res = await fetch("http://localhost:8001/api/verifikasi", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id_surat: confirmAction.row.id,
+          status: newStatus,
+        }),
+      });
 
-    const text = await res.text(); // <-- tambahkan
-    console.log("Response:", res.status, text); // logkan semuanya
+      const text = await res.text();
+      console.log("Response:", res.status, text);
 
-    if (!res.ok) throw new Error("Gagal update database");
+      if (!res.ok) throw new Error("Gagal update database");
 
-    // ✅ Update UI
-    setData((prev) =>
-      prev.map((r) =>
-        r.id === confirmAction.row.id ? { ...r, status: newStatus } : r
-      )
-    );
-  } catch (err) {
-    console.error("Error verifikasi:", err);
-  }
+      // ✅ perbaikan di sini
+      setData((prev) =>
+        prev.map((r) =>
+          r.id === confirmAction.row.id
+            ? { ...r, status: newStatus as Status }
+            : r
+        )
+      );
+    } catch (err) {
+      console.error("Error verifikasi:", err);
+    }
 
-  closeModal(setConfirmAction);
-};
-
-
+    closeModal(setConfirmAction);
+  };
 
   // 🔍 Filter pencarian
   const filteredData = useMemo(() => {
-  const formatted = data.map((r) => ({
-    ...r,
-    status:
-      r.status === "diproses"
-        ? "Diproses"
-        : r.status === "diterima"
-        ? "Diterima"
-        : "Ditolak",
-  }));
+    const formatted = data.map((r) => ({
+      ...r,
+      status: (
+        r.status === "diproses"
+          ? "Diproses"
+          : r.status === "diterima"
+          ? "Diterima"
+          : "Ditolak"
+      ) as Status, // ✅ perbaikan di sini
+    }));
 
-  return formatted.filter((r) => {
-    const matchQuery =
-      r.nama.toLowerCase().includes(query.toLowerCase()) ||
-      r.nim.toLowerCase().includes(query.toLowerCase());
+    return formatted.filter((r) => {
+      const matchQuery =
+        r.nama.toLowerCase().includes(query.toLowerCase()) ||
+        r.nim.toLowerCase().includes(query.toLowerCase());
 
-    const matchJenis = jenisFilter === "Semua" || r.jenis === jenisFilter;
+      const matchJenis = jenisFilter === "Semua" || r.jenis === jenisFilter;
 
-    return matchQuery && matchJenis;
-  });
-}, [data, query, jenisFilter]);
+      return matchQuery && matchJenis;
+    });
+  }, [data, query, jenisFilter]);
 
-
-const jenisOptions = [
-  "Semua",
-  ...Array.from(new Set(data.map((r) => r.jenis))),
-];
+  const jenisOptions = [
+    "Semua",
+    ...Array.from(new Set(data.map((r) => r.jenis))),
+  ];
 
   if (!mounted) return null;
 
