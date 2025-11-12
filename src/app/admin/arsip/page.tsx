@@ -3,7 +3,7 @@
 import { useState, useMemo, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { FileArchive } from "lucide-react";
-import { SuratRow, DUMMY } from "./data";
+import { SuratRow } from "./data";
 
 import FilterBar from "./components/FilterBar";
 import ArsipTable from "./components/ArsipTable";
@@ -11,13 +11,50 @@ import DetailModal from "./components/DetailModal";
 import PreviewModal from "./components/PreviewModal";
 
 export default function ArsipSuratPage() {
-  const [rows] = useState<SuratRow[]>(DUMMY);
+  
+  const [rows, setRows] = useState<SuratRow[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
   const [query, setQuery] = useState("");
   const [jenisFilter, setJenisFilter] = useState("Semua");
   const [detailRow, setDetailRow] = useState<SuratRow | null>(null);
   const [previewRow, setPreviewRow] = useState<SuratRow | null>(null);
   const [closing, setClosing] = useState(false);
   const [mounted, setMounted] = useState(false);
+
+  // Fetch data dari backend Express
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await fetch("http://localhost:8001/api/arsip-surat");
+        const json = await res.json();
+
+        if (json.success) {
+          // sesuaikan key backend dengan tipe SuratRow
+          const formatted = json.data.map((item: any) => ({
+            id: item.id_surat,
+            nama: item.nama,
+            nim: item.nim,
+            jurusan: item.jurusan,
+            jenis: item.jenis_surat,
+            status: item.status_verifikasi || item.status,
+          }));
+
+          setRows(formatted);
+        } else {
+          setError(json.message || "Gagal mengambil data arsip");
+        }
+      } catch (err) {
+        console.error("Fetch error:", err);
+        setError("Tidak bisa terhubung ke server backend");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const anyModalOpen = !!detailRow || !!previewRow;
   useEffect(() => {
@@ -53,9 +90,14 @@ export default function ArsipSuratPage() {
 
   if (!mounted) return null;
 
+  if (loading)
+    return <p className="text-gray-500">Memuat data arsip surat...</p>;
+  if (error) return <p className="text-red-500">{error}</p>;
+
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
+        <FileArchive className="w-6 h-6 text-blue-600" />
         <h1 className="text-2xl font-semibold text-gray-800">Arsip Surat</h1>
       </div>
 
