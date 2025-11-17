@@ -26,6 +26,7 @@ export default function ArsipTable({
             <th className="py-3 px-4 text-center">Status</th>
           </tr>
         </thead>
+
         <tbody>
           {data.length > 0 ? (
             data.map((r) => (
@@ -36,9 +37,12 @@ export default function ArsipTable({
                 <td className="py-3 px-4 font-medium text-gray-800">
                   {r.nama}
                 </td>
+
                 <td className="py-3 px-4 text-gray-600">{r.nim}</td>
                 <td className="py-3 px-4 text-gray-600">{r.jurusan}</td>
                 <td className="py-3 px-4 text-gray-600">{r.jenis}</td>
+
+                {/* Tombol Lihat Detail */}
                 <td className="py-3 px-4 text-center">
                   <button
                     onClick={() => onDetail(r)}
@@ -47,6 +51,8 @@ export default function ArsipTable({
                     Lihat Detail
                   </button>
                 </td>
+
+                {/* Tombol Preview Surat */}
                 <td className="py-3 px-4 text-center">
                   <button
                     onClick={() => onPreview(r)}
@@ -55,20 +61,34 @@ export default function ArsipTable({
                     <Eye className="w-4 h-4" /> Lihat Surat
                   </button>
                 </td>
+
+                {/* Status */}
                 <td className="py-3 px-4 text-center">
-                  {r.status === "Diterima" ? (
-                    <span className="px-3 py-1 text-xs bg-green-100 text-green-700 rounded-md border border-green-300">
-                      Diterima
-                    </span>
-                  ) : r.status === "Ditangguhkan" ? (
-                    <span className="px-3 py-1 text-xs bg-red-100 text-red-700 rounded-md border border-red-300">
-                      Ditangguhkan
-                    </span>
-                  ) : (
-                    <span className="px-3 py-1 text-xs bg-yellow-100 text-yellow-700 rounded-md border border-yellow-300">
-                      Diproses
-                    </span>
-                  )}
+                  {(() => {
+                    const status = r.status?.toLowerCase();
+
+                    if (status === "diterima") {
+                      return (
+                        <span className="px-3 py-1 text-xs bg-green-100 text-green-700 rounded-md border border-green-300">
+                          Diterima
+                        </span>
+                      );
+                    }
+
+                    if (status === "ditolak") {
+                      return (
+                        <span className="px-3 py-1 text-xs bg-red-100 text-red-700 rounded-md border border-red-300">
+                          Ditolak
+                        </span>
+                      );
+                    }
+
+                    return (
+                      <span className="px-3 py-1 text-xs bg-yellow-100 text-yellow-700 rounded-md border border-yellow-300">
+                        Diproses
+                      </span>
+                    );
+                  })()}
                 </td>
               </tr>
             ))
