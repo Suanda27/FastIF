@@ -11,7 +11,7 @@ router.get('/stats/:id_user', (req, res) => {
         SELECT 
             SUM(CASE WHEN status IS NULL OR status = '' THEN 1 ELSE 0 END) AS diajukan,
             SUM(CASE WHEN status = 'diterima' THEN 1 ELSE 0 END) AS selesai,
-            SUM(CASE WHEN status = 'ditolak' THEN 1 ELSE 0 END) AS ditolak
+            SUM(CASE WHEN status = 'ditolak' THEN 1 ELSE 0 END) AS diverifikasi
         FROM surat
         WHERE id_user = ?;
     `;
@@ -31,7 +31,7 @@ router.get('/stats/:id_user', (req, res) => {
             success: true,
             data: {
                 diajukan: data.diajukan,
-                diverifikasi: data.selesai + data.ditolak,
+                diverifikasi: data.diverifikasi,
                 selesai: data.selesai
             }
         });
