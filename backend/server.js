@@ -7,6 +7,7 @@ import dotenv from "dotenv";
 import { sessionConfig } from "./middlewares/sessionConfig.js";
 import authRoutes from "./routes/authRoutes.js";
 import formulirRoutes from "./routes/formulirRoutes.js";
+import userDashboardRoutes from "./routes/userDashboardRoutes.js";
 import dashboardRoutes from "./routes/dashboardRoutes.js";
 import verifikasiRoutes from "./routes/verifikasiRoutes.js";
 import arsipRoutes from "./routes/arsipRoutes.js";
@@ -33,6 +34,7 @@ app.use("/api/formulir", formulirRoutes);
 app.use("/api/cardadmin", dashboardRoutes);
 app.use("/api/verifikasi", verifikasiRoutes);
 app.use("/api/arsip-surat", arsipRoutes);
+app.use("/api/user/dashboard", userDashboardRoutes);
 
 app.get("/", (req, res) => {
   res.send("Server FASTIF aktif 🚀");

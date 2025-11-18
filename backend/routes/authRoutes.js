@@ -64,6 +64,21 @@ router.get("/profile", (req, res) => {
   });
 });
 
+// === Route cek user yang sedang login ===
+router.get("/me", (req, res) => {
+  if (!req.session.user) {
+    return res.status(401).json({
+      success: false,
+      message: "Belum login"
+    });
+  }
+
+  res.json({
+    success: true,
+    user: req.session.user
+  });
+});
+
 // === Route logout ===
 router.post("/logout", (req, res) => {
   req.session.destroy(() => {
