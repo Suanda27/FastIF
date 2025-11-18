@@ -59,7 +59,7 @@ export default function Sidebar() {
       if (data.success) {
         localStorage.clear();
         sessionStorage.clear();
-        router.push("/login");
+        router.push("/");
       } else {
         alert("Logout gagal, silakan coba lagi.");
       }
