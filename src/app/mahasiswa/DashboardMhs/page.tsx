@@ -16,36 +16,28 @@ const letterTypes = [
 ];
 
 export default function DashboardMhsPage() {
-  const [user, setUser] = useState<any>(null);
+
+  const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState<any>(null);
   const [activities, setActivities] = useState<any[]>([]);
 
-  // Ambil user login dari session
   useEffect(() => {
-    async function loadUser() {
+    async function loadAll() {
       try {
+        // Ambil user login
         const res = await fetch("http://localhost:8001/api/me", {
           credentials: "include",
         });
 
         const data = await res.json();
-        if (data.success) {
-          setUser(data.user);
+        if (!data.success) {
+          setLoading(false);
+          return;
         }
-      } catch (err) {
-        console.error(err);
-      }
-    }
-    loadUser();
-  }, []);
 
-  // Jika user berhasil ditemukan, ambil dashboard data
-  useEffect(() => {
-    if (!user) return;
+        const user = data.user;
 
-    async function loadDashboard() {
-      try {
-        // STATISTIK
+        // Ambil statistik
         const statRes = await fetch(
           `http://localhost:8001/api/user/dashboard/stats/${user.id_user}`,
           { credentials: 'include' }
@@ -53,14 +45,13 @@ export default function DashboardMhsPage() {
         const statData = await statRes.json();
         setStats(statData.data);
 
-        // AKTIVITAS TERAKHIR
+        // Ambil aktivitas
         const actRes = await fetch(
           `http://localhost:8001/api/user/dashboard/aktivitas/${user.id_user}`,
           { credentials: 'include' }
         );
         const actData = await actRes.json();
 
-        // mapping FE format
         const mapped = actData.data.map((item: any) => ({
           date: item.tanggal,
           type: item.jenis_surat,
@@ -68,16 +59,24 @@ export default function DashboardMhsPage() {
         }));
 
         setActivities(mapped);
+
       } catch (err) {
         console.error(err);
+      } finally {
+        setLoading(false);   
       }
     }
 
-    loadDashboard();
-  }, [user]);
+    loadAll();
+  }, []); 
 
-  // Tunggu data sebelum render
-  if (!stats) return null;
+  if (loading || !stats) {
+    return (
+      <div className="flex justify-center items-center h-screen text-xl font-semibold">
+        Memuat data...
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen bg-gray-50 relative">
@@ -87,6 +86,7 @@ export default function DashboardMhsPage() {
         <StudentHeader />
 
         <main className="flex-1 p-4 md:p-8">
+
           {/* HEADER UTAMA */}
           <div className="mb-6 md:mb-8 text-center">
             <h2 className="text-xl md:text-2xl font-bold text-[#0A1C56] mb-2">

@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
 import Sidebar from "../components/SidebarMhs";
 import TableStatus from "./components/TableStatus";
 import StudentHeader from "../components/StudentHeader";
@@ -16,63 +17,60 @@ export interface Surat {
   keterangan?: string;
 }
 
-const dummyData: Surat[] = [
-  {
-    id: "1",
-    nomorSurat: "2025/09/1005",
-    jenisSurat: "Surat Izin",
-    tanggal: "11-10-2025",
-    status: "Selesai",
-    keterangan: "Surat izin telah disetujui dan dapat diambil di bagian administrasi.",
-  },
-  {
-    id: "2",
-    nomorSurat: "2025/09/1004",
-    jenisSurat: "Surat Survey",
-    tanggal: "11-10-2025",
-    status: "Diproses",
-    keterangan: "Surat sedang dalam proses verifikasi oleh dosen pembimbing.",
-  },
-  {
-    id: "3",
-    nomorSurat: "2025/09/1003",
-    jenisSurat: "Surat Pengantar",
-    tanggal: "11-10-2025",
-    status: "Selesai",
-    keterangan: "Surat pengantar telah selesai dan siap digunakan.",
-  },
-  {
-    id: "4",
-    nomorSurat: "2025/09/1002",
-    jenisSurat: "Surat Izin",
-    tanggal: "11-10-2025",
-    status: "Ditangguhkan",
-    keterangan: "Menunggu kelengkapan dokumen pendukung dari mahasiswa.",
-  },
-  {
-    id: "5",
-    nomorSurat: "2025/09/1001",
-    jenisSurat: "Surat Keterangan",
-    tanggal: "10-10-2025",
-    status: "Selesai",
-    keterangan: "Surat keterangan aktif kuliah telah selesai diproses.",
-  },
-  {
-    id: "6",
-    nomorSurat: "2025/09/1000",
-    jenisSurat: "Surat Rekomendasi",
-    tanggal: "10-10-2025",
-    status: "Diproses",
-    keterangan: "Menunggu persetujuan dari Ketua Program Studi.",
-  },
-];
-
 export default function StatusSuratPage() {
+  const [suratList, setSuratList] = useState<Surat[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // === Ambil data dari backend === //
+  useEffect(() => {
+  fetch("http://localhost:8001/api/user/status-surat", {
+    method: "GET",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+  })
+    .then(async (res) => {
+      if (!res.ok) {
+        const text = await res.text();
+        console.error("SERVER RESPONSE:", text);
+        throw new Error("Server returned non-JSON data");
+      }
+      return res.json();
+    })
+    .then((data) => {
+      const mapped: Surat[] = data.map((item: any) => ({
+        id: String(item.id_surat),
+        nomorSurat: `FASTIF-${String(item.id_surat).padStart(4, "0")}`,
+        jenisSurat: item.jenis_surat,
+        tanggal: item.tanggal_pengajuan?.split(" ")[0] ?? "-",
+        status:
+          item.status === "diterima"
+            ? "Selesai"
+            : item.status === "pending"
+            ? "Diproses"
+            : "Ditangguhkan",
+        keterangan: item.keterangan ?? "",
+      }));
+
+      setSuratList(mapped);
+      setLoading(false);
+    })
+    .catch((err) => {
+      console.error("ERROR FETCHING:", err);
+      setLoading(false);
+    });
+}, []);
+
+
   return (
     <div className="flex min-h-screen">
       <Sidebar />
+
       <main className="flex-1 bg-gray-50 lg:ml-0">
-      <StudentHeader/>
+        <StudentHeader />
+
         <div className="p-4 sm:p-6 lg:p-8 pt-16 lg:pt-8">
           <motion.div
             initial={{ opacity: 0, y: -20 }}
@@ -94,7 +92,11 @@ export default function StatusSuratPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            <TableStatus suratList={dummyData} />
+            {loading ? (
+              <p className="text-gray-500">Memuat data...</p>
+            ) : (
+              <TableStatus suratList={suratList} />
+            )}
           </motion.div>
         </div>
       </main>

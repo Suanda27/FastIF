@@ -7,10 +7,12 @@ import dotenv from "dotenv";
 import { sessionConfig } from "./middlewares/sessionConfig.js";
 import authRoutes from "./routes/authRoutes.js";
 import formulirRoutes from "./routes/formulirRoutes.js";
+import statusSuratMhsRoutes from "./routes/statusSuratMhsRoutes.js";
 import userDashboardRoutes from "./routes/userDashboardRoutes.js";
 import dashboardRoutes from "./routes/dashboardRoutes.js";
 import verifikasiRoutes from "./routes/verifikasiRoutes.js";
 import arsipRoutes from "./routes/arsipRoutes.js";
+import riwayatSuratRoutes from "./routes/riwayatSuratRoutes.js";
 
 import uploadsDir from "./config/multerConfig.js";
 
@@ -35,6 +37,8 @@ app.use("/api/cardadmin", dashboardRoutes);
 app.use("/api/verifikasi", verifikasiRoutes);
 app.use("/api/arsip-surat", arsipRoutes);
 app.use("/api/user/dashboard", userDashboardRoutes);
+app.use("/api/user/status-surat", statusSuratMhsRoutes);
+app.use("/api/user/riwayat-surat", riwayatSuratRoutes);
 
 app.get("/", (req, res) => {
   res.send("Server FASTIF aktif 🚀");
