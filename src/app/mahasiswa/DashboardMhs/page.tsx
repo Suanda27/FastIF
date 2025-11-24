@@ -8,18 +8,12 @@ import StatCard from '../components/StatCardMhs';
 import ActivityTable from '../components/ActivityTableMhs';
 import LetterCard from '../components/LetterCardMhs';
 
-const letterTypes = [
-  { title: 'Surat Izin Kehadiran', exampleLink: '#', templateLink: '#' },
-  { title: 'Surat Survei', exampleLink: '#', templateLink: '#' },
-  { title: 'Surat Izin Pengantar', exampleLink: '#', templateLink: '#' },
-  { title: 'Surat Izin Magang', exampleLink: '#', templateLink: '#' },
-];
-
 export default function DashboardMhsPage() {
 
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState<any>(null);
   const [activities, setActivities] = useState<any[]>([]);
+  const [templates, setTemplates] = useState<any[]>([]);
 
   useEffect(() => {
     async function loadAll() {
@@ -60,15 +54,21 @@ export default function DashboardMhsPage() {
 
         setActivities(mapped);
 
+        // AMBIL TEMPLATE SURAT
+        const templateRes = await fetch("http://localhost:8001/api/formulir");
+        const templateData = await templateRes.json();
+
+        setTemplates(templateData.data);
+
       } catch (err) {
         console.error(err);
       } finally {
-        setLoading(false);   
+        setLoading(false);
       }
     }
 
     loadAll();
-  }, []); 
+  }, []);
 
   if (loading || !stats) {
     return (
@@ -111,12 +111,20 @@ export default function DashboardMhsPage() {
 
           {/* SURAT PILIHAN */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {letterTypes.map((letter, index) => (
+            {templates.map((letter: any) => (
               <LetterCard
-                key={index}
-                title={letter.title}
-                exampleLink={letter.exampleLink}
-                templateLink={letter.templateLink}
+                key={letter.id_template}
+                title={letter.nama_template}
+                exampleLink={
+                  letter.file_contoh
+                    ? `http://localhost:8001/uploads/${letter.file_contoh}`
+                    : null
+                }
+                templateLink={
+                  letter.file_template
+                    ? `http://localhost:8001/uploads/${letter.file_template}`
+                    : null
+                }
               />
             ))}
           </div>

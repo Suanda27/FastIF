@@ -13,8 +13,7 @@ import dashboardRoutes from "./routes/dashboardRoutes.js";
 import verifikasiRoutes from "./routes/verifikasiRoutes.js";
 import arsipRoutes from "./routes/arsipRoutes.js";
 import riwayatSuratRoutes from "./routes/riwayatSuratRoutes.js";
-
-import uploadsDir from "./config/multerConfig.js";
+import { uploadsDir } from "./config/multerConfig.js";
 
 dotenv.config();
 
