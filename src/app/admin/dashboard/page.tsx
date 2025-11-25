@@ -22,7 +22,6 @@ const statusColor: Record<StatusSurat, string> = {
 };
 
 export default function DashboardPage() {
-  // nilai awal semua 0
   const [stats, setStats] = useState({
     pengajuan: 0,
     verifikasi: 0,
@@ -31,40 +30,40 @@ export default function DashboardPage() {
 
   const [dataSurat, setDataSurat] = useState<Surat[]>([]);
 
-  // ambil data dari API nanti (placeholder dulu)
   useEffect(() => {
-  const fetchData = async () => {
-    try {
-      const res = await fetch("http://localhost:8001/api/cardadmin"); // endpoint backend kamu
-      if (!res.ok) throw new Error("Gagal mengambil data");
-      const data = await res.json();
+    const fetchData = async () => {
+      try {
+        const res = await fetch("http://localhost:8001/api/cardadmin", {
+          credentials: "include",
+        });
+        if (!res.ok) throw new Error("Gagal mengambil data");
+        const data = await res.json();
 
-      setStats({
-        pengajuan: data.pengajuan || 0,
-        verifikasi: data.verifikasi || 0,
-        selesai: data.selesai || 0,
-      });
+        setStats({
+          pengajuan: data.pengajuan || 0,
+          verifikasi: data.verifikasi || 0,
+          selesai: data.selesai || 0,
+        });
 
-      setDataSurat(
-        data.dataSurat.map((item: any) => ({
-          ...item,
-          jurusan: item.jurusan || "-", // sementara belum ada
-          status:
-            item.status === "diproses"
-              ? "Diproses"
-              : item.status === "diterima"
-              ? "Diterima"
-              : "Ditangguhkan",
-        }))
-      );
-    } catch (error) {
-      console.error("Error mengambil data:", error);
-    }
-  };
+        setDataSurat(
+          data.dataSurat.map((item: any) => ({
+            ...item,
+            jurusan: item.jurusan || "-",
+            status:
+              item.status === "diproses"
+                ? "Diproses"
+                : item.status === "diterima"
+                ? "Diterima"
+                : "Ditangguhkan",
+          }))
+        );
+      } catch (error) {
+        console.error("Error mengambil data:", error);
+      }
+    };
 
-  fetchData();
-}, []);
-
+    fetchData();
+  }, []);
 
   return (
     <motion.div
@@ -73,12 +72,10 @@ export default function DashboardPage() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
     >
-      {/* Judul Halaman */}
       <h1 className="text-3xl font-bold text-gray-800 tracking-tight">
         Dashboard
       </h1>
 
-      {/* Kartu Ringkasan */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {[
           {
@@ -115,7 +112,6 @@ export default function DashboardPage() {
         ))}
       </div>
 
-      {/* Tabel Data Surat */}
       <motion.div
         className="bg-white rounded-xl shadow-md border border-gray-300 p-6 transition-all duration-500 hover:shadow-lg"
         initial={{ opacity: 0, y: 15 }}
