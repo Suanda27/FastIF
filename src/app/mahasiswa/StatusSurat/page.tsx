@@ -48,7 +48,7 @@ export default function StatusSuratPage() {
         status:
           item.status === "diterima"
             ? "Selesai"
-            : item.status === "pending"
+            : item.status === "diproses"
             ? "Diproses"
             : "Ditangguhkan",
         keterangan: item.keterangan ?? "",

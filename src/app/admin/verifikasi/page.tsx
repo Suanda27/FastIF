@@ -5,7 +5,7 @@ import { createPortal } from "react-dom";
 import { motion } from "framer-motion";
 import { FileCheck2 } from "lucide-react";
 
-import { SuratRow, Status } from "./data"; // ✅ tambahkan Status
+import { SuratRow, Status } from "./data"; //tambahkan Status
 import FilterBar from "./components/FilterBar";
 import VerifikasiTable from "./components/VerifikasiTable";
 import ConfirmModal from "./components/ConfirmModal";
@@ -38,7 +38,7 @@ export default function VerifikasiSuratPage() {
             nim: item.nim,
             jenis: item.jenis,
             jurusan: item.jurusan,
-            status: item.status as Status, // ✅ perbaikan di sini
+            status: item.status as Status,
           }))
         );
       })
@@ -74,7 +74,6 @@ export default function VerifikasiSuratPage() {
 
       if (!res.ok) throw new Error("Gagal update database");
 
-      // ✅ perbaikan di sini
       setData((prev) =>
         prev.map((r) =>
           r.id === confirmAction.row.id
@@ -89,7 +88,7 @@ export default function VerifikasiSuratPage() {
     closeModal(setConfirmAction);
   };
 
-  // 🔍 Filter pencarian
+  // Filter pencarian
   const filteredData = useMemo(() => {
     const formatted = data.map((r) => ({
       ...r,
@@ -99,7 +98,7 @@ export default function VerifikasiSuratPage() {
           : r.status === "diterima"
           ? "Diterima"
           : "Ditolak"
-      ) as Status, // ✅ perbaikan di sini
+      ) as Status,
     }));
 
     return formatted.filter((r) => {

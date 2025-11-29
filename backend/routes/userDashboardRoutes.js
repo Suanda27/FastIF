@@ -9,9 +9,9 @@ router.get('/stats/:id_user', (req, res) => {
 
     const query = `
         SELECT 
-            SUM(CASE WHEN status IS NULL OR status = '' THEN 1 ELSE 0 END) AS diajukan,
+            SUM(CASE WHEN status = 'diproses' THEN 1 ELSE 0 END) AS diajukan,
             SUM(CASE WHEN status = 'diterima' THEN 1 ELSE 0 END) AS selesai,
-            SUM(CASE WHEN status = 'ditolak' THEN 1 ELSE 0 END) AS diverifikasi
+            SUM(CASE WHEN status = 'ditolak' THEN 1 ELSE 0 END) AS ditolak
         FROM surat
         WHERE id_user = ?;
     `;
@@ -25,14 +25,14 @@ router.get('/stats/:id_user', (req, res) => {
             });
         }
 
-        const data = result[0] || { diajukan: 0, selesai: 0, ditolak: 0 };
+        const data = result[0] || {};
 
         return res.json({
             success: true,
             data: {
-                diajukan: data.diajukan,
-                diverifikasi: data.diverifikasi,
-                selesai: data.selesai
+                diajukan: data.diajukan || 0,
+                selesai: data.selesai || 0,
+                ditolak: data.ditolak || 0
             }
         });
     });
@@ -69,6 +69,7 @@ router.get('/aktivitas/:id_user', (req, res) => {
         });
     });
 });
+
 
 // Template Surat untuk ditampilkan
 router.get('/templates', (req, res) => {

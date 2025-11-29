@@ -19,6 +19,7 @@ pnpm-debug.log*
 .env.test.local
 backend/.env
 backend/.env.local
+backend/uploads/
 
 # === Build output / cache (kalau nanti ditambah build backend) ===
 dist/

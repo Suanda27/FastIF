@@ -34,7 +34,7 @@ router.post("/izin-kehadiran", multiUpload, async (req, res) => {
     // Insert ke tabel surat
     const insertSurat = `
       INSERT INTO surat (id_user, id_template, jenis_surat, tanggal_pengajuan, status)
-      VALUES (?, 1, 'Surat Izin Kehadiran', NOW(), 'Menunggu Verifikasi')
+      VALUES (?, 1, 'Surat Izin Kehadiran', NOW(), 'diproses')
     `;
 
     const [suratResult] = await db.promise().query(insertSurat, [id_user]);

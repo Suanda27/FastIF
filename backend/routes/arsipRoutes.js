@@ -12,7 +12,7 @@ router.get("/", (req, res) => {
       u.jurusan,
       s.jenis_surat,
       s.tanggal_pengajuan,
-      s.status AS status_verifikasi
+      s.status
   FROM surat s
   JOIN user u ON s.id_user = u.id_user
   ORDER BY s.created_at DESC

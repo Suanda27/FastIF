@@ -49,7 +49,12 @@ export default function DashboardMhsPage() {
         const mapped = actData.data.map((item: any) => ({
           date: item.tanggal,
           type: item.jenis_surat,
-          status: item.status === "diterima" ? "Selesai" : "Ditangguhkan",
+          status:
+          item.status === "diterima"
+          ? "Selesai"
+          : item.status === "diproses"
+          ? "Diproses"
+          : "Ditolak",
         }));
 
         setActivities(mapped);
@@ -100,7 +105,7 @@ export default function DashboardMhsPage() {
           {/* STATISTIK */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             <StatCard title="Surat Diajukan" value={stats.diajukan} variant="submitted" />
-            <StatCard title="Surat Diverifikasi" value={stats.diverifikasi} variant="verified" />
+            <StatCard title="Surat Ditolak" value={stats.ditolak} variant="verified" />
             <StatCard title="Surat Selesai" value={stats.selesai} variant="completed" />
           </div>
 

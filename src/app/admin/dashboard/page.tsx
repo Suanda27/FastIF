@@ -46,17 +46,21 @@ export default function DashboardPage() {
         });
 
         setDataSurat(
-          data.dataSurat.map((item: any) => ({
-            ...item,
-            jurusan: item.jurusan || "-",
-            status:
-              item.status === "diproses"
-                ? "Diproses"
-                : item.status === "diterima"
-                ? "Diterima"
-                : "Ditangguhkan",
-          }))
-        );
+  data.dataSurat.map((item: any) => {
+    const low = item.status.toLowerCase();
+
+    let statusDisplay = "Ditangguhkan";
+    if (low === "diproses") statusDisplay = "Diproses";
+    if (low === "diterima") statusDisplay = "Diterima";
+    if (low === "ditolak") statusDisplay = "Ditolak";
+
+    return {
+      ...item,
+      jurusan: item.jurusan || "-",
+      status: statusDisplay,
+    };
+  })
+);
       } catch (error) {
         console.error("Error mengambil data:", error);
       }
