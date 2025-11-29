@@ -54,7 +54,7 @@ export default function DashboardMhsPage() {
           ? "Selesai"
           : item.status === "diproses"
           ? "Diproses"
-          : "Ditolak",
+          : "Ditangguhkan",
         }));
 
         setActivities(mapped);

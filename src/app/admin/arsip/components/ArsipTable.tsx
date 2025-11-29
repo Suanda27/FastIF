@@ -78,7 +78,7 @@ export default function ArsipTable({
                     if (status === "ditolak") {
                       return (
                         <span className="px-3 py-1 text-xs bg-red-100 text-red-700 rounded-md border border-red-300">
-                          Ditolak
+                          Ditangguhkan
                         </span>
                       );
                     }

@@ -52,7 +52,7 @@ export default function DashboardPage() {
     let statusDisplay = "Ditangguhkan";
     if (low === "diproses") statusDisplay = "Diproses";
     if (low === "diterima") statusDisplay = "Diterima";
-    if (low === "ditolak") statusDisplay = "Ditolak";
+    if (low === "ditolak") statusDisplay = "Ditangguhkan";
 
     return {
       ...item,

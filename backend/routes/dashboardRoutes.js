@@ -7,12 +7,12 @@ const router = express.Router();
 router.get("/", (req, res) => {
 
   const statsQuery = `
-    SELECT
-      (SELECT COUNT(*) FROM surat WHERE LOWER(status) = 'diproses') AS pengajuan,
-      (SELECT COUNT(*) FROM surat WHERE LOWER(status) = 'ditolak') AS ditolak,
-      (SELECT COUNT(*) FROM surat WHERE LOWER(status) = 'diterima') AS selesai
-    FROM DUAL
-  `;
+  SELECT
+    (SELECT COUNT(*) FROM surat) AS pengajuan,
+    (SELECT COUNT(*) FROM surat WHERE LOWER(status) = 'diproses') AS verifikasi,
+    (SELECT COUNT(*) FROM surat WHERE LOWER(status) IN ('diterima', 'ditolak')) AS selesai
+  FROM DUAL
+`;
 
   db.query(statsQuery, (err, statsResult) => {
     if (err) return res.status(500).json({ success: false });
@@ -37,7 +37,7 @@ router.get("/", (req, res) => {
       res.json({
         success: true,
         pengajuan: statsResult[0].pengajuan,
-        ditolak: statsResult[0].ditolak,
+        verifikasi: statsResult[0].verifikasi,
         selesai: statsResult[0].selesai,
         dataSurat: tableResult,
       });
