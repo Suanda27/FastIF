@@ -21,7 +21,7 @@ router.post("/survei", uploadSurvei, async (req, res) => {
     const sql = `
       INSERT INTO surat 
       (id_user, id_template, jenis_surat, tanggal_pengajuan, status, keperluan, file_surat)
-      VALUES (?, 3, 'Surat Survei', NOW(), 'Diproses', ?, ?)
+      VALUES (?, 3, 'Surat Survei', NOW(), 'diproses', ?, ?)
     `;
 
     await db.promise().query(sql, [id_user, keperluan, file_surat]);
