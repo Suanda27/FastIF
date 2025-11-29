@@ -2,11 +2,12 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { UserCircle, Send, CheckCircle } from 'lucide-react';
+import { Send, CheckCircle } from 'lucide-react';
 import SidebarMhs from '../../components/SidebarMhs';
 import FormField from './components/FormField';
 import FileUpload from './components/FileUpload';
 import StudentHeader from '../../components/StudentHeader';
+
 interface FormData {
   namaOrangTua: string;
   kelasPerkuliahan: string;
@@ -43,35 +44,67 @@ export default function SuratIzinKehadiranPage() {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [resetKey, setResetKey] = useState(0);
+  const [closeTimeout, setCloseTimeout] = useState<any>(null);
+
+  const resetForm = () => {
+    setFormData({
+      namaOrangTua: '',
+      kelasPerkuliahan: '',
+      namaDosenWali: '',
+      jenisPerizinan: '',
+      tanggalMulai: '',
+      tanggalTerakhir: '',
+      suratFile: null,
+      buktiDosenWali: null,
+      buktiDosenPengajar: null,
+      buktiPendukung: null,
+    });
+
+    setResetKey((prev) => prev + 1);
+  };
+
+  const updateFormData = (field: keyof FormData, value: string | File | null) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    const form = new FormData();
+    form.append("namaOrangTua", formData.namaOrangTua);
+    form.append("kelasPerkuliahan", formData.kelasPerkuliahan);
+    form.append("namaDosenWali", formData.namaDosenWali);
+    form.append("jenisPerizinan", formData.jenisPerizinan);
+    form.append("tanggalMulai", formData.tanggalMulai);
+    form.append("tanggalTerakhir", formData.tanggalTerakhir);
 
-    setIsSubmitting(false);
-    setShowSuccess(true);
+    if (formData.suratFile) form.append("suratFile", formData.suratFile);
+    if (formData.buktiDosenWali) form.append("buktiDosenWali", formData.buktiDosenWali);
+    if (formData.buktiDosenPengajar) form.append("buktiDosenPengajar", formData.buktiDosenPengajar);
+    if (formData.buktiPendukung) form.append("buktiPendukung", formData.buktiPendukung);
 
-    setTimeout(() => {
-      setShowSuccess(false);
-      setFormData({
-        namaOrangTua: '',
-        kelasPerkuliahan: '',
-        namaDosenWali: '',
-        jenisPerizinan: '',
-        tanggalMulai: '',
-        tanggalTerakhir: '',
-        suratFile: null,
-        buktiDosenWali: null,
-        buktiDosenPengajar: null,
-        buktiPendukung: null,
+    try {
+      await fetch("http://localhost:8001/api/user/pengajuan-surat/izin-kehadiran", {
+        method: "POST",
+        body: form,
+        credentials: "include",
       });
-    }, 3000);
-  };
 
-  const updateFormData = (field: keyof FormData, value: string | File | null) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+      setShowSuccess(true);
+      setIsSubmitting(false);
+
+      const timeout = setTimeout(() => {
+        setShowSuccess(false);
+        resetForm();
+      }, 3000);
+
+      setCloseTimeout(timeout);
+    } catch (error) {
+      console.log(error);
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -82,25 +115,17 @@ export default function SuratIzinKehadiranPage() {
       <SidebarMhs />
 
       <main className="flex-1 lg:ml-0">
-        <StudentHeader/>
+        <StudentHeader />
         <div className="p-4 sm:p-6 lg:p-8 pt-16 lg:pt-6">
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-6 lg:mb-8"
-          >
-            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-              <div>
-                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#0A1C56] mb-1 lg:mb-2">
-                  Pengajuan Surat Izin Kehadiran
-                </h1>
-                <p className="text-sm lg:text-base text-gray-600">
-                  
-                </p>
-              </div>
-            </div>
+          
+          {/* Judul */}
+          <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="mb-6 lg:mb-8">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#0A1C56]">
+              Pengajuan Surat Izin Kehadiran
+            </h1>
           </motion.div>
 
+          {/* FORM */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -166,12 +191,12 @@ export default function SuratIzinKehadiranPage() {
                 />
               </div>
 
+              {/* Dokumen Pendukung */}
               <div className="border-t border-gray-200 pt-6 mt-6">
-                <h3 className="text-lg font-bold text-[#0A1C56] mb-4">
-                  Dokumen Pendukung
-                </h3>
+                <h3 className="text-lg font-bold text-[#0A1C56] mb-4">Dokumen Pendukung</h3>
                 <div className="space-y-5">
                   <FileUpload
+                    key={resetKey + "-surat"}
                     label="Unggah Surat"
                     description="Format dapat dilihat di Dashboard"
                     required
@@ -180,6 +205,7 @@ export default function SuratIzinKehadiranPage() {
                   />
 
                   <FileUpload
+                    key={resetKey + "-wali"}
                     label="Unggah Bukti Persetujuan Dosen Wali"
                     description="Berupa tangkapan layar percakapan (file JPG)"
                     required
@@ -188,6 +214,7 @@ export default function SuratIzinKehadiranPage() {
                   />
 
                   <FileUpload
+                    key={resetKey + "-pengajar"}
                     label="Unggah Bukti Persetujuan Dosen Pengajar"
                     description="Berupa tangkapan layar percakapan (file JPG)"
                     required
@@ -196,8 +223,9 @@ export default function SuratIzinKehadiranPage() {
                   />
 
                   <FileUpload
+                    key={resetKey + "-pendukung"}
                     label="Bukti Pendukung Lain"
-                    description="Seperti MC, Surat Perintah Lembur, dll. Dalam bentuk file PDF/JPG"
+                    description="Seperti MC, Surat Perintah Lembur, dll."
                     accept=".pdf,.jpg,.jpeg,.png"
                     onChange={(file) => updateFormData('buktiPendukung', file)}
                   />
@@ -211,9 +239,7 @@ export default function SuratIzinKehadiranPage() {
                   type="submit"
                   disabled={isSubmitting}
                   className={`flex items-center gap-2 px-8 py-3 rounded-lg font-semibold text-white shadow-lg transition-all ${
-                    isSubmitting
-                      ? 'bg-gray-400 cursor-not-allowed'
-                      : 'bg-[#0A1C56] hover:bg-[#1976D2]'
+                    isSubmitting ? "bg-gray-400 cursor-not-allowed" : "bg-[#0A1C56] hover:bg-[#1976D2]"
                   }`}
                 >
                   {isSubmitting ? (
@@ -234,11 +260,11 @@ export default function SuratIzinKehadiranPage() {
         </div>
       </main>
 
+      {/* POPUP SUKSES */}
       {showSuccess && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
           className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
         >
           <motion.div
@@ -249,12 +275,23 @@ export default function SuratIzinKehadiranPage() {
             <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <CheckCircle className="w-10 h-10 text-green-500" />
             </div>
-            <h3 className="text-2xl font-bold text-[#0A1C56] mb-2">
-              Berhasil!
-            </h3>
-            <p className="text-gray-600">
+
+            <h3 className="text-2xl font-bold text-[#0A1C56] mb-2">Berhasil!</h3>
+
+            <p className="text-gray-600 mb-6">
               Pengajuan surat izin kehadiran Anda telah berhasil dikirim dan akan segera diproses.
             </p>
+
+            <button
+              onClick={() => {
+                setShowSuccess(false);
+                clearTimeout(closeTimeout);
+                resetForm();
+              }}
+              className="px-6 py-2 rounded-lg bg-[#0A1C56] text-white font-semibold shadow-md hover:bg-[#1976D2] transition-all"
+            >
+              OK
+            </button>
           </motion.div>
         </motion.div>
       )}

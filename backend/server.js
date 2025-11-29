@@ -14,6 +14,7 @@ import verifikasiRoutes from "./routes/verifikasiRoutes.js";
 import arsipRoutes from "./routes/arsipRoutes.js";
 import riwayatSuratRoutes from "./routes/riwayatSuratRoutes.js";
 import { uploadsDir } from "./config/multerConfig.js";
+import pengajuanRoutes from "./routes/pengajuanRoutes.js";
 
 dotenv.config();
 
@@ -38,6 +39,7 @@ app.use("/api/arsip-surat", arsipRoutes);
 app.use("/api/user/dashboard", userDashboardRoutes);
 app.use("/api/user/status-surat", statusSuratMhsRoutes);
 app.use("/api/user/riwayat-surat", riwayatSuratRoutes);
+app.use("/api/user/pengajuan-surat", pengajuanRoutes);
 
 app.get("/", (req, res) => {
   res.send("Server FASTIF aktif 🚀");
