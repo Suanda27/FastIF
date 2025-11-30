@@ -1,70 +1,73 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
-import Sidebar from '../components/SidebarMhs';
-import StudentHeader from '../components/StudentHeader';
-import StatCard from '../components/StatCardMhs';
-import ActivityTable from '../components/ActivityTableMhs';
-import LetterCard from '../components/LetterCardMhs';
+import Sidebar from "../components/SidebarMhs";
+import StudentHeader from "../components/StudentHeader";
+import StatCard from "../components/StatCardMhs";
+import ActivityTable from "../components/ActivityTableMhs";
+import LetterCard from "../components/LetterCardMhs";
 
 export default function DashboardMhsPage() {
-
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState<any>(null);
   const [activities, setActivities] = useState<any[]>([]);
   const [templates, setTemplates] = useState<any[]>([]);
 
+  // Helper fetch function
+  const apiFetch = async (url: string) => {
+    try {
+      const res = await fetch(url, { credentials: "include" });
+      return await res.json();
+    } catch (err) {
+      console.error("API Fetch Error:", err);
+      return { success: false };
+    }
+  };
+
   useEffect(() => {
     async function loadAll() {
       try {
-        // Ambil user login
-        const res = await fetch("http://localhost:8001/api/me", {
-          credentials: "include",
-        });
-
-        const data = await res.json();
-        if (!data.success) {
+        // ========== Ambil user login ==========
+        const meData = await apiFetch("http://localhost:8001/api/me");
+        if (!meData?.success) {
           setLoading(false);
           return;
         }
 
-        const user = data.user;
+        const user = meData.user;
 
-        // Ambil statistik
-        const statRes = await fetch(
-          `http://localhost:8001/api/user/dashboard/stats/${user.id_user}`,
-          { credentials: 'include' }
+        // ========== Ambil Statistik ==========
+        const statData = await apiFetch(
+          `http://localhost:8001/api/dashboard-mhs/stats/${user.id_user}`
         );
-        const statData = await statRes.json();
-        setStats(statData.data);
 
-        // Ambil aktivitas
-        const actRes = await fetch(
-          `http://localhost:8001/api/user/dashboard/aktivitas/${user.id_user}`,
-          { credentials: 'include' }
+        setStats(statData?.data || { diajukan: 0, selesai: 0, ditolak: 0 });
+
+        // ========== Ambil Aktivitas ==========
+        const actData = await apiFetch(
+          `http://localhost:8001/api/dashboard-mhs/aktivitas/${user.id_user}`
         );
-        const actData = await actRes.json();
 
-        const mapped = actData.data.map((item: any) => ({
+        const mappedActivities = (actData?.data ?? []).map((item: any) => ({
           date: item.tanggal,
           type: item.jenis_surat,
           status:
-          item.status === "diterima"
-          ? "Selesai"
-          : item.status === "diproses"
-          ? "Diproses"
-          : "Ditangguhkan",
+            item.status === "diterima"
+              ? "Selesai"
+              : item.status === "diproses"
+              ? "Diproses"
+              : "Ditangguhkan",
         }));
 
-        setActivities(mapped);
+        setActivities(mappedActivities);
 
-        // AMBIL TEMPLATE SURAT
-        const templateRes = await fetch("http://localhost:8001/api/formulir");
-        const templateData = await templateRes.json();
+        // ========== Ambil Template Surat ==========
+        const templateData = await apiFetch(
+          "http://localhost:8001/api/formulir"
+        );
 
-        setTemplates(templateData.data);
-
+        setTemplates(templateData?.data || []);
       } catch (err) {
         console.error(err);
       } finally {
@@ -75,6 +78,7 @@ export default function DashboardMhsPage() {
     loadAll();
   }, []);
 
+  // Loading State
   if (loading || !stats) {
     return (
       <div className="flex justify-center items-center h-screen text-xl font-semibold">
@@ -91,7 +95,6 @@ export default function DashboardMhsPage() {
         <StudentHeader />
 
         <main className="flex-1 p-4 md:p-8">
-
           {/* HEADER UTAMA */}
           <div className="mb-6 md:mb-8 text-center">
             <h2 className="text-xl md:text-2xl font-bold text-[#0A1C56] mb-2">
@@ -104,9 +107,21 @@ export default function DashboardMhsPage() {
 
           {/* STATISTIK */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <StatCard title="Surat Diajukan" value={stats.diajukan} variant="submitted" />
-            <StatCard title="Surat Ditolak" value={stats.ditolak} variant="verified" />
-            <StatCard title="Surat Selesai" value={stats.selesai} variant="completed" />
+            <StatCard
+              title="Surat Diajukan"
+              value={stats.diajukan}
+              variant="submitted"
+            />
+            <StatCard
+              title="Surat Ditolak"
+              value={stats.ditolak}
+              variant="verified"
+            />
+            <StatCard
+              title="Surat Selesai"
+              value={stats.selesai}
+              variant="completed"
+            />
           </div>
 
           {/* AKTIVITAS TERAKHIR */}
