@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 10, 2025 at 05:27 PM
+-- Generation Time: Nov 29, 2025 at 08:45 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -38,6 +38,7 @@ CREATE TABLE `form_surat_izin` (
   `file_chat_dosen_wali` varchar(255) DEFAULT NULL,
   `file_chat_dosen_pengajar` varchar(255) DEFAULT NULL,
   `file_pendukung` varchar(255) DEFAULT NULL,
+  `file_surat` varchar(255) DEFAULT NULL,
   `created_at` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -45,9 +46,8 @@ CREATE TABLE `form_surat_izin` (
 -- Dumping data for table `form_surat_izin`
 --
 
-INSERT INTO `form_surat_izin` (`id_form_izin`, `id_surat`, `nama_nohp_orangtua`, `kelas_perkuliahan`, `jenis_perizinan`, `tanggal_mulai`, `tanggal_selesai`, `file_chat_dosen_wali`, `file_chat_dosen_pengajar`, `file_pendukung`, `created_at`) VALUES
-(1, 1, '081234567890', 'IF-7A', 'Izin Kegiatan', '2025-11-12', '2025-11-13', 'chat_wali.jpg', 'chat_pengajar.jpg', 'poster_event.jpg', '2025-11-10 15:35:42'),
-(2, 2, '081298765432', 'IF-7B', 'Izin Sakit', '2025-11-10', '2025-11-11', 'chat_wali_sakit.jpg', 'chat_pengajar_sakit.jpg', 'surat_dokter.pdf', '2025-11-10 15:35:42');
+INSERT INTO `form_surat_izin` (`id_form_izin`, `id_surat`, `nama_nohp_orangtua`, `kelas_perkuliahan`, `jenis_perizinan`, `tanggal_mulai`, `tanggal_selesai`, `file_chat_dosen_wali`, `file_chat_dosen_pengajar`, `file_pendukung`, `file_surat`, `created_at`) VALUES
+(5, 24, 'test status', 'test status', 'Izin Sakit', '2025-11-30', '2025-11-30', '1764444395946-BPJS_Ketenagakerjaan.jpg', '1764444395949-Foto.jpg', '1764444395950-BPJS_Kesehatan.pdf', '1764444395944-BPJS_Kesehatan.pdf', '2025-11-30 02:26:35');
 
 -- --------------------------------------------------------
 
@@ -64,18 +64,6 @@ CREATE TABLE `pengajuan_surat` (
   `created_at` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `pengajuan_surat`
---
-
-INSERT INTO `pengajuan_surat` (`id_pengajuan`, `id_surat`, `keperluan`, `file_surat`, `deskripsi`, `created_at`) VALUES
-(1, 1, 'Mengikuti lomba tingkat nasional', 'surat_kegiatan.pdf', 'Perlu surat izin kegiatan kampus', '2025-11-10 15:35:42'),
-(2, 2, 'Sakit flu berat', 'izin_sakit.pdf', 'Tidak dapat hadir kelas selama 2 hari', '2025-11-10 15:35:42'),
-(3, 3, 'Kegiatan magang perusahaan', 'pengajuan_magang.pdf', 'Diajukan untuk surat pengantar magang', '2025-11-10 15:35:42'),
-(4, 1, 'Mengikuti lomba tingkat nasional', 'surat_kegiatan.pdf', 'Perlu surat izin kegiatan kampus', '2025-11-10 15:35:42'),
-(5, 2, 'Sakit flu berat', 'izin_sakit.pdf', 'Tidak dapat hadir kelas selama 2 hari', '2025-11-10 15:35:42'),
-(6, 3, 'Kegiatan magang perusahaan', 'pengajuan_magang.pdf', 'Diajukan untuk surat pengantar magang', '2025-11-10 15:35:42');
-
 -- --------------------------------------------------------
 
 --
@@ -90,17 +78,17 @@ CREATE TABLE `surat` (
   `tanggal_pengajuan` datetime DEFAULT NULL,
   `status` varchar(50) DEFAULT NULL,
   `keterangan` text DEFAULT NULL,
-  `created_at` datetime DEFAULT current_timestamp()
+  `created_at` datetime DEFAULT current_timestamp(),
+  `keperluan` text DEFAULT NULL,
+  `file_surat` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `surat`
 --
 
-INSERT INTO `surat` (`id_surat`, `id_user`, `id_template`, `jenis_surat`, `tanggal_pengajuan`, `status`, `keterangan`, `created_at`) VALUES
-(1, 1, 1, 'izin kegiatan', '2025-11-10 10:00:00', 'diproses', 'Menunggu verifikasi admin', '2025-11-10 15:35:42'),
-(2, 2, 2, 'izin tidak hadir', '2025-11-10 09:30:00', 'ditolak', 'Berkas tidak lengkap', '2025-11-10 15:35:42'),
-(3, 3, 3, 'magang', '2025-11-09 14:21:00', 'diterima', 'Verified by admin', '2025-11-10 15:35:42');
+INSERT INTO `surat` (`id_surat`, `id_user`, `id_template`, `jenis_surat`, `tanggal_pengajuan`, `status`, `keterangan`, `created_at`, `keperluan`, `file_surat`) VALUES
+(24, 4, 1, 'Surat Izin Kehadiran', '2025-11-30 02:26:35', 'diterima', NULL, '2025-11-30 02:26:35', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -112,17 +100,19 @@ CREATE TABLE `template_surat` (
   `id_template` int(11) NOT NULL,
   `nama_template` varchar(100) DEFAULT NULL,
   `deskripsi` text DEFAULT NULL,
-  `file_template` varchar(255) DEFAULT NULL
+  `file_template` varchar(255) DEFAULT NULL,
+  `file_contoh` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `template_surat`
 --
 
-INSERT INTO `template_surat` (`id_template`, `nama_template`, `deskripsi`, `file_template`) VALUES
-(1, 'Surat Izin Kegiatan', 'Template untuk izin kegiatan luar kampus', 'izin_kegiatan.docx'),
-(2, 'Surat Izin Tidak Hadir Kelas', 'Template izin tidak masuk kuliah', 'izin_tidak_hadir.docx'),
-(3, 'Surat Magang', 'Permohonan kegiatan magang', 'surat_magang.docx');
+INSERT INTO `template_surat` (`id_template`, `nama_template`, `deskripsi`, `file_template`, `file_contoh`) VALUES
+(1, 'Surat Izin Kehadiran', NULL, NULL, NULL),
+(2, 'Surat Survey', NULL, NULL, NULL),
+(3, 'Surat Pengantar', NULL, NULL, NULL),
+(4, 'Surat Izin Magang', NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -149,7 +139,7 @@ INSERT INTO `user` (`id_user`, `nama`, `email`, `password`, `role`, `nim`, `juru
 (1, 'Budi Santoso', 'budi@student.ac.id', 'budi123', 'mahasiswa', '20221001', 'Rekayasa Perangkat Lunak', NULL),
 (2, 'Dewi Kartika', 'dewi@student.ac.id', 'dewi123', 'mahasiswa', '20221002', 'Sistem Informasi', NULL),
 (3, 'Rizky Pratama', 'rizky@student.ac.id', 'rizki123', 'mahasiswa', '20221003', 'Informatika', NULL),
-(4, 'Doni Saputra', 'doni@student.ac.id', 'doni123', 'mahasiswa', '20221004', 'Terapan Teknologi Permainan', NULL),
+(4, 'Mahasiswa', 'doni@student.ac.id', '123', 'mahasiswa', '20221004', 'Terapan Teknologi Permainan', NULL),
 (5, 'admin', 'admin@kampus.ac.id', 'admin123', 'admin', NULL, NULL, '19870001');
 
 -- --------------------------------------------------------
@@ -166,15 +156,6 @@ CREATE TABLE `verifikasi` (
   `catatan` text DEFAULT NULL,
   `status_verifikasi` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `verifikasi`
---
-
-INSERT INTO `verifikasi` (`id_verifikasi`, `id_surat`, `id_user`, `tanggal_verifikasi`, `catatan`, `status_verifikasi`) VALUES
-(1, 1, 5, '2025-11-10 11:00:00', 'Sedang ditinjau', 'pending'),
-(2, 2, 5, '2025-11-10 10:00:00', 'File kurang lengkap', 'ditolak'),
-(3, 3, 5, '2025-11-09 15:00:00', 'Semua dokumen lengkap', 'diterima');
 
 --
 -- Indexes for dumped tables
@@ -233,7 +214,7 @@ ALTER TABLE `verifikasi`
 -- AUTO_INCREMENT for table `form_surat_izin`
 --
 ALTER TABLE `form_surat_izin`
-  MODIFY `id_form_izin` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id_form_izin` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `pengajuan_surat`
@@ -245,13 +226,13 @@ ALTER TABLE `pengajuan_surat`
 -- AUTO_INCREMENT for table `surat`
 --
 ALTER TABLE `surat`
-  MODIFY `id_surat` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id_surat` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT for table `template_surat`
 --
 ALTER TABLE `template_surat`
-  MODIFY `id_template` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id_template` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `user`
