@@ -16,7 +16,7 @@ import verifikasiRoutes from "./routes/verifikasiRoutes.js";
 import arsipRoutes from "./routes/arsipRoutes.js";
 import riwayatSuratRoutes from "./routes/riwayatSuratRoutes.js";
 import pengajuanRoutes from "./routes/pengajuanRoutes.js";
-import pengajuanSurveiRoutes from "./routes/pengajuanSurveiRoutes.js";
+import pengajuanSurveyRoutes from "./routes/pengajuanSurveyRoutes.js";
 
 import dashboardmhsRoutes from "./routes/dashboardmhsRoutes.js";
 
@@ -44,7 +44,7 @@ app.use("/api", authRoutes);
 // --- Formulir / Pengajuan ---
 app.use("/api/formulir", formulirRoutes);
 app.use("/api/user/pengajuan-surat", pengajuanRoutes);
-app.use("/api/user/pengajuan-survei", pengajuanSurveiRoutes);
+app.use("/api/user/pengajuan-survei", pengajuanSurveyRoutes);
 
 // --- Mahasiswa ---
 app.use("/api/user/status-surat", statusSuratMhsRoutes);

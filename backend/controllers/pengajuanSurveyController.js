@@ -1,6 +1,6 @@
-import { insertSuratSurvei } from "../models/pengajuanSurveiModel.js";
+import { insertSuratSurvey } from "../models/pengajuanSurveyModel.js";
 
-export const pengajuanSurvei = async (req, res) => {
+export const pengajuanSurvey = async (req, res) => {
   try {
     if (!req.session.user) {
       return res.status(401).json({ success: false, message: "Belum login" });
@@ -10,11 +10,11 @@ export const pengajuanSurvei = async (req, res) => {
     const { keperluan } = req.body;
     const file_surat = req.file ? req.file.filename : null;
 
-    await insertSuratSurvei({ id_user, keperluan, file_surat });
+    await insertSuratSurvey({ id_user, keperluan, file_surat });
 
     res.json({
       success: true,
-      message: "Pengajuan surat survei berhasil dikirim!",
+      message: "Pengajuan surat survey berhasil dikirim!",
     });
   } catch (error) {
     console.error(error);
