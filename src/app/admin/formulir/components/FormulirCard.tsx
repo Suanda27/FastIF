@@ -1,30 +1,31 @@
 "use client";
-import { LucideIcon } from "lucide-react";
+
+import { LucideIcon, FileText } from "lucide-react";
 
 interface FormulirCardProps {
-  icon: LucideIcon;
+  icon?: LucideIcon; 
   title: string;
   desc: string;
   onUploadClick: () => void;
   onUploadTemplateClick: () => void;
   fileUploaded: boolean;
-  templateUploaded: boolean; // ✅ Tambahan
-  onDeleteFile: (isTemplate?: boolean) => void; // ✅ Tambahan opsional
+  templateUploaded: boolean;
+  onDeleteFile: (isTemplate?: boolean) => void;
 }
 
 export default function FormulirCard({
-  icon: Icon,
+  icon: Icon = FileText,
   title,
   desc,
   onUploadClick,
   onUploadTemplateClick,
   fileUploaded,
-  templateUploaded, // ✅
+  templateUploaded,
   onDeleteFile,
 }: FormulirCardProps) {
   return (
     <div className="border border-gray-200 rounded-lg shadow-sm p-5 bg-white flex flex-col gap-4 transition-all hover:shadow-md">
-      {/* Bagian File Contoh */}
+
       <div className="flex items-start gap-3">
         <div className="p-2 bg-blue-100 rounded-md">
           <Icon className="text-blue-600" size={22} />
@@ -40,13 +41,14 @@ export default function FormulirCard({
           <>
             <button
               onClick={onUploadClick}
-              className="bg-yellow-500 hover:bg-yellow-600 text-white text-sm font-medium rounded-md py-2 transition-all"
+              className="bg-yellow-500 hover:bg-yellow-600 text-white text-sm rounded-md py-2"
             >
               Edit File
             </button>
+
             <button
-              onClick={() => onDeleteFile(false)} // ❗️false artinya bukan template
-              className="bg-red-500 hover:bg-red-600 text-white text-sm font-medium rounded-md py-2 transition-all"
+              onClick={() => onDeleteFile(false)}
+              className="bg-red-500 hover:bg-red-600 text-white text-sm rounded-md py-2"
             >
               Hapus File
             </button>
@@ -54,16 +56,15 @@ export default function FormulirCard({
         ) : (
           <button
             onClick={onUploadClick}
-            className="bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium rounded-md py-2 transition-all"
+            className="bg-blue-500 hover:bg-blue-600 text-white text-sm rounded-md py-2"
           >
             Upload File
           </button>
         )}
       </div>
 
-      <hr className="my-1" />
+      <hr />
 
-      {/* Bagian File Template */}
       <div className="flex items-start gap-3">
         <div className="p-2 bg-blue-50 rounded-md">
           <Icon className="text-blue-500" size={20} />
@@ -76,19 +77,19 @@ export default function FormulirCard({
         </div>
       </div>
 
-      {/* ✅ Tombol khusus Template File */}
       <div className="flex flex-col gap-2">
         {templateUploaded ? (
           <>
             <button
               onClick={onUploadTemplateClick}
-              className="bg-yellow-500 hover:bg-yellow-600 text-white text-sm font-medium rounded-md py-2 transition-all"
+              className="bg-yellow-500 hover:bg-yellow-600 text-white text-sm rounded-md py-2"
             >
               Edit File Template
             </button>
+
             <button
-              onClick={() => onDeleteFile(true)} // ✅ true = hapus template
-              className="bg-red-500 hover:bg-red-600 text-white text-sm font-medium rounded-md py-2 transition-all"
+              onClick={() => onDeleteFile(true)}
+              className="bg-red-500 hover:bg-red-600 text-white text-sm rounded-md py-2"
             >
               Hapus File Template
             </button>
@@ -96,7 +97,7 @@ export default function FormulirCard({
         ) : (
           <button
             onClick={onUploadTemplateClick}
-            className="bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium rounded-md py-2 transition-all"
+            className="bg-blue-500 hover:bg-blue-600 text-white text-sm rounded-md py-2"
           >
             Upload File Template
           </button>

@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { FileText, ClipboardList, Briefcase, Calendar } from "lucide-react";
 
 import FormulirCard from "./components/FormulirCard";
 import UploadModal from "./components/UploadModal";
@@ -11,23 +10,27 @@ import ToastNotification from "./components/ToastNotification";
 export default function FormulirSuratPage() {
   const [showModal, setShowModal] = useState(false);
   const [closing, setClosing] = useState(false);
+
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [newTemplateName, setNewTemplateName] = useState("");
+
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploadProgress, setUploadProgress] = useState(0);
-  const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
+
+  const [toast, setToast] = useState<{
+    message: string;
+    type: "success" | "error";
+  } | null>(null);
+
   const [fadeIn, setFadeIn] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
 
-  // Data dari database
   const [templateData, setTemplateData] = useState<any[]>([]);
-
-  // Card aktif
   const [selectedFormId, setSelectedFormId] = useState<number | null>(null);
   const [isTemplateUpload, setIsTemplateUpload] = useState(false);
 
-  // URL backend
   const API_URL = "http://localhost:8001/api";
 
-  // GET data dari database
   const fetchTemplates = async () => {
     try {
       const res = await fetch(`${API_URL}/formulir`);
@@ -38,19 +41,17 @@ export default function FormulirSuratPage() {
     }
   };
 
-  useEffect(() => { fetchTemplates(); }, []);
-
-  useEffect(() => setIsMounted(true), []);
   useEffect(() => {
+    fetchTemplates();
+    setIsMounted(true);
     const timer = setTimeout(() => setFadeIn(true), 100);
     return () => clearTimeout(timer);
   }, []);
+
   useEffect(() => {
-    document.body.style.overflow = showModal ? "hidden" : "auto";
-  }, [showModal]);
+    document.body.style.overflow = showModal || showAddModal ? "hidden" : "auto";
+  }, [showModal, showAddModal]);
 
-
-  // Open modal upload
   const handleUploadClick = (id: number, isTemplate = false) => {
     setSelectedFormId(id);
     setIsTemplateUpload(isTemplate);
@@ -71,11 +72,9 @@ export default function FormulirSuratPage() {
     if (e.target.files?.[0]) setSelectedFile(e.target.files[0]);
   };
 
-  // Upload file
   const handleUpload = async () => {
     if (!selectedFile || selectedFormId === null) {
-      setToast({ message: "❌ Pilih file dahulu!", type: "error" });
-      setTimeout(() => setToast(null), 2500);
+      showToast("❌ Pilih file dahulu!", "error");
       return;
     }
 
@@ -95,18 +94,14 @@ export default function FormulirSuratPage() {
       const data = await res.json();
       if (!data.success) throw new Error();
 
-      setToast({ message: "✅ File berhasil diupload!", type: "success" });
-      setTimeout(() => setToast(null), 2500);
-
+      showToast("✅ File berhasil diupload!", "success");
       fetchTemplates();
       setShowModal(false);
-    } catch (err) {
-      setToast({ message: "❌ Gagal upload file!", type: "error" });
-      setTimeout(() => setToast(null), 2500);
+    } catch {
+      showToast("❌ Gagal upload file!", "error");
     }
   };
 
-  // Delete file
   const handleDeleteFile = async (id: number, isTemplate = false) => {
     try {
       const res = await fetch(`${API_URL}/formulir/delete`, {
@@ -118,25 +113,45 @@ export default function FormulirSuratPage() {
       const data = await res.json();
       if (!data.success) throw new Error();
 
-      setToast({ message: "🗑️ File berhasil dihapus", type: "success" });
-      setTimeout(() => setToast(null), 2500);
-
+      showToast("🗑️ File berhasil dihapus", "success");
       fetchTemplates();
     } catch {
-      setToast({ message: "❌ Gagal menghapus file", type: "error" });
-      setTimeout(() => setToast(null), 2500);
+      showToast("❌ Gagal menghapus file", "error");
+    }
+  };
+
+  const showToast = (message: string, type: "success" | "error") => {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 2500);
+  };
+
+  const handleCreateTemplate = async () => {
+    if (!newTemplateName.trim()) {
+      showToast("❌ Nama template wajib diisi!", "error");
+      return;
+    }
+
+    try {
+      const res = await fetch(`${API_URL}/formulir/create`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ nama_template: newTemplateName }),
+      });
+
+      const data = await res.json();
+      if (!data.success) throw new Error();
+
+      showToast("🎉 Template berhasil dibuat!", "success");
+
+      setShowAddModal(false);
+      setNewTemplateName("");
+      fetchTemplates();
+    } catch {
+      showToast("❌ Gagal membuat template", "error");
     }
   };
 
   if (!isMounted) return null;
-
-  // Card FE Statis
-  const cardList = [
-    { id: 1, title: "Surat Izin Kehadiran", icon: Calendar },
-    { id: 2, title: "Surat Survey", icon: ClipboardList },
-    { id: 3, title: "Surat Pengantar", icon: FileText },
-    { id: 4, title: "Surat Izin Magang", icon: Briefcase },
-  ];
 
   return (
     <div
@@ -146,27 +161,35 @@ export default function FormulirSuratPage() {
     >
       <h1 className="text-2xl font-bold text-gray-800">Formulir Surat</h1>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-        {cardList.map((card) => {
-          // ambil data dari DB sesuai id card
-          const dbData = templateData.find((x) => x.id_template === card.id);
+      <button
+        onClick={() => setShowAddModal(true)}
+        className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+      >
+        + Tambah Template Baru
+      </button>
 
-          return (
-            <FormulirCard
-              key={card.id}
-              icon={card.icon}
-              title={card.title}
-              desc={`Formulir untuk ${card.title}`}
-              onUploadClick={() => handleUploadClick(card.id, false)}
-              onUploadTemplateClick={() => handleUploadClick(card.id, true)}
-              fileUploaded={!!dbData?.file_contoh}
-              templateUploaded={!!dbData?.file_template}
-              onDeleteFile={(isTemplate?: boolean) =>
-                handleDeleteFile(card.id, isTemplate)
-              }
-            />
-          );
-        })}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-4">
+        {templateData.length === 0 && (
+          <p className="text-gray-500 col-span-2">
+            Belum ada template. Silakan tambah.
+          </p>
+        )}
+
+        {templateData.map((t) => (
+          <FormulirCard
+            key={t.id_template}
+            title={t.nama_template}
+            desc={`Formulir untuk ${t.nama_template}`}
+            icon={undefined}
+            onUploadClick={() => handleUploadClick(t.id_template, false)}
+            onUploadTemplateClick={() => handleUploadClick(t.id_template, true)}
+            fileUploaded={!!t.file_contoh}
+            templateUploaded={!!t.file_template}
+            onDeleteFile={(isTemplate?: boolean) =>
+              handleDeleteFile(t.id_template, isTemplate)
+            }
+          />
+        ))}
       </div>
 
       {showModal &&
@@ -179,6 +202,41 @@ export default function FormulirSuratPage() {
             onFileChange={handleFileChange}
             onUpload={handleUpload}
           />,
+          document.body
+        )}
+
+      {showAddModal &&
+        createPortal(
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
+            <div className="bg-white p-6 rounded-xl w-96 shadow-xl animate-fadeIn">
+
+              <h2 className="text-xl font-semibold mb-4">Tambah Template Baru</h2>
+
+              <input
+                type="text"
+                placeholder="Nama template surat"
+                className="w-full border px-3 py-2 rounded-lg mb-4"
+                value={newTemplateName}
+                onChange={(e) => setNewTemplateName(e.target.value)}
+              />
+
+              <div className="flex justify-end space-x-3">
+                <button
+                  onClick={() => setShowAddModal(false)}
+                  className="px-4 py-2 bg-gray-300 rounded-lg"
+                >
+                  Batal
+                </button>
+
+                <button
+                  onClick={handleCreateTemplate}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg"
+                >
+                  Simpan
+                </button>
+              </div>
+            </div>
+          </div>,
           document.body
         )}
 
