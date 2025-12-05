@@ -6,7 +6,7 @@ import CardSurat from "../components/CardSurat";
 import StudentHeader from "../components/StudentHeader";
 
 const suratTypes = [
-  { title: "Izin Kehadiran", iconName: "Mail", link: "/mahasiswa/PengajuanSurat/IzinKehadiran" },
+  { title: "Izin Kehadiran", iconName: "Mail", link: "/mahasiswa/PengajuanSurat/SuratIzinKehadiran" },
   { title: "Surat Survei", iconName: "Globe", link: "/mahasiswa/PengajuanSurat/SuratSurvei" },
   { title: "Surat Pengantar", iconName: "Send", link: "/mahasiswa/PengajuanSurat/SuratPengantar" },
   { title: "Surat Beasiswa", iconName: "Award", link: "/mahasiswa/PengajuanSurat/SuratBeasiswa" },
