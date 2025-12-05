@@ -10,6 +10,7 @@ import StudentHeader from '../../components/StudentHeader';
 
 interface FormData {
   namaOrangTua: string;
+  noHpOrangTua: string; // <-- new: nomor HP terpisah
   kelasPerkuliahan: string;
   namaDosenWali: string;
   jenisPerizinan: string;
@@ -31,6 +32,7 @@ const jenisPerizinanOptions = [
 export default function SuratIzinKehadiranPage() {
   const [formData, setFormData] = useState<FormData>({
     namaOrangTua: '',
+    noHpOrangTua: '', // <-- initialize new field
     kelasPerkuliahan: '',
     namaDosenWali: '',
     jenisPerizinan: '',
@@ -50,6 +52,7 @@ export default function SuratIzinKehadiranPage() {
   const resetForm = () => {
     setFormData({
       namaOrangTua: '',
+      noHpOrangTua: '', // <-- reset
       kelasPerkuliahan: '',
       namaDosenWali: '',
       jenisPerizinan: '',
@@ -74,6 +77,7 @@ export default function SuratIzinKehadiranPage() {
 
     const form = new FormData();
     form.append("namaOrangTua", formData.namaOrangTua);
+    form.append("noHpOrangTua", formData.noHpOrangTua); // <-- append phone
     form.append("kelasPerkuliahan", formData.kelasPerkuliahan);
     form.append("namaDosenWali", formData.namaDosenWali);
     form.append("jenisPerizinan", formData.jenisPerizinan);
@@ -136,15 +140,28 @@ export default function SuratIzinKehadiranPage() {
               onSubmit={handleSubmit}
               className="bg-white rounded-xl lg:rounded-2xl shadow-xl p-6 sm:p-8 lg:p-10 space-y-6"
             >
+              {/* NAMA & NO HP ORTU (dua kolom, proporsional) */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <FormField
-                  label="Nama & Nomor HP Orang Tua/Wali"
-                  placeholder="Contoh: Budi Santoso - 081234567890"
+                  label="Nama Orang Tua / Wali"
+                  placeholder="Contoh: Budi Santoso"
                   required
                   value={formData.namaOrangTua}
                   onChange={(val) => updateFormData('namaOrangTua', val)}
                 />
 
+                <FormField
+                  label="No. HP Orang Tua / Wali"
+                  placeholder="Contoh: 081234567890"
+                  type="text"
+                  required
+                  value={formData.noHpOrangTua}
+                  onChange={(val) => updateFormData('noHpOrangTua', val)}
+                />
+              </div>
+
+              {/* Kelas Perkuliahan & Nama Dosen Wali (tetap dua kolom) */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <FormField
                   label="Kelas Perkuliahan"
                   placeholder="Contoh: IF-42-05"
@@ -152,9 +169,7 @@ export default function SuratIzinKehadiranPage() {
                   value={formData.kelasPerkuliahan}
                   onChange={(val) => updateFormData('kelasPerkuliahan', val)}
                 />
-              </div>
 
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <FormField
                   label="Nama Dosen Wali"
                   placeholder="Contoh: Dr. Ahmad Fauzi, M.Kom"
@@ -162,7 +177,10 @@ export default function SuratIzinKehadiranPage() {
                   value={formData.namaDosenWali}
                   onChange={(val) => updateFormData('namaDosenWali', val)}
                 />
+              </div>
 
+              {/* Jenis Perizinan & tanggal (tetap seperti semula) */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <FormField
                   label="Jenis Perizinan"
                   type="select"
@@ -171,9 +189,7 @@ export default function SuratIzinKehadiranPage() {
                   onChange={(val) => updateFormData('jenisPerizinan', val)}
                   options={jenisPerizinanOptions}
                 />
-              </div>
 
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <FormField
                   label="Tanggal Mulai Izin"
                   type="date"
@@ -181,7 +197,9 @@ export default function SuratIzinKehadiranPage() {
                   value={formData.tanggalMulai}
                   onChange={(val) => updateFormData('tanggalMulai', val)}
                 />
+              </div>
 
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <FormField
                   label="Tanggal Terakhir Izin"
                   type="date"
@@ -189,6 +207,9 @@ export default function SuratIzinKehadiranPage() {
                   value={formData.tanggalTerakhir}
                   onChange={(val) => updateFormData('tanggalTerakhir', val)}
                 />
+
+                {/* kalau mau, bisa sisakan kolom ini kosong atau untuk field lain */}
+                <div />
               </div>
 
               {/* Dokumen Pendukung */}
