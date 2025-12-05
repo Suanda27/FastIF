@@ -121,7 +121,7 @@ export default function SuratIzinKehadiranPage() {
           {/* Judul */}
           <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="mb-6 lg:mb-8">
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#0A1C56]">
-              Pengajuan Surat Izin Kehadiran
+              Pengajuan Izin Kehadiran
             </h1>
           </motion.div>
 
@@ -279,7 +279,7 @@ export default function SuratIzinKehadiranPage() {
             <h3 className="text-2xl font-bold text-[#0A1C56] mb-2">Berhasil!</h3>
 
             <p className="text-gray-600 mb-6">
-              Pengajuan surat izin kehadiran Anda telah berhasil dikirim dan akan segera diproses.
+              Pengajuan Izin Kehadiran Anda telah berhasil dikirim dan akan segera diproses.
             </p>
 
             <button
