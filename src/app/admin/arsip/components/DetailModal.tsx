@@ -2,7 +2,6 @@
 
 import { motion } from "framer-motion";
 import { X, FileText } from "lucide-react";
-import { SuratRow } from "../data";
 
 export default function DetailModal({
   row,
@@ -10,11 +9,14 @@ export default function DetailModal({
   onClose,
   onPreview,
 }: {
-  row: SuratRow;
+  row: any;
   closing?: boolean;
   onClose: () => void;
-  onPreview: (id: string) => void;
+  onPreview: (file: string) => void;
 }) {
+  // row.detail berasal dari backend (form_surat_izin) jika tipe izin
+  const detail = row.detail || {};
+
   return (
     <div
       onClick={onClose}
@@ -26,15 +28,22 @@ export default function DetailModal({
       style={{ pointerEvents: closing ? "none" : "auto" }}
     >
       <motion.div
-        onClick={(e) => e.stopPropagation()}
-        initial={{ scale: 0.95, opacity: 0 }}
-        animate={{
-          scale: closing ? 0.95 : 1,
-          opacity: closing ? 0 : 1,
-        }}
-        transition={{ duration: 0.25 }}
-        className="relative bg-white rounded-2xl shadow-2xl w-[95%] max-w-4xl p-8 border border-gray-100"
-      >
+  onClick={(e) => e.stopPropagation()}
+  initial={{ scale: 0.95, opacity: 0 }}
+  animate={{
+    scale: closing ? 0.95 : 1,
+    opacity: closing ? 0 : 1,
+  }}
+  transition={{ duration: 0.25 }}
+  className="
+    relative bg-white rounded-2xl shadow-2xl 
+    w-[95%] max-w-4xl 
+    max-h-[90vh] 
+    overflow-y-auto 
+    p-8 
+    border border-gray-100
+  "
+>
         {/* Tombol Tutup */}
         <button
           onClick={onClose}
@@ -51,24 +60,49 @@ export default function DetailModal({
         {/* Grid Info */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-4">
-            <Field label="Nama" value={row.nama} />
-            <Field label="NIM" value={row.nim} />
-            <Field label="Jurusan" value={row.jurusan} />
-            <Field label="Jenis Surat" value={row.jenis} />
+            <Field label="Nama" value={row.nama || "-"} />
+            <Field label="NIM" value={row.nim || "-"} />
+            <Field label="Jurusan" value={row.jurusan || "-"} />
+            <Field label="Jenis Surat" value={row.jenis_surat || row.jenis || "-"} />
           </div>
 
           <div className="space-y-4">
-            {row.jenis === "Surat Izin Kehadiran" && (
+            <Field
+              label="Tanggal Pengajuan"
+              value={
+                row.tanggal_pengajuan
+                  ? new Date(row.tanggal_pengajuan).toLocaleString("id-ID")
+                  : "-"
+              }
+            />
+            <Field label="Status" value={(row.status || "-").toString()} />
+
+            {/* Jika surat izin, tampilkan info tambahan */}
+            {row.jenis_surat === "Surat Izin Kehadiran" && (
               <>
-                <Field label="Kelas" value="TI-2B (dummy)" />
-                <Field
-                  label="Dosen Wali"
-                  value="Bapak Andi Saputra, S.Kom., M.Kom (dummy)"
-                />
-                <Field label="Jenis Perizinan" value="Tidak Hadir Kuliah" />
-                <div className="grid grid-cols-2 gap-4">
-                  <Field label="Mulai Izin" value="12 Okt 2025" />
-                  <Field label="Akhir Izin" value="14 Okt 2025" />
+                <div className="mt-2" />
+                <Field label="Nama Orang Tua" value={detail.nama_orangtua || "-"} />
+                <Field label="No HP Orang Tua" value={detail.nohp_orangtua || "-"} />
+                <Field label="Kelas Perkuliahan" value={detail.kelas_perkuliahan || "-"} />
+                <Field label="Dosen Wali" value={detail.nama_dosen_wali || "-"} />
+                <Field label="Jenis Perizinan" value={detail.jenis_perizinan || "-"} />
+                <div className="grid grid-cols-2 gap-4 gap-y-3">
+                  <Field
+                    label="Mulai Izin"
+                    value={
+                      detail.tanggal_mulai
+                        ? new Date(detail.tanggal_mulai).toLocaleDateString("id-ID")
+                        : "-"
+                    }
+                  />
+                  <Field
+                    label="Akhir Izin"
+                    value={
+                      detail.tanggal_selesai
+                        ? new Date(detail.tanggal_selesai).toLocaleDateString("id-ID")
+                        : "-"
+                    }
+                  />
                 </div>
               </>
             )}
@@ -84,7 +118,7 @@ export default function DetailModal({
             Keterangan / Keperluan
           </label>
           <div className="mt-2 bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-sm text-gray-700 min-h-[80px]">
-            {row.keterangan || "Tidak ada keterangan."}
+            {row.keperluan || row.keterangan || "Tidak ada keterangan."}
           </div>
         </div>
 
@@ -94,28 +128,36 @@ export default function DetailModal({
             Berkas Terlampir
           </label>
           <div className="grid sm:grid-cols-2 gap-3">
-            {(row.files || []).map((f, i) => (
-              <div
-                key={i}
-                className="flex justify-between items-center bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 hover:shadow-md transition"
-              >
-                <div className="flex items-center gap-2 text-gray-700">
-                  <FileText className="w-4 h-4 text-blue-500" />
-                  <span className="text-sm truncate max-w-[150px]">{f}</span>
+            {(row.files || []).length > 0 ? (
+              row.files.map((f: string, i: number) => (
+                <div
+                  key={i}
+                  className="flex justify-between items-center bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 hover:shadow-md transition"
+                >
+                  <div className="flex items-center gap-2 text-gray-700">
+                    <FileText className="w-4 h-4 text-blue-500" />
+                    <span className="text-sm truncate max-w-[150px]">{f}</span>
+                  </div>
+                  <div className="flex gap-2">
+                    <a
+                      href={`http://localhost:8001/uploads/${encodeURIComponent(f)}`}
+                      download
+                      className="text-xs px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition"
+                    >
+                      Download
+                    </a>
+                    <button
+                      onClick={() => onPreview(f)}
+                      className="text-xs px-3 py-1 border border-gray-300 rounded-md hover:bg-gray-100 transition"
+                    >
+                      Preview
+                    </button>
+                  </div>
                 </div>
-                <div className="flex gap-2">
-                  <button className="text-xs px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition">
-                    Download
-                  </button>
-                  <button
-                    onClick={() => onPreview(row.id)}
-                    className="text-xs px-3 py-1 border border-gray-300 rounded-md hover:bg-gray-100 transition"
-                  >
-                    Preview
-                  </button>
-                </div>
-              </div>
-            ))}
+              ))
+            ) : (
+              <p className="text-gray-500">Tidak ada lampiran.</p>
+            )}
           </div>
         </div>
       </motion.div>
@@ -123,7 +165,7 @@ export default function DetailModal({
   );
 }
 
-function Field({ label, value }: { label: string; value: string }) {
+function Field({ label, value }: { label: string; value: any }) {
   return (
     <div>
       <p className="text-xs uppercase tracking-wider text-gray-500">{label}</p>
