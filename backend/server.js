@@ -17,6 +17,8 @@ import arsipRoutes from "./routes/arsipRoutes.js";
 import riwayatSuratRoutes from "./routes/riwayatSuratRoutes.js";
 import pengajuanRoutes from "./routes/pengajuanRoutes.js";
 import pengajuanSurveyRoutes from "./routes/pengajuanSurveyRoutes.js";
+import previewRoutes from "./routes/previewRoutes.js";
+
 
 import dashboardmhsRoutes from "./routes/dashboardmhsRoutes.js";
 
@@ -26,8 +28,23 @@ dotenv.config();
 
 const app = express();
 
+// ===== FIX IFRAME / PDF PREVIEW =====
+app.use((req, res, next) => {
+  res.setHeader("Cross-Origin-Opener-Policy", "same-origin-allow-popups");
+  res.setHeader("X-Frame-Options", "ALLOWALL");
+  res.setHeader("Content-Security-Policy", "frame-ancestors *");
+  next();
+});
+
+// ===== Security Headers =====
+app.use(
+  helmet({
+    contentSecurityPolicy: false,
+    frameguard: false,
+  })
+);
+
 // ===== Middleware =====
-app.use(helmet());
 app.use(cors({ origin: "http://localhost:3000", credentials: true }));
 app.use(express.json());
 app.use(morgan("tiny"));
@@ -55,6 +72,7 @@ app.use("/api/dashboard-mhs", dashboardmhsRoutes);
 app.use("/api/cardadmin", dashboardRoutes);
 app.use("/api/verifikasi", verifikasiRoutes);
 app.use("/api/arsip-surat", arsipRoutes);
+app.use("/preview", previewRoutes);
 
 // Root Endpoint
 app.get("/", (req, res) => {

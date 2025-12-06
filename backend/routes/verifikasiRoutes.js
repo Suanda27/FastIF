@@ -1,8 +1,11 @@
 import express from "express";
-import { verifikasiSurat } from "../controllers/verifikasiController.js";
-
+import {
+  verifikasiSurat,
+  getDetailSurat,
+} from "../controllers/verifikasiController.js";
 const router = express.Router();
 
 router.post("/", verifikasiSurat);
+router.get("/:id_surat", getDetailSurat);
 
 export default router;

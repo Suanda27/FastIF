@@ -3,9 +3,8 @@
 import { useState, useEffect, useMemo } from "react";
 import { createPortal } from "react-dom";
 import { motion } from "framer-motion";
-import { FileCheck2 } from "lucide-react";
 
-import { SuratRow, Status } from "./data"; //tambahkan Status
+import { SuratRow, Status } from "./data";
 import FilterBar from "./components/FilterBar";
 import VerifikasiTable from "./components/VerifikasiTable";
 import ConfirmModal from "./components/ConfirmModal";
@@ -16,17 +15,21 @@ export default function VerifikasiSuratPage() {
   const [data, setData] = useState<SuratRow[]>([]);
   const [query, setQuery] = useState("");
   const [jenisFilter, setJenisFilter] = useState("Semua");
-  const [detailRow, setDetailRow] = useState<SuratRow | null>(null);
-  const [previewRow, setPreviewRow] = useState<SuratRow | null>(null);
+
+  const [detailRow, setDetailRow] = useState<any>(null);
+  const [previewRow, setPreviewRow] = useState<any>(null);
+
   const [confirmAction, setConfirmAction] = useState<{
     type: "accept" | "reject";
     row: SuratRow;
   } | null>(null);
+
   const [closing, setClosing] = useState(false);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => setMounted(true), []);
 
+  // ==================== AMBIL DATA TABEL ====================
   useEffect(() => {
     fetch("http://localhost:8001/api/cardadmin")
       .then((res) => res.json())
@@ -45,6 +48,23 @@ export default function VerifikasiSuratPage() {
       .catch((err) => console.error("Gagal fetch:", err));
   }, []);
 
+  // ==================== FIX DETAIL SURAT ====================
+  const handleDetail = async (row: SuratRow) => {
+    try {
+      const res = await fetch(`http://localhost:8001/api/verifikasi/${row.id}`);
+      const result = await res.json();
+
+      if (result.success) {
+        setDetailRow(result.data);
+      } else {
+        alert("Gagal memuat detail surat");
+      }
+    } catch (err) {
+      console.error("Error get detail:", err);
+    }
+  };
+
+  // ==================== ANIMASI CLOSE ====================
   const closeModal = (setter: Function) => {
     setClosing(true);
     setTimeout(() => {
@@ -53,6 +73,7 @@ export default function VerifikasiSuratPage() {
     }, 250);
   };
 
+  // ==================== VERIFIKASI ====================
   const handleConfirm = async () => {
     if (!confirmAction) return;
 
@@ -88,7 +109,7 @@ export default function VerifikasiSuratPage() {
     closeModal(setConfirmAction);
   };
 
-  // Filter pencarian
+  // ==================== FILTER DATA ====================
   const filteredData = useMemo(() => {
     const formatted = data.map((r) => ({
       ...r,
@@ -142,26 +163,24 @@ export default function VerifikasiSuratPage() {
 
       <VerifikasiTable
         data={filteredData}
-        onDetail={setDetailRow}
+        onDetail={handleDetail}
         onAccept={(row) => setConfirmAction({ type: "accept", row })}
         onReject={(row) => setConfirmAction({ type: "reject", row })}
       />
 
-      {/* === Portals === */}
+      {/* =============== DETAIL MODAL =============== */}
       {detailRow &&
         createPortal(
           <DetailModal
             row={detailRow}
             closing={closing}
             onClose={() => closeModal(setDetailRow)}
-            onPreview={(id) => {
-              const row = data.find((r) => r.id === id);
-              if (row) setPreviewRow(row);
-            }}
+            onPreview={(file) => setPreviewRow({ previewFile: file })}
           />,
           document.body
         )}
 
+      {/* =============== CONFIRM MODAL =============== */}
       {confirmAction &&
         createPortal(
           <ConfirmModal
@@ -173,6 +192,7 @@ export default function VerifikasiSuratPage() {
           document.body
         )}
 
+      {/* =============== PREVIEW MODAL =============== */}
       {previewRow &&
         createPortal(
           <PreviewModal

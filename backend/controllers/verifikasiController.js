@@ -1,5 +1,9 @@
-import { updateSuratStatus } from "../models/verifikasiModel.js";
+import {
+  updateSuratStatus,
+  getSuratDetailById,
+} from "../models/verifikasiModel.js";
 
+// Verifikasi Surat
 export const verifikasiSurat = async (req, res) => {
   let { id_surat, status } = req.body;
 
@@ -11,9 +15,9 @@ export const verifikasiSurat = async (req, res) => {
   }
 
   status = status.toLowerCase();
-  const allowedStatus = ["diproses", "diterima", "ditolak"];
+  const allowed = ["diproses", "diterima", "ditolak"];
 
-  if (!allowedStatus.includes(status)) {
+  if (!allowed.includes(status)) {
     return res.status(400).json({
       success: false,
       message: "Status tidak valid",
@@ -28,9 +32,37 @@ export const verifikasiSurat = async (req, res) => {
       message: "Status berhasil diubah",
     });
   } catch (err) {
+    console.error("Error verifikasi:", err);
     res.status(500).json({
       success: false,
       message: "Gagal mengubah status",
+    });
+  }
+};
+
+// DETAIL SURAT (UNTUK MODAL DETAIL)
+export const getDetailSurat = async (req, res) => {
+  try {
+    const { id_surat } = req.params;
+
+    const data = await getSuratDetailById(id_surat);
+
+    if (!data) {
+      return res.json({
+        success: false,
+        message: "Surat tidak ditemukan",
+      });
+    }
+
+    res.json({
+      success: true,
+      data,
+    });
+  } catch (err) {
+    console.error("Detail Error:", err);
+    res.status(500).json({
+      success: false,
+      message: "Gagal mengambil detail surat",
     });
   }
 };
