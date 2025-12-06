@@ -31,22 +31,22 @@ export default function VerifikasiSuratPage() {
 
   // ==================== AMBIL DATA TABEL ====================
   useEffect(() => {
-    fetch("http://localhost:8001/api/cardadmin")
-      .then((res) => res.json())
-      .then((result) => {
-        setData(
-          (result.dataSurat || []).map((item: any) => ({
-            id: item.id_surat,
-            nama: item.nama,
-            nim: item.nim,
-            jenis: item.jenis,
-            jurusan: item.jurusan,
-            status: item.status as Status,
-          }))
-        );
-      })
-      .catch((err) => console.error("Gagal fetch:", err));
-  }, []);
+  fetch("http://localhost:8001/api/verifikasi")
+    .then((res) => res.json())
+    .then((result) => {
+      console.log("Data dari backend:", result.data);
+      setData(
+        (result.data || []).map((item: any) => ({
+          id: item.id_surat,
+          nama: item.nama,
+          nim: item.nim,
+          jenis: item.jenis_surat,
+          status: (item.status || "diproses").toLowerCase() as Status,
+        }))
+      );
+    })
+    .catch((err) => console.error("Gagal fetch:", err));
+}, []);
 
   // ==================== FIX DETAIL SURAT ====================
   const handleDetail = async (row: SuratRow) => {
@@ -90,9 +90,6 @@ export default function VerifikasiSuratPage() {
         }),
       });
 
-      const text = await res.text();
-      console.log("Response:", res.status, text);
-
       if (!res.ok) throw new Error("Gagal update database");
 
       setData((prev) =>
@@ -109,28 +106,29 @@ export default function VerifikasiSuratPage() {
     closeModal(setConfirmAction);
   };
 
-  // ==================== FILTER DATA ====================
+  // ==================== FILTER DATA (HANYA DIPROSES) ====================
   const filteredData = useMemo(() => {
-    const formatted = data.map((r) => ({
-      ...r,
-      status: (
-        r.status === "diproses"
-          ? "Diproses"
-          : r.status === "diterima"
-          ? "Diterima"
-          : "Ditangguhkan"
-      ) as Status,
-    }));
+    return data
+      .map((r) => {
+        const statusLower = (r.status || "").toLowerCase();
+        const mappedStatus: Status =
+          statusLower === "diproses"
+            ? "Diproses"
+            : statusLower === "diterima"
+            ? "Diterima"
+            : "Ditangguhkan";
 
-    return formatted.filter((r) => {
-      const matchQuery =
-        r.nama.toLowerCase().includes(query.toLowerCase()) ||
-        r.nim.toLowerCase().includes(query.toLowerCase());
-
-      const matchJenis = jenisFilter === "Semua" || r.jenis === jenisFilter;
-
-      return matchQuery && matchJenis;
-    });
+        return { ...r, status: mappedStatus };
+      })
+      // Hanya tampilkan yang masih diproses
+      .filter((r) => r.status === "Diproses")
+      .filter((r) => {
+        const matchQuery =
+          r.nama.toLowerCase().includes(query.toLowerCase()) ||
+          r.nim.toLowerCase().includes(query.toLowerCase());
+        const matchJenis = jenisFilter === "Semua" || r.jenis === jenisFilter;
+        return matchQuery && matchJenis;
+      });
   }, [data, query, jenisFilter]);
 
   const jenisOptions = [
@@ -168,7 +166,6 @@ export default function VerifikasiSuratPage() {
         onReject={(row) => setConfirmAction({ type: "reject", row })}
       />
 
-      {/* =============== DETAIL MODAL =============== */}
       {detailRow &&
         createPortal(
           <DetailModal
@@ -180,7 +177,6 @@ export default function VerifikasiSuratPage() {
           document.body
         )}
 
-      {/* =============== CONFIRM MODAL =============== */}
       {confirmAction &&
         createPortal(
           <ConfirmModal
@@ -192,7 +188,6 @@ export default function VerifikasiSuratPage() {
           document.body
         )}
 
-      {/* =============== PREVIEW MODAL =============== */}
       {previewRow &&
         createPortal(
           <PreviewModal

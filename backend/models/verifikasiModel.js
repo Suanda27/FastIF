@@ -68,3 +68,20 @@ export const getSuratDetailById = async (id_surat) => {
     files: [base.file_surat].filter(Boolean),
   };
 };
+
+export const getSuratDiproses = () => {
+  return db.promise().query(
+    `SELECT 
+        s.id_surat,
+        s.jenis_surat,
+        s.keperluan,
+        s.tanggal_pengajuan,
+        s.status,
+        u.nama,
+        u.nim
+     FROM surat s
+     JOIN user u ON s.id_user = u.id_user
+     WHERE s.status = 'diproses'
+     ORDER BY s.tanggal_pengajuan DESC`
+  );
+};

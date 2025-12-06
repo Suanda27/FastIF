@@ -66,3 +66,23 @@ export const getDetailSurat = async (req, res) => {
     });
   }
 };
+
+import { getSuratDiproses } from "../models/verifikasiModel.js";
+
+export const getSuratUntukVerifikasi = async (req, res) => {
+  try {
+    const [data] = await getSuratDiproses();
+
+    res.json({
+      success: true,
+      data,
+    });
+
+  } catch (err) {
+    console.error("Error Fetch:", err);
+    res.status(500).json({
+      success: false,
+      message: "Gagal mengambil data verifikasi",
+    });
+  }
+};
