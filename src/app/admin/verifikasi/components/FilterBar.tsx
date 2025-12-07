@@ -49,7 +49,7 @@ export default function FilterBar({
           setQuery("");
           setJenisFilter("Semua");
         }}
-        className="text-sm px-4 py-3 bg-white rounded-full border border-gray-200 shadow-sm"
+        className="text-sm px-3 py-2 bg-gray-100 rounded-lg border border-gray-200 text-gray-700"
       >
         Reset
       </button>
