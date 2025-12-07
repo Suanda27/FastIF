@@ -29,29 +29,34 @@ export default function VerifikasiSuratPage() {
 
   useEffect(() => setMounted(true), []);
 
-  // ==================== AMBIL DATA TABEL ====================
+  // ==================== FETCH DATA ====================
   useEffect(() => {
-  fetch("http://localhost:8001/api/verifikasi")
-    .then((res) => res.json())
-    .then((result) => {
-      console.log("Data dari backend:", result.data);
-      setData(
-        (result.data || []).map((item: any) => ({
-          id: item.id_surat,
-          nama: item.nama,
-          nim: item.nim,
-          jenis: item.jenis_surat,
-          status: (item.status || "diproses").toLowerCase() as Status,
-        }))
-      );
+    fetch("http://localhost:8001/api/verifikasi", {
+      credentials: "include",
     })
-    .catch((err) => console.error("Gagal fetch:", err));
-}, []);
+      .then((res) => res.json())
+      .then((result) => {
+        console.log("Data dari backend:", result.data);
+        setData(
+          (result.data || []).map((item: any) => ({
+            id: item.id_surat,
+            nama: item.nama,
+            nim: item.nim,
+            jenis: item.jenis_surat,
+            status: (item.status || "diproses").toLowerCase() as Status,
+          }))
+        );
+      })
+      .catch((err) => console.error("Gagal fetch:", err));
+  }, []);
 
-  // ==================== FIX DETAIL SURAT ====================
+  // ==================== DETAIL SURAT ====================
   const handleDetail = async (row: SuratRow) => {
     try {
-      const res = await fetch(`http://localhost:8001/api/verifikasi/${row.id}`);
+      const res = await fetch(
+        `http://localhost:8001/api/verifikasi/${row.id}`,
+        { credentials: "include" }
+      );
       const result = await res.json();
 
       if (result.success) {
@@ -64,7 +69,7 @@ export default function VerifikasiSuratPage() {
     }
   };
 
-  // ==================== ANIMASI CLOSE ====================
+  // ==================== CLOSE ANIMATION ====================
   const closeModal = (setter: Function) => {
     setClosing(true);
     setTimeout(() => {
@@ -73,8 +78,8 @@ export default function VerifikasiSuratPage() {
     }, 250);
   };
 
-  // ==================== VERIFIKASI ====================
-  const handleConfirm = async () => {
+  // ==================== VERIFIKASI (PAKAI CATATAN) ====================
+  const handleConfirm = async (catatan: string) => {
     if (!confirmAction) return;
 
     const newStatus =
@@ -84,14 +89,17 @@ export default function VerifikasiSuratPage() {
       const res = await fetch("http://localhost:8001/api/verifikasi", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({
           id_surat: confirmAction.row.id,
           status: newStatus,
+          catatan: catatan || null, // ⬅️ kirim catatan
         }),
       });
 
       if (!res.ok) throw new Error("Gagal update database");
 
+      // Update UI
       setData((prev) =>
         prev.map((r) =>
           r.id === confirmAction.row.id
@@ -106,7 +114,7 @@ export default function VerifikasiSuratPage() {
     closeModal(setConfirmAction);
   };
 
-  // ==================== FILTER DATA (HANYA DIPROSES) ====================
+  // ==================== FILTER DATA ====================
   const filteredData = useMemo(() => {
     return data
       .map((r) => {
@@ -120,7 +128,6 @@ export default function VerifikasiSuratPage() {
 
         return { ...r, status: mappedStatus };
       })
-      // Hanya tampilkan yang masih diproses
       .filter((r) => r.status === "Diproses")
       .filter((r) => {
         const matchQuery =
@@ -182,7 +189,7 @@ export default function VerifikasiSuratPage() {
           <ConfirmModal
             action={confirmAction.type}
             onClose={() => closeModal(setConfirmAction)}
-            onConfirm={handleConfirm}
+            onConfirm={(catatan) => handleConfirm(catatan)}
             closing={closing}
           />,
           document.body

@@ -1,11 +1,24 @@
 import {
   updateSuratStatus,
   getSuratDetailById,
+  insertVerifikasiLog,
+  getSuratDiproses,
 } from "../models/verifikasiModel.js";
 
-// Verifikasi Surat
+// VERIFIKASI SURAT
 export const verifikasiSurat = async (req, res) => {
-  let { id_surat, status } = req.body;
+  let { id_surat, status, catatan } = req.body;
+
+  // Pastikan user login dan role admin
+  if (!req.session.user || req.session.user.role !== "admin") {
+    return res.status(401).json({
+      success: false,
+      message: "Unauthorized: hanya admin yang dapat memverifikasi",
+    });
+  }
+
+  // Ambil id admin dari session
+  const id_admin = req.session.user.id_user;
 
   if (!id_surat || !status) {
     return res.status(400).json({
@@ -16,7 +29,6 @@ export const verifikasiSurat = async (req, res) => {
 
   status = status.toLowerCase();
   const allowed = ["diproses", "diterima", "ditolak"];
-
   if (!allowed.includes(status)) {
     return res.status(400).json({
       success: false,
@@ -25,11 +37,15 @@ export const verifikasiSurat = async (req, res) => {
   }
 
   try {
+    // UPDATE STATUS
     await updateSuratStatus(id_surat, status);
+
+    // INSERT LOG VERIFIKASI
+    await insertVerifikasiLog(id_surat, id_admin, status, catatan || null);
 
     res.json({
       success: true,
-      message: "Status berhasil diubah",
+      message: "Status berhasil diubah & log tercatat",
     });
   } catch (err) {
     console.error("Error verifikasi:", err);
@@ -40,7 +56,7 @@ export const verifikasiSurat = async (req, res) => {
   }
 };
 
-// DETAIL SURAT (UNTUK MODAL DETAIL)
+// DETAIL SURAT
 export const getDetailSurat = async (req, res) => {
   try {
     const { id_surat } = req.params;
@@ -67,8 +83,7 @@ export const getDetailSurat = async (req, res) => {
   }
 };
 
-import { getSuratDiproses } from "../models/verifikasiModel.js";
-
+// LIST SURAT DIPROSES
 export const getSuratUntukVerifikasi = async (req, res) => {
   try {
     const [data] = await getSuratDiproses();
@@ -77,7 +92,6 @@ export const getSuratUntukVerifikasi = async (req, res) => {
       success: true,
       data,
     });
-
   } catch (err) {
     console.error("Error Fetch:", err);
     res.status(500).json({

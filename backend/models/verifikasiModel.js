@@ -1,16 +1,32 @@
 import db from "../config/db.js";
 
-// Verifikasi Surat - Update Status
+// Update Status Surat
 export const updateSuratStatus = (id_surat, status) => {
+  return db
+    .promise()
+    .query(`UPDATE surat SET status = ? WHERE id_surat = ?`, [
+      status,
+      id_surat,
+    ]);
+};
+
+// INSERT LOG VERIFIKASI (BARU)
+export const insertVerifikasiLog = (
+  id_surat,
+  id_user,
+  status_verifikasi,
+  catatan = null
+) => {
   return db.promise().query(
-    `UPDATE surat SET status = ? WHERE id_surat = ?`,
-    [status, id_surat]
+    `INSERT INTO verifikasi 
+      (id_surat, id_user, tanggal_verifikasi, catatan, status_verifikasi)
+     VALUES (?, ?, NOW(), ?, ?)`,
+    [id_surat, id_user, catatan, status_verifikasi]
   );
 };
 
-// Detail Surat
+// DETAIL SURAT
 export const getSuratDetailById = async (id_surat) => {
-  // Ambil data dasar surat + user
   const [surat] = await db.promise().query(
     `SELECT 
         s.id_surat,
@@ -24,21 +40,17 @@ export const getSuratDetailById = async (id_surat) => {
         u.jurusan
      FROM surat s
      JOIN user u ON s.id_user = u.id_user
-     WHERE s.id_surat = ?
-    `,
+     WHERE s.id_surat = ?`,
     [id_surat]
   );
 
   if (surat.length === 0) return null;
-
   const base = surat[0];
 
-  // Ambil data pengajuan surat izin kehadiran
+  // Jika surat izin
   if (base.jenis_surat === "Surat Izin Kehadiran") {
     const [izin] = await db.promise().query(
-      `SELECT *
-       FROM form_surat_izin
-       WHERE id_surat = ?`,
+      `SELECT * FROM form_surat_izin WHERE id_surat = ?`,
       [id_surat]
     );
 
@@ -54,11 +66,9 @@ export const getSuratDetailById = async (id_surat) => {
     };
   }
 
-  // Ambil data pengajuan surat lainnya
+  // Jika surat survei
   const [pengajuan] = await db.promise().query(
-    `SELECT *
-     FROM pengajuan_surat
-     WHERE id_surat = ?`,
+    `SELECT * FROM pengajuan_surat WHERE id_surat = ?`,
     [id_surat]
   );
 
@@ -69,6 +79,7 @@ export const getSuratDetailById = async (id_surat) => {
   };
 };
 
+// DATA SURAT DIPROSES
 export const getSuratDiproses = () => {
   return db.promise().query(
     `SELECT 

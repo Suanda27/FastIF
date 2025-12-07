@@ -40,7 +40,7 @@ export const login = async (req, res) => {
       id_user: user.id_user,
       nama: user.nama,
       email: user.email,
-      role: user.role || "mahasiswa",
+      role: user.role,
     };
 
     console.log("✅ Login berhasil untuk:", user.nama);
