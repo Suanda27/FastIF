@@ -58,7 +58,6 @@ const Arsip = {
         // SURAT SURVEI
         else if (r.jenis_surat === "Surat Survey") {
           files = [
-            r.ps_file_surat,
             r.surat_file,
           ].filter(Boolean);
         }

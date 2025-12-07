@@ -148,7 +148,7 @@ export default function DetailModal({
                     </a>
                     <button
                       onClick={() => onPreview(f)}
-                      className="text-xs px-3 py-1 border border-gray-300 rounded-md hover:bg-gray-100 transition"
+                      className="text-xs px-3 py-1 border border-gray-400 rounded-md bg-gray-100 text-gray-800 hover:bg-gray-200 transition"
                     >
                       Preview
                     </button>
