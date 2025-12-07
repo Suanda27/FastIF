@@ -48,13 +48,13 @@ export default function DetailModal({
             </div>
           </div>
 
-          {/* ===================== SURAT IZIN KHUSUS ===================== */}
+          {/* ===================== SURAT IZIN ===================== */}
           {row.jenis_surat === "Surat Izin Kehadiran" && (
             <>
               <div className="my-8 border-t border-gray-300" />
 
               <h4 className="text-lg font-semibold text-gray-700 mb-4">
-                Informasi Khusus Surat Izin
+                Informasi Surat Izin
               </h4>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
