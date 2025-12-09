@@ -7,6 +7,16 @@ import { Eye } from "lucide-react";
 import BadgeStatus from "./BadgeStatus";
 import dynamic from "next/dynamic";
 
+function formatTanggalIndonesia(tgl: string) {
+  if (!tgl) return "-";
+  return new Date(tgl).toLocaleDateString("id-ID", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+}
+
+
 const DetailModal = dynamic(() => import("./DetailModal"), { ssr: false });
 
 interface TableStatusProps {
@@ -72,7 +82,7 @@ export default function TableStatus({ suratList }: TableStatusProps) {
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="text-sm text-gray-600">{surat.tanggal}</span>
+                    <span className="text-sm font-medium"style={{ color: "#0A1C56" }}>{formatTanggalIndonesia(surat.tanggal)}</span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <BadgeStatus status={surat.status} />
@@ -132,7 +142,7 @@ export default function TableStatus({ suratList }: TableStatusProps) {
 
               <div>
                 <p className="text-xs text-gray-500 mb-1">Tanggal</p>
-                <p className="text-sm text-gray-600">{surat.tanggal}</p>
+                <p className="text-sm font-medium" style={{ color: "#0A1C56" }}> {formatTanggalIndonesia(surat.tanggal)}</p>
               </div>
 
               <motion.button

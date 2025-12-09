@@ -2,20 +2,23 @@
 
 import { motion } from 'framer-motion';
 import { Eye } from 'lucide-react';
-
-interface SuratData {
-  id: string;
-  nomorSurat: string;
-  jenisSurat: string;
-  tanggal: string;
-  status: 'Selesai' | 'Diproses' | 'Ditangguhkan';
-  keterangan?: string;
-}
+import { SuratData } from '../page';
 
 interface TableRiwayatProps {
   data: SuratData[];
   onDetailClick: (surat: SuratData) => void;
 }
+
+const formatTanggal = (tanggal: string) => {
+  const date = new Date(tanggal);
+  if (isNaN(date.getTime())) return 'Tanggal tidak valid';
+
+  return date.toLocaleDateString('id-ID', {
+    day: '2-digit',
+    month: 'long',
+    year: 'numeric'
+  });
+};
 
 const getStatusClasses = (status: SuratData['status']) => {
   switch (status) {
@@ -33,6 +36,7 @@ const getStatusClasses = (status: SuratData['status']) => {
 export default function TableRiwayat({ data, onDetailClick }: TableRiwayatProps) {
   return (
     <>
+      {/* DESKTOP */}
       <div className="hidden lg:block bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
         <div className="overflow-x-auto">
           <table className="w-full" style={{ fontFamily: 'Roboto, sans-serif' }}>
@@ -55,6 +59,7 @@ export default function TableRiwayat({ data, onDetailClick }: TableRiwayatProps)
                 </th>
               </tr>
             </thead>
+
             <tbody className="divide-y divide-gray-200">
               {data.map((surat, index) => (
                 <motion.tr
@@ -67,10 +72,15 @@ export default function TableRiwayat({ data, onDetailClick }: TableRiwayatProps)
                   <td className="px-6 py-4 text-sm font-medium" style={{ color: '#0A1C56' }}>
                     {surat.nomorSurat}
                   </td>
+
                   <td className="px-6 py-4 text-sm font-semibold" style={{ color: '#0A1C56' }}>
                     {surat.jenisSurat}
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-700">{surat.tanggal}</td>
+
+                  <td className="px-6 py-4 text-sm font-medium" style={{ color: '#0A1C56' }}>
+                    {formatTanggal(surat.tanggal)}
+                  </td>
+
                   <td className="px-6 py-4">
                     <span
                       className={`inline-flex items-center px-3 py-1.5 rounded-full text-xs sm:text-sm font-medium ${getStatusClasses(
@@ -80,6 +90,7 @@ export default function TableRiwayat({ data, onDetailClick }: TableRiwayatProps)
                       {surat.status}
                     </span>
                   </td>
+
                   <td className="px-6 py-4 text-center">
                     <motion.button
                       whileHover={{ scale: 1.05 }}
@@ -103,6 +114,7 @@ export default function TableRiwayat({ data, onDetailClick }: TableRiwayatProps)
         </div>
       </div>
 
+      {/* MOBILE */}
       <div className="lg:hidden space-y-4">
         {data.map((surat, index) => (
           <motion.div
@@ -121,8 +133,9 @@ export default function TableRiwayat({ data, onDetailClick }: TableRiwayatProps)
                     {surat.nomorSurat}
                   </p>
                 </div>
+
                 <span
-                  className={`inline-flex items-center px-3 sm:px-4 py-1 sm:py-1.5 rounded-full text-xs sm:text-sm font-medium ${getStatusClasses(
+                  className={`inline-flex items-center px-3 py-1.5 rounded-full text-xs sm:text-sm font-medium ${getStatusClasses(
                     surat.status
                   )}`}
                 >
@@ -139,7 +152,9 @@ export default function TableRiwayat({ data, onDetailClick }: TableRiwayatProps)
 
               <div>
                 <p className="text-xs text-gray-500 mb-1">Tanggal</p>
-                <p className="text-sm text-gray-700">{surat.tanggal}</p>
+                <p className="text-sm font-medium" style={{ color: '#0A1C56' }}>
+                  {formatTanggal(surat.tanggal)}
+                </p>
               </div>
 
               <motion.button
@@ -157,7 +172,9 @@ export default function TableRiwayat({ data, onDetailClick }: TableRiwayatProps)
         ))}
 
         <div className="bg-white rounded-xl shadow-lg border border-gray-200 px-4 py-3">
-          <p className="text-sm text-gray-600 text-center">Menampilkan 1-{data.length} dari {data.length} hasil</p>
+          <p className="text-sm text-gray-600 text-center">
+            Menampilkan 1-{data.length} dari {data.length} hasil
+          </p>
         </div>
       </div>
     </>

@@ -58,7 +58,7 @@ export default function StatusSuratPage() {
   id: String(item.id_surat),
   nomorSurat: `FASTIF-${String(item.id_surat).padStart(4, "0")}`,
   jenisSurat: item.jenis_surat,
-  tanggal: formatTanggalIndonesia(item.tanggal_pengajuan),
+  tanggal: item.tanggal_pengajuan,
   status:
     item.status === "diterima"
       ? "Selesai"

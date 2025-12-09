@@ -8,13 +8,16 @@ import TableRiwayat from './components/TableRiwayat';
 import ModalDetail from './components/ModalDetail';
 import StudentHeader from '../components/StudentHeader';
 
-interface SuratData {
-  id: string;
+export interface SuratData {
+  id: number;
   nomorSurat: string;
   jenisSurat: string;
   tanggal: string;
   status: 'Selesai' | 'Diproses' | 'Ditangguhkan';
+  keterangan?: string;
+  file?: string;
 }
+
 
 const jenisSuratOptions = [
   'Semua Jenis Surat',
@@ -36,17 +39,14 @@ export default function RiwayatSuratPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedSurat, setSelectedSurat] = useState<SuratData | null>(null);
 
-  // DATA DARI BACKEND
   const [dataSurat, setDataSurat] = useState<SuratData[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // ============================
-  // FETCH USER + RIWAYAT SURAT
-  // ============================
+  // FETCH USER + RIWAYAT
   useEffect(() => {
     async function loadAll() {
       try {
-        // Ambil user login
+        // Ambil data login
         const userRes = await fetch("http://localhost:8001/api/me", {
           credentials: "include",
         });
@@ -63,17 +63,8 @@ export default function RiwayatSuratPage() {
         );
 
         const suratData = await suratRes.json();
+        setDataSurat(suratData.data);
 
-        // Mapping ke format FE
-        const mapped: SuratData[] = suratData.data.map((item: any) => ({
-          id: String(item.id_surat),
-          nomorSurat: formatNomorSurat(item.id_surat),
-          jenisSurat: formatJenis(item.jenis_surat),
-          tanggal: item.tanggal,
-          status: formatStatus(item.status)
-        }));
-
-        setDataSurat(mapped);
       } catch (err) {
         console.error(err);
       } finally {
@@ -84,25 +75,7 @@ export default function RiwayatSuratPage() {
     loadAll();
   }, []);
 
-  // Format nomor surat FE
-  const formatNomorSurat = (id: number) =>
-    `2025/09/${String(id).padStart(4, '0')}`;
-
-  // Format jenis
-  const formatJenis = (txt: string) =>
-    txt.replace(/\b\w/g, (c) => c.toUpperCase()).replace(/_/g, ' ');
-
-  // Format status dari DB → FE
-  const formatStatus = (st: string) => {
-    if (st === 'diterima') return 'Selesai';
-    if (st === 'pending') return 'Diproses';
-    if (st === 'ditolak') return 'Ditangguhkan';
-    return 'Diproses';
-  };
-
-  // ============================
-  // FILTERING (TIDAK DIUBAH)
-  // ============================
+  // FILTERING
   const filteredData = useMemo(() => {
     return dataSurat.filter((surat) => {
       const matchesSearch =
@@ -142,10 +115,14 @@ export default function RiwayatSuratPage() {
       <main className="flex-1 lg:ml-0">
         <StudentHeader />
 
-        <div className="p-4 sm:p-6 lg:p-8 pt-16 lg:pt-6">
+        <div className="p-4 sm:p-6 lg:pt-6 pt-16">
 
           {/* HEADER */}
-          <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="mb-6 lg:mb-8">
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-6 lg:mb-8"
+          >
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
               <div>
                 <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#0A1C56] mb-1 lg:mb-2">
@@ -157,30 +134,31 @@ export default function RiwayatSuratPage() {
           </motion.div>
 
           {/* FILTER */}
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
             className="bg-white rounded-xl lg:rounded-2xl shadow-lg p-4 sm:p-5 lg:p-6 mb-4 lg:mb-6"
           >
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
 
-              {/* SEARCH */}
               <div className="relative sm:col-span-2 lg:col-span-1">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 lg:w-5 lg:h-5 text-gray-400" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <input
                   type="text"
                   placeholder="Cari Surat..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-9 lg:pl-10 pr-4 py-2.5 lg:py-3 text-sm lg:text-base bg-gray-50 border border-gray-200 rounded-lg"
+                  className="w-full pl-9 pr-4 py-2.5 bg-white border border-gray-300 text-[#0A1C56] placeholder-gray-400 rounded-lg focus:ring-2 focus:ring-blue-400"
                 />
               </div>
 
-              {/* JENIS */}
               <div className="relative">
-                <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 lg:w-5 lg:h-5 text-gray-400" />
+                <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <select
                   value={selectedJenisSurat}
                   onChange={(e) => setSelectedJenisSurat(e.target.value)}
-                  className="w-full pl-9 lg:pl-10 pr-8 py-2.5 lg:py-3 bg-gray-50 border border-gray-200 rounded-lg"
+                  className="w-full pl-9 pr-8 py-2.5 bg-white border border-gray-300 text-[#0A1C56] rounded-lg focus:ring-2 focus:ring-blue-400"
                 >
                   {jenisSuratOptions.map((opt) => (
                     <option key={opt}>{opt}</option>
@@ -188,13 +166,12 @@ export default function RiwayatSuratPage() {
                 </select>
               </div>
 
-              {/* STATUS */}
               <div className="relative">
-                <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 lg:w-5 lg:h-5 text-gray-400" />
+                <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <select
                   value={selectedStatus}
                   onChange={(e) => setSelectedStatus(e.target.value)}
-                  className="w-full pl-9 lg:pl-10 pr-8 py-2.5 lg:py-3 bg-gray-50 border border-gray-200 rounded-lg"
+                  className="w-full pl-9 pr-8 py-2.5 bg-white border border-gray-300 text-[#0A1C56] rounded-lg focus:ring-2 focus:ring-blue-400"
                 >
                   {statusOptions.map((opt) => (
                     <option key={opt}>{opt}</option>
@@ -202,14 +179,13 @@ export default function RiwayatSuratPage() {
                 </select>
               </div>
 
-              {/* DATE */}
               <div className="relative">
-                <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 lg:w-5 lg:h-5 text-gray-400" />
+                <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <input
                   type="date"
                   value={selectedDate}
                   onChange={(e) => setSelectedDate(e.target.value)}
-                  className="w-full pl-9 lg:pl-10 pr-4 py-2.5 lg:py-3 bg-gray-50 border border-gray-200 rounded-lg"
+                  className="w-full pl-9 pr-4 py-2.5 bg-white border border-gray-300 text-[#0A1C56] placeholder-gray-400 rounded-lg focus:ring-2 focus:ring-blue-400"
                 />
               </div>
 
@@ -217,7 +193,11 @@ export default function RiwayatSuratPage() {
           </motion.div>
 
           {/* TABLE */}
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+          >
             <TableRiwayat data={filteredData} onDetailClick={handleDetailClick} />
           </motion.div>
 
