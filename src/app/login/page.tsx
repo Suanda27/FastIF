@@ -54,7 +54,7 @@ export default function LoginPage() {
   const router = useRouter();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false); // ⬅️ Tambahkan di sini
+  const [loading, setLoading] = useState(false); 
   const reduce = useReducedMotion();
 
   const handleSubmit = async (e: FormEvent) => {
@@ -66,7 +66,7 @@ export default function LoginPage() {
         headers: {
           "Content-Type": "application/json",
         },
-        credentials: "include", // penting buat kirim session cookie
+        credentials: "include", // buat kirim session cookienya
         body: JSON.stringify({
           username,
           password,
@@ -82,7 +82,7 @@ export default function LoginPage() {
         return;
       }
 
-      // ✅ Jika login berhasil
+      // kalo login berhasil
       if (data.user.role === "admin") {
         router.push("/admin/dashboard");
       } else if (data.user.role === "mahasiswa") {
@@ -169,7 +169,7 @@ export default function LoginPage() {
           </form>
 
           <p className="text-center text-sm text-gray-600 mt-6">
-            Belum punya akun? Hubungi TU.
+            Belum punya akun? <Link href="/register" className="text-[#0A1C56] font-medium hover:underline">Daftar disini</Link>.
           </p>
         </motion.div>
       </main>
