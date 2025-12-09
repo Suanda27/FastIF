@@ -1,6 +1,6 @@
 "use client";
 
-import { LucideIcon, FileText } from "lucide-react";
+import { LucideIcon, FileText, Trash2 } from "lucide-react";
 
 interface FormulirCardProps {
   icon?: LucideIcon; 
@@ -11,6 +11,7 @@ interface FormulirCardProps {
   fileUploaded: boolean;
   templateUploaded: boolean;
   onDeleteFile: (isTemplate?: boolean) => void;
+  onDeleteTemplate: () => void;
 }
 
 export default function FormulirCard({
@@ -22,6 +23,7 @@ export default function FormulirCard({
   fileUploaded,
   templateUploaded,
   onDeleteFile,
+  onDeleteTemplate,
 }: FormulirCardProps) {
   return (
     <div className="border border-gray-200 rounded-lg shadow-sm p-5 bg-white flex flex-col gap-4 transition-all hover:shadow-md">
@@ -103,6 +105,13 @@ export default function FormulirCard({
           </button>
         )}
       </div>
+      <button
+        onClick={onDeleteTemplate}
+        className="bg-red-600 hover:bg-red-700 text-white text-sm rounded-md py-2 mt-2 flex items-center justify-center gap-2"
+      >
+        <Trash2 size={16} />
+        Hapus Template
+      </button>
     </div>
   );
 }

@@ -1,18 +1,29 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { X, Clock } from "lucide-react";
-import { SuratRow } from "../data";
+import { X } from "lucide-react";
 
 export default function PreviewModal({
-  row,
+  file,
   onClose,
   closing,
 }: {
-  row: SuratRow;
+  file: string;
   onClose: () => void;
   closing?: boolean;
 }) {
+  // Detect extension
+  const ext = (file || "").split(".").pop()?.toLowerCase() || "";
+
+  // URL berbeda untuk tipe file IMAGE
+  const url =
+    ext === "pdf" || ["doc", "docx"].includes(ext)
+      ? `http://localhost:8001/uploads/${encodeURIComponent(file)}`
+      : `http://localhost:8001/preview/${encodeURIComponent(file)}`;
+
+  const isImage = ["jpg", "jpeg", "png", "gif", "webp", "svg"].includes(ext);
+  const isPdf = ext === "pdf";
+
   return (
     <div
       onClick={onClose}
@@ -31,7 +42,7 @@ export default function PreviewModal({
           opacity: closing ? 0 : 1,
         }}
         transition={{ duration: 0.25 }}
-        className="relative bg-white rounded-2xl shadow-2xl w-[95%] max-w-5xl p-8 border border-gray-100"
+        className="relative bg-white rounded-2xl shadow-2xl w-[95%] max-w-5xl p-4 border border-gray-100"
       >
         {/* Tombol Tutup */}
         <button
@@ -43,16 +54,39 @@ export default function PreviewModal({
 
         {/* Header */}
         <h2 className="text-xl font-semibold text-gray-800 mb-4">
-          Preview Surat:{" "}
-          <span className="text-blue-600">{row.files?.[0] || "-"}</span>
+          Preview Surat: <span className="text-blue-600">{file}</span>
         </h2>
 
         {/* Konten Preview */}
-        <div className="w-full h-[70vh] bg-gray-50 border border-gray-200 rounded flex items-center justify-center">
-          <div className="text-gray-500 text-center">
-            <p className="mb-3 text-sm">Preview file belum tersedia (dummy)</p>
-            <Clock className="w-5 h-5 mx-auto" />
-          </div>
+        <div className="w-full h-[70vh] bg-gray-50 border border-gray-200 rounded overflow-hidden">
+          {isPdf ? (
+            <iframe
+              title={file}
+              src={url}
+              className="w-full h-full"
+              style={{ border: "none" }}
+            />
+          ) : isImage ? (
+            <iframe
+              title={file}
+              src={url}
+              className="w-full h-full"
+              style={{ border: "none" }}
+            />
+          ) : (
+            <div className="text-center p-6">
+              <p className="mb-3 text-sm text-gray-600">
+                Tidak dapat menampilkan preview untuk tipe file ini.
+              </p>
+              <a
+                href={url}
+                download
+                className="inline-block px-4 py-2 bg-blue-500 text-white rounded-md"
+              >
+                Download {file}
+              </a>
+            </div>
+          )}
         </div>
       </motion.div>
     </div>

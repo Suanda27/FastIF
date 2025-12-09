@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 29, 2025 at 08:45 PM
+-- Generation Time: Dec 08, 2025 at 12:55 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -30,8 +30,10 @@ SET time_zone = "+00:00";
 CREATE TABLE `form_surat_izin` (
   `id_form_izin` int(11) NOT NULL,
   `id_surat` int(11) DEFAULT NULL,
-  `nama_nohp_orangtua` varchar(20) DEFAULT NULL,
+  `nama_orangtua` varchar(100) DEFAULT NULL,
+  `nohp_orangtua` varchar(20) DEFAULT NULL,
   `kelas_perkuliahan` varchar(20) DEFAULT NULL,
+  `nama_dosen_wali` varchar(100) DEFAULT NULL,
   `jenis_perizinan` varchar(50) DEFAULT NULL,
   `tanggal_mulai` date DEFAULT NULL,
   `tanggal_selesai` date DEFAULT NULL,
@@ -46,8 +48,8 @@ CREATE TABLE `form_surat_izin` (
 -- Dumping data for table `form_surat_izin`
 --
 
-INSERT INTO `form_surat_izin` (`id_form_izin`, `id_surat`, `nama_nohp_orangtua`, `kelas_perkuliahan`, `jenis_perizinan`, `tanggal_mulai`, `tanggal_selesai`, `file_chat_dosen_wali`, `file_chat_dosen_pengajar`, `file_pendukung`, `file_surat`, `created_at`) VALUES
-(5, 24, 'test status', 'test status', 'Izin Sakit', '2025-11-30', '2025-11-30', '1764444395946-BPJS_Ketenagakerjaan.jpg', '1764444395949-Foto.jpg', '1764444395950-BPJS_Kesehatan.pdf', '1764444395944-BPJS_Kesehatan.pdf', '2025-11-30 02:26:35');
+INSERT INTO `form_surat_izin` (`id_form_izin`, `id_surat`, `nama_orangtua`, `nohp_orangtua`, `kelas_perkuliahan`, `nama_dosen_wali`, `jenis_perizinan`, `tanggal_mulai`, `tanggal_selesai`, `file_chat_dosen_wali`, `file_chat_dosen_pengajar`, `file_pendukung`, `file_surat`, `created_at`) VALUES
+(15, 42, 'Zam Zami', '082391189882', 'RPL', 'Dwi Eli', 'Izin Shift Kerja', '2025-12-08', '2025-12-09', '1764985389307-Foto.jpg', '1764985389308-KK.jpg', '1764985389321-KK.jpg', '1764985389281-CV_dan_Permohonan_Lamaran_Kerja_.pdf', '2025-12-06 08:43:09');
 
 -- --------------------------------------------------------
 
@@ -63,6 +65,13 @@ CREATE TABLE `pengajuan_surat` (
   `deskripsi` text DEFAULT NULL,
   `created_at` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `pengajuan_surat`
+--
+
+INSERT INTO `pengajuan_surat` (`id_pengajuan`, `id_surat`, `keperluan`, `file_surat`, `deskripsi`, `created_at`) VALUES
+(10, 43, 'Untuk Magang', '1764985433497-Surat_Pengalaman_M_Ilham_TAP.pdf', NULL, '2025-12-06 08:43:53');
 
 -- --------------------------------------------------------
 
@@ -88,7 +97,8 @@ CREATE TABLE `surat` (
 --
 
 INSERT INTO `surat` (`id_surat`, `id_user`, `id_template`, `jenis_surat`, `tanggal_pengajuan`, `status`, `keterangan`, `created_at`, `keperluan`, `file_surat`) VALUES
-(24, 4, 1, 'Surat Izin Kehadiran', '2025-11-30 02:26:35', 'diterima', NULL, '2025-11-30 02:26:35', NULL, NULL);
+(42, 4, 13, 'Surat Izin Kehadiran', '2025-12-06 08:43:09', 'diproses', NULL, '2025-12-06 08:43:09', 'Izin Shift Kerja', '1764985389281-CV_dan_Permohonan_Lamaran_Kerja_.pdf'),
+(43, 1, 12, 'Surat Survey', '2025-12-06 08:43:53', 'diproses', NULL, '2025-12-06 08:43:53', 'Untuk Magang', '1764985433497-Surat_Pengalaman_M_Ilham_TAP.pdf');
 
 -- --------------------------------------------------------
 
@@ -109,10 +119,10 @@ CREATE TABLE `template_surat` (
 --
 
 INSERT INTO `template_surat` (`id_template`, `nama_template`, `deskripsi`, `file_template`, `file_contoh`) VALUES
-(1, 'Surat Izin Kehadiran', NULL, NULL, NULL),
-(2, 'Surat Survey', NULL, NULL, NULL),
-(3, 'Surat Pengantar', NULL, NULL, NULL),
-(4, 'Surat Izin Magang', NULL, NULL, NULL);
+(12, 'Surat Survei', NULL, NULL, NULL),
+(13, 'Izin Perkuliahan', NULL, NULL, NULL),
+(15, 'Surat Izin Magang', NULL, NULL, NULL),
+(16, 'Surat Pengantar', NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -214,25 +224,25 @@ ALTER TABLE `verifikasi`
 -- AUTO_INCREMENT for table `form_surat_izin`
 --
 ALTER TABLE `form_surat_izin`
-  MODIFY `id_form_izin` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id_form_izin` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `pengajuan_surat`
 --
 ALTER TABLE `pengajuan_surat`
-  MODIFY `id_pengajuan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id_pengajuan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `surat`
 --
 ALTER TABLE `surat`
-  MODIFY `id_surat` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `id_surat` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
 
 --
 -- AUTO_INCREMENT for table `template_surat`
 --
 ALTER TABLE `template_surat`
-  MODIFY `id_template` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id_template` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `user`
@@ -244,7 +254,7 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT for table `verifikasi`
 --
 ALTER TABLE `verifikasi`
-  MODIFY `id_verifikasi` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id_verifikasi` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- Constraints for dumped tables

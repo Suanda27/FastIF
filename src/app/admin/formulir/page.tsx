@@ -151,6 +151,27 @@ export default function FormulirSuratPage() {
     }
   };
 
+  // -------------------------------------------------
+  //  🗑️ HAPUS TEMPLATE SURAT (baru)
+  // -------------------------------------------------
+  const deleteTemplate = async (id: number) => {
+    if (!confirm("Hapus template ini beserta semua file?")) return;
+
+    try {
+      const res = await fetch(`${API_URL}/formulir/${id}`, {
+        method: "DELETE",
+      });
+
+      const data = await res.json();
+      if (!data.success) throw new Error();
+
+      showToast("🗑️ Template berhasil dihapus!", "success");
+      fetchTemplates();
+    } catch (err) {
+      showToast("❌ Gagal menghapus template!", "error");
+    }
+  };
+
   if (!isMounted) return null;
 
   return (
@@ -188,6 +209,7 @@ export default function FormulirSuratPage() {
             onDeleteFile={(isTemplate?: boolean) =>
               handleDeleteFile(t.id_template, isTemplate)
             }
+            onDeleteTemplate={() => deleteTemplate(t.id_template)} // <-- tambahan
           />
         ))}
       </div>

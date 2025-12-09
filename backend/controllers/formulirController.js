@@ -7,6 +7,7 @@ import {
   upsertTemplateFile,
   getTemplateFile,
   deleteTemplateFileField,
+  deleteTemplateModel,
 } from "../models/formulirModel.js";
 
 export const createTemplate = async (req, res) => {
@@ -111,6 +112,52 @@ export const deleteTemplateFile = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Gagal menghapus file",
+    });
+  }
+};
+
+export const deleteTemplate = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Ambil data template untuk mendapatkan nama file yang harus dihapus
+    const template = await getTemplateById(id);
+
+    if (!template) {
+      return res.status(404).json({
+        success: false,
+        message: "Template tidak ditemukan",
+      });
+    }
+
+    // Hapus file TEMPLATE
+    if (template.file_template) {
+      const templatePath = path.join("uploads", template.file_template);
+      if (fs.existsSync(templatePath)) {
+        fs.unlinkSync(templatePath);
+      }
+    }
+
+    // Hapus file CONTOH
+    if (template.file_contoh) {
+      const contohPath = path.join("uploads", template.file_contoh);
+      if (fs.existsSync(contohPath)) {
+        fs.unlinkSync(contohPath);
+      }
+    }
+
+    // Hapus row dari database
+    await deleteTemplateModel(id);
+
+    res.json({
+      success: true,
+      message: "Template berhasil dihapus",
+    });
+  } catch (err) {
+    console.error("DELETE TEMPLATE ERROR:", err);
+    res.status(500).json({
+      success: false,
+      message: "Gagal menghapus template",
     });
   }
 };

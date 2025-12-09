@@ -3,9 +3,8 @@
 import { useState, useEffect, useMemo } from "react";
 import { createPortal } from "react-dom";
 import { motion } from "framer-motion";
-import { FileCheck2 } from "lucide-react";
 
-import { SuratRow, Status } from "./data"; //tambahkan Status
+import { SuratRow, Status } from "./data";
 import FilterBar from "./components/FilterBar";
 import VerifikasiTable from "./components/VerifikasiTable";
 import ConfirmModal from "./components/ConfirmModal";
@@ -16,35 +15,61 @@ export default function VerifikasiSuratPage() {
   const [data, setData] = useState<SuratRow[]>([]);
   const [query, setQuery] = useState("");
   const [jenisFilter, setJenisFilter] = useState("Semua");
-  const [detailRow, setDetailRow] = useState<SuratRow | null>(null);
-  const [previewRow, setPreviewRow] = useState<SuratRow | null>(null);
+
+  const [detailRow, setDetailRow] = useState<any>(null);
+  const [previewRow, setPreviewRow] = useState<any>(null);
+
   const [confirmAction, setConfirmAction] = useState<{
     type: "accept" | "reject";
     row: SuratRow;
   } | null>(null);
+
   const [closing, setClosing] = useState(false);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => setMounted(true), []);
 
+  // ==================== FETCH DATA ====================
   useEffect(() => {
-    fetch("http://localhost:8001/api/cardadmin")
+    fetch("http://localhost:8001/api/verifikasi", {
+      credentials: "include",
+    })
       .then((res) => res.json())
       .then((result) => {
+        console.log("Data dari backend:", result.data);
         setData(
-          (result.dataSurat || []).map((item: any) => ({
+          (result.data || []).map((item: any) => ({
             id: item.id_surat,
             nama: item.nama,
             nim: item.nim,
-            jenis: item.jenis,
-            jurusan: item.jurusan,
-            status: item.status as Status,
+            jenis: item.jenis_surat,
+            status: (item.status || "diproses").toLowerCase() as Status,
           }))
         );
       })
       .catch((err) => console.error("Gagal fetch:", err));
   }, []);
 
+  // ==================== DETAIL SURAT ====================
+  const handleDetail = async (row: SuratRow) => {
+    try {
+      const res = await fetch(
+        `http://localhost:8001/api/verifikasi/${row.id}`,
+        { credentials: "include" }
+      );
+      const result = await res.json();
+
+      if (result.success) {
+        setDetailRow(result.data);
+      } else {
+        alert("Gagal memuat detail surat");
+      }
+    } catch (err) {
+      console.error("Error get detail:", err);
+    }
+  };
+
+  // ==================== CLOSE ANIMATION ====================
   const closeModal = (setter: Function) => {
     setClosing(true);
     setTimeout(() => {
@@ -53,7 +78,8 @@ export default function VerifikasiSuratPage() {
     }, 250);
   };
 
-  const handleConfirm = async () => {
+  // ==================== VERIFIKASI (PAKAI CATATAN) ====================
+  const handleConfirm = async (catatan: string) => {
     if (!confirmAction) return;
 
     const newStatus =
@@ -63,17 +89,17 @@ export default function VerifikasiSuratPage() {
       const res = await fetch("http://localhost:8001/api/verifikasi", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({
           id_surat: confirmAction.row.id,
           status: newStatus,
+          catatan: catatan || null, // ⬅️ kirim catatan
         }),
       });
 
-      const text = await res.text();
-      console.log("Response:", res.status, text);
-
       if (!res.ok) throw new Error("Gagal update database");
 
+      // Update UI
       setData((prev) =>
         prev.map((r) =>
           r.id === confirmAction.row.id
@@ -88,28 +114,28 @@ export default function VerifikasiSuratPage() {
     closeModal(setConfirmAction);
   };
 
-  // Filter pencarian
+  // ==================== FILTER DATA ====================
   const filteredData = useMemo(() => {
-    const formatted = data.map((r) => ({
-      ...r,
-      status: (
-        r.status === "diproses"
-          ? "Diproses"
-          : r.status === "diterima"
-          ? "Diterima"
-          : "Ditangguhkan"
-      ) as Status,
-    }));
+    return data
+      .map((r) => {
+        const statusLower = (r.status || "").toLowerCase();
+        const mappedStatus: Status =
+          statusLower === "diproses"
+            ? "Diproses"
+            : statusLower === "diterima"
+            ? "Diterima"
+            : "Ditangguhkan";
 
-    return formatted.filter((r) => {
-      const matchQuery =
-        r.nama.toLowerCase().includes(query.toLowerCase()) ||
-        r.nim.toLowerCase().includes(query.toLowerCase());
-
-      const matchJenis = jenisFilter === "Semua" || r.jenis === jenisFilter;
-
-      return matchQuery && matchJenis;
-    });
+        return { ...r, status: mappedStatus };
+      })
+      .filter((r) => r.status === "Diproses")
+      .filter((r) => {
+        const matchQuery =
+          r.nama.toLowerCase().includes(query.toLowerCase()) ||
+          r.nim.toLowerCase().includes(query.toLowerCase());
+        const matchJenis = jenisFilter === "Semua" || r.jenis === jenisFilter;
+        return matchQuery && matchJenis;
+      });
   }, [data, query, jenisFilter]);
 
   const jenisOptions = [
@@ -142,22 +168,18 @@ export default function VerifikasiSuratPage() {
 
       <VerifikasiTable
         data={filteredData}
-        onDetail={setDetailRow}
+        onDetail={handleDetail}
         onAccept={(row) => setConfirmAction({ type: "accept", row })}
         onReject={(row) => setConfirmAction({ type: "reject", row })}
       />
 
-      {/* === Portals === */}
       {detailRow &&
         createPortal(
           <DetailModal
             row={detailRow}
             closing={closing}
             onClose={() => closeModal(setDetailRow)}
-            onPreview={(id) => {
-              const row = data.find((r) => r.id === id);
-              if (row) setPreviewRow(row);
-            }}
+            onPreview={(file) => setPreviewRow({ previewFile: file })}
           />,
           document.body
         )}
@@ -167,7 +189,7 @@ export default function VerifikasiSuratPage() {
           <ConfirmModal
             action={confirmAction.type}
             onClose={() => closeModal(setConfirmAction)}
-            onConfirm={handleConfirm}
+            onConfirm={(catatan) => handleConfirm(catatan)}
             closing={closing}
           />,
           document.body

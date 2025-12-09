@@ -83,3 +83,14 @@ export const createTemplateModel = (nama_template) => {
     });
   });
 };
+
+// Hapus template beserta semua datanya
+export const deleteTemplateModel = (id) => {
+  const sql = "DELETE FROM template_surat WHERE id_template = ?";
+  return new Promise((resolve, reject) => {
+    db.query(sql, [id], (err) => {
+      if (err) return reject(err);
+      resolve();
+    });
+  });
+};

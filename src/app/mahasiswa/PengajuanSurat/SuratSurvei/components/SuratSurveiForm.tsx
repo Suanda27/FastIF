@@ -87,7 +87,7 @@ export default function SuratSurveiForm() {
 
     try {
       const res = await fetch(
-        "http://localhost:8001/api/user/pengajuan-surat/survei",
+        "http://localhost:8001/api/user/pengajuan-survei/survey",
         {
           method: "POST",
           body: form,
