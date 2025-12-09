@@ -6,7 +6,10 @@ export const getStatusSuratByUser = (id_user, callback) => {
       id_surat,
       jenis_surat,
       tanggal_pengajuan,
-      status
+      status,
+      keterangan,
+      keperluan,
+      file_surat
     FROM surat
     WHERE id_user = ?
     ORDER BY id_surat DESC
