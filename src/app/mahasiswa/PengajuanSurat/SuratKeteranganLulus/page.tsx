@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { UserCircle, Send, CheckCircle } from 'lucide-react';
 import SidebarMhs from '../../components/SidebarMhs';
@@ -15,6 +15,40 @@ export default function SuratKeteranganLulusPage() {
   const [formData, setFormData] = useState<FormData>({
     keperluan: '',
   });
+
+  // ----- profile state + fetch (sama seperti SuratSurveiForm) -----
+  const [profile, setProfile] = useState<{ nama?: string; nim?: string; jurusan?: string } | null>(null);
+  const [profileLoading, setProfileLoading] = useState(true);
+
+  useEffect(() => {
+    let mounted = true;
+    const loadProfile = async () => {
+      try {
+        const res = await fetch('http://localhost:8001/api/user/profile', { credentials: 'include' });
+        if (res.ok) {
+          const data = await res.json();
+          if (!mounted) return;
+          setProfile({
+            nama: data.nama ?? data.name ?? '',
+            nim: data.nim ?? '',
+            jurusan: data.jurusan ?? data.department ?? '',
+          });
+        } else {
+          if (mounted) setProfile(null);
+        }
+      } catch {
+        if (mounted) setProfile(null);
+      } finally {
+        if (mounted) setProfileLoading(false);
+      }
+    };
+
+    loadProfile();
+    return () => {
+      mounted = false;
+    };
+  }, []);
+  // ----- end profile -----
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
@@ -78,6 +112,29 @@ export default function SuratKeteranganLulusPage() {
               onSubmit={handleSubmit}
               className="bg-white rounded-xl lg:rounded-2xl shadow-xl p-6 sm:p-8 lg:p-10 space-y-6"
             >
+            {/* PROFIL MAHASISWA - tampil di dalam form (Nama / NIM / Jurusan) */}
+            <div className="mb-4">
+              <div className="mb-2 grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <p className="block text-lg font-bold text-[#0A1C56]">Nama</p>
+                <p className="block text-lg font-bold text-[#0A1C56]">NIM</p>
+                <p className="block text-lg font-bold text-[#0A1C56]">Jurusan</p>
+              </div>
+
+              <div>
+                <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 flex flex-col sm:flex-row sm:items-center gap-4">
+                  <div className="flex-1 min-w-0">
+                    <p className="text-base font-medium text-gray-900">{profileLoading ? 'Memuat...' : profile?.nama ?? '—'}</p>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-base font-medium text-gray-900">{profileLoading ? 'Memuat...' : profile?.nim ?? '—'}</p>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-base font-medium text-gray-900">{profileLoading ? 'Memuat...' : profile?.jurusan ?? '—'}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
               <TextAreaField
                 label="Keperluan"
                 placeholder="Jelaskan keperluan surat keterangan lulus..."
