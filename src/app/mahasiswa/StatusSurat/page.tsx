@@ -15,7 +15,21 @@ export interface Surat {
   tanggal: string;
   status: StatusType;
   keterangan?: string;
+  keperluan?: string;
+  file?: string; 
 }
+
+function formatTanggalIndonesia(tanggal: string) {
+  if (!tanggal) return "-";
+  
+  const date = new Date(tanggal);
+  return date.toLocaleDateString("id-ID", {
+    day: "numeric",
+    month: "long",
+    year: "numeric"
+  });
+}
+
 
 export default function StatusSuratPage() {
   const [suratList, setSuratList] = useState<Surat[]>([]);
@@ -41,18 +55,21 @@ export default function StatusSuratPage() {
     })
     .then((data) => {
       const mapped: Surat[] = data.map((item: any) => ({
-        id: String(item.id_surat),
-        nomorSurat: `FASTIF-${String(item.id_surat).padStart(4, "0")}`,
-        jenisSurat: item.jenis_surat,
-        tanggal: item.tanggal_pengajuan?.split(" ")[0] ?? "-",
-        status:
-          item.status === "diterima"
-            ? "Selesai"
-            : item.status === "diproses"
-            ? "Diproses"
-            : "Ditangguhkan",
-        keterangan: item.keterangan ?? "",
-      }));
+  id: String(item.id_surat),
+  nomorSurat: `FASTIF-${String(item.id_surat).padStart(4, "0")}`,
+  jenisSurat: item.jenis_surat,
+  tanggal: formatTanggalIndonesia(item.tanggal_pengajuan),
+  status:
+    item.status === "diterima"
+      ? "Selesai"
+      : item.status === "diproses"
+      ? "Diproses"
+      : "Ditangguhkan",
+
+  keterangan: item.keterangan ?? "-",
+  keperluan: item.keperluan ?? "-",
+  file: item.file_surat || null,
+}));
 
       setSuratList(mapped);
       setLoading(false);
