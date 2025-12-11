@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { Mail, RefreshCcw, CheckSquare } from "lucide-react";
 import { motion } from "framer-motion";
 import CountUp from "react-countup";
@@ -21,6 +21,36 @@ const statusColor: Record<StatusSurat, string> = {
   Ditangguhkan: "bg-red-500",
 };
 
+// Card Dashboard (agar tidak dirender ulang setiap render)
+const dashboardCards = [
+  {
+    title: "Pengajuan Surat",
+    gradient: "bg-gradient-to-br from-blue-400 to-blue-600",
+    icon: <Mail size={22} />,
+    key: "pengajuan",
+  },
+  {
+    title: "Verifikasi Surat",
+    gradient: "bg-gradient-to-br from-yellow-400 to-orange-500",
+    icon: <RefreshCcw size={22} />,
+    key: "verifikasi",
+  },
+  {
+    title: "Surat Selesai",
+    gradient: "bg-gradient-to-br from-green-400 to-emerald-600",
+    icon: <CheckSquare size={22} />,
+    key: "selesai",
+  },
+];
+
+// Fungsi mapping status (lebih rapi)
+const mapStatus = (status: string): StatusSurat => {
+  const low = status.toLowerCase();
+  if (low === "diproses") return "Diproses";
+  if (low === "diterima") return "Diterima";
+  return "Ditangguhkan";
+};
+
 export default function DashboardPage() {
   const [stats, setStats] = useState({
     pengajuan: 0,
@@ -28,7 +58,26 @@ export default function DashboardPage() {
     selesai: 0,
   });
 
-  const [dataSurat, setDataSurat] = useState<Surat[]>([]);
+  const [allSurat, setAllSurat] = useState<Surat[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  // 🔥 Data sudah disaring agar hanya "Diproses"
+  const dataSurat = useMemo(
+    () => allSurat.filter((item) => item.status === "Diproses"),
+    [allSurat]
+  );
+
+  const totalPages = Math.ceil(dataSurat.length / itemsPerPage);
+
+  const paginatedData = useMemo(
+    () =>
+      dataSurat.slice(
+        (currentPage - 1) * itemsPerPage,
+        currentPage * itemsPerPage
+      ),
+    [dataSurat, currentPage]
+  );
 
   useEffect(() => {
     const fetchData = async () => {
@@ -45,22 +94,13 @@ export default function DashboardPage() {
           selesai: data.selesai || 0,
         });
 
-        setDataSurat(
-  data.dataSurat.map((item: any) => {
-    const low = item.status.toLowerCase();
+        const mapped = data.dataSurat.map((item: any) => ({
+          ...item,
+          jurusan: item.jurusan || "-",
+          status: mapStatus(item.status),
+        }));
 
-    let statusDisplay = "Ditangguhkan";
-    if (low === "diproses") statusDisplay = "Diproses";
-    if (low === "diterima") statusDisplay = "Diterima";
-    if (low === "ditolak") statusDisplay = "Ditangguhkan";
-
-    return {
-      ...item,
-      jurusan: item.jurusan || "-",
-      status: statusDisplay,
-    };
-  })
-);
+        setAllSurat(mapped);
       } catch (error) {
         console.error("Error mengambil data:", error);
       }
@@ -80,27 +120,9 @@ export default function DashboardPage() {
         Dashboard
       </h1>
 
+      {/* CARD STATISTIK */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {[
-          {
-            title: "Pengajuan Surat",
-            gradient: "bg-gradient-to-br from-blue-400 to-blue-600",
-            icon: <Mail size={22} />,
-            value: stats.pengajuan,
-          },
-          {
-            title: "Verifikasi Surat",
-            gradient: "bg-gradient-to-br from-yellow-400 to-orange-500",
-            icon: <RefreshCcw size={22} />,
-            value: stats.verifikasi,
-          },
-          {
-            title: "Surat Selesai",
-            gradient: "bg-gradient-to-br from-green-400 to-emerald-600",
-            icon: <CheckSquare size={22} />,
-            value: stats.selesai,
-          },
-        ].map((card, index) => (
+        {dashboardCards.map((card, index) => (
           <motion.div
             key={index}
             className={`${card.gradient} text-white rounded-2xl shadow-lg p-6 h-36 flex flex-col justify-between relative cursor-pointer transition-transform hover:scale-[1.03] hover:shadow-xl`}
@@ -110,12 +132,17 @@ export default function DashboardPage() {
             <div className="absolute top-4 right-4 opacity-90">{card.icon}</div>
             <h2 className="text-base font-semibold">{card.title}</h2>
             <p className="text-5xl font-bold">
-              <CountUp start={0} end={card.value} duration={2} />
+              <CountUp
+                start={0}
+                end={stats[card.key as keyof typeof stats]}
+                duration={2}
+              />
             </p>
           </motion.div>
         ))}
       </div>
 
+      {/* TABLE */}
       <motion.div
         className="bg-white rounded-xl shadow-md border border-gray-300 p-6 transition-all duration-500 hover:shadow-lg"
         initial={{ opacity: 0, y: 15 }}
@@ -145,9 +172,10 @@ export default function DashboardPage() {
                 )}
               </tr>
             </thead>
+
             <tbody>
-              {dataSurat.length > 0 ? (
-                dataSurat.map((item, index) => (
+              {paginatedData.length > 0 ? (
+                paginatedData.map((item, index) => (
                   <motion.tr
                     key={index}
                     className={`border-b border-[#A2A2A2] ${
@@ -183,6 +211,41 @@ export default function DashboardPage() {
             </tbody>
           </table>
         </div>
+
+        {/* PAGINATION */}
+        {totalPages > 1 && (
+          <div className="flex justify-center items-center gap-3 mt-4">
+            <button
+              className="px-3 py-1 rounded-lg bg-blue-900 text-white hover:bg-blue-600 transition disabled:opacity-40"
+              onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+              disabled={currentPage === 1}
+            >
+              Prev
+            </button>
+
+            {Array.from({ length: totalPages }, (_, i) => (
+              <button
+                key={i}
+                onClick={() => setCurrentPage(i + 1)}
+                className={`px-3 py-1 rounded-lg transition text-white ${
+                  currentPage === i + 1
+                    ? "bg-blue-700"
+                    : "bg-blue-900 hover:bg-blue-600"
+                }`}
+              >
+                {i + 1}
+              </button>
+            ))}
+
+            <button
+              className="px-3 py-1 rounded-lg bg-blue-900 text-white hover:bg-blue-600 transition disabled:opacity-40"
+              onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+              disabled={currentPage === totalPages}
+            >
+              Next
+            </button>
+          </div>
+        )}
       </motion.div>
     </motion.div>
   );

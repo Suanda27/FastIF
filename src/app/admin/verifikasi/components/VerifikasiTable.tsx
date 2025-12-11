@@ -68,7 +68,7 @@ export default function VerifikasiTable({
                       onClick={() => onReject(row)}
                       className="text-sm bg-red-600 text-white px-3 py-1.5 rounded-md hover:bg-red-700 transition"
                     >
-                      Tolak
+                      Ditangguhkan
                     </button>
                   </div>
                 </td>
