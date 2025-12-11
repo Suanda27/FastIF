@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { UserCircle, Send, CheckCircle } from 'lucide-react';
 import SidebarMhs from '../../components/SidebarMhs';
 import TextAreaField from './components/TextAreaField';
-import SuratSurveiForm from '../SuratSurvei/components/SuratSurveiForm';
+import SuratPengantarForm from '../SuratPengantar/components/SuratPengantarform';
 import StudentHeader from '../../components/StudentHeader';
 
 interface FormData {
@@ -73,7 +73,7 @@ export default function SuratPengantarPage() {
           </motion.div>
 
           
-              <SuratSurveiForm/>
+              <SuratPengantarForm/>
         </div>
               
       </main>

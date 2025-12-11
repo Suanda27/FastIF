@@ -18,15 +18,34 @@ export interface SuratData {
   file?: string;
 }
 
-
 const jenisSuratOptions = [
   'Semua Jenis Surat',
-  'Surat Izin',
+  'Izin Kehadiran',
   'Surat Survey',
   'Surat Pengantar',
-  'Surat Keterangan',
-  'Surat Rekomendasi'
+  'Surat Keterangan Lulus',
+  'Surat Beasiswa',
+  'Surat Izin Magang',
 ];
+
+// mapping toleran untuk mencocokkan nilai backend yang bisa berbeda penamaan
+const jenisSuratAlias: Record<string, string[] | null> = {
+  'Semua Jenis Surat': null,
+  'Izin Kehadiran': ['surat izin', 'izin kehadiran', 'izin'],
+  'Surat Survey': ['surat survey', 'surat survei', 'survei'],
+  'Surat Pengantar': ['surat pengantar', 'pengantar'],
+  'Surat Keterangan Lulus': ['surat keterangan', 'surat keterangan lulus', 'keterangan lulus'],
+  'Surat Beasiswa': ['surat beasiswa', 'beasiswa'],
+  'Surat Izin Magang': ['surat izin magang', 'izin magang'],
+};
+
+const matchJenisSurat = (suratJenis: string | undefined, selected: string) => {
+  if (!suratJenis) return false;
+  const raw = suratJenis.toLowerCase();
+  const aliases = jenisSuratAlias[selected];
+  if (aliases === null) return true; // semua jenis
+  return aliases.some((a) => raw.includes(a));
+};
 
 const statusOptions = ['Semua Status', 'Selesai', 'Diproses', 'Ditangguhkan'];
 
@@ -82,8 +101,7 @@ export default function RiwayatSuratPage() {
         surat.nomorSurat.toLowerCase().includes(searchQuery.toLowerCase()) ||
         surat.jenisSurat.toLowerCase().includes(searchQuery.toLowerCase());
 
-      const matchesJenis =
-        selectedJenisSurat === 'Semua Jenis Surat' || surat.jenisSurat === selectedJenisSurat;
+      const matchesJenis = matchJenisSurat(surat.jenisSurat, selectedJenisSurat);
 
       const matchesStatus =
         selectedStatus === 'Semua Status' || surat.status === selectedStatus;
