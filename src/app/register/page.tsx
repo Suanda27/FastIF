@@ -83,7 +83,7 @@ export default function RegisterPage() {
     return emailRegex.test(email);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     setLoading(true);
@@ -139,8 +139,38 @@ export default function RegisterPage() {
     }
 
     if (!hasError) {
-      router.push('/dashboard');
+  try {
+    const res = await fetch('http://localhost:8001/api/register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        nama: formData.nama,
+        nim: formData.nim,
+        email: formData.email,
+        password: formData.password,
+      }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      alert(data.message || 'Registrasi gagal');
+      setLoading(false);
+      return;
     }
+
+    alert('Registrasi berhasil, silakan login');
+    router.push('/login');
+  } catch (err) {
+    console.error(err);
+    alert('Server error');
+  } finally {
+    setLoading(false);
+  }
+}
+
   };
 
   return (

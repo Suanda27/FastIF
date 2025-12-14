@@ -6,11 +6,13 @@ import {
   getProfile,
   getMe,
   logout,
+  register
 } from "../controllers/authController.js";
 
 const router = express.Router();
 
 router.post("/login", loginLimiter, login);
+router.post("/register", register);
 router.get("/profile", getProfile);
 router.get("/me", getMe);
 router.post("/logout", logout);
