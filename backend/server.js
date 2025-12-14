@@ -18,6 +18,7 @@ import riwayatSuratRoutes from "./routes/riwayatSuratRoutes.js";
 import pengajuanRoutes from "./routes/pengajuanRoutes.js";
 import pengajuanSurveyRoutes from "./routes/pengajuanSurveyRoutes.js";
 import previewRoutes from "./routes/previewRoutes.js";
+import notifikasiRoutes from "./routes/notifikasiRoutes.js";
 
 
 import dashboardmhsRoutes from "./routes/dashboardmhsRoutes.js";
@@ -67,6 +68,7 @@ app.use("/api/user/pengajuan-survei", pengajuanSurveyRoutes);
 app.use("/api/user/status-surat", statusSuratMhsRoutes);
 app.use("/api/user/riwayat-surat", riwayatSuratRoutes);
 app.use("/api/dashboard-mhs", dashboardmhsRoutes);
+app.use("/api/notifikasi", notifikasiRoutes);
 
 // --- Admin ---
 app.use("/api/cardadmin", dashboardRoutes);
