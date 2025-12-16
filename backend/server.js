@@ -10,6 +10,7 @@ import { sessionConfig } from "./middlewares/sessionConfig.js";
 import authRoutes from "./routes/authRoutes.js";
 import formulirRoutes from "./routes/formulirRoutes.js";
 import statusSuratMhsRoutes from "./routes/statusSuratMhsRoutes.js";
+import profileRoutes from "./routes/profileRoutes.js";
 
 import dashboardRoutes from "./routes/dashboardRoutes.js";
 import verifikasiRoutes from "./routes/verifikasiRoutes.js";
@@ -69,6 +70,7 @@ app.use("/api/user/status-surat", statusSuratMhsRoutes);
 app.use("/api/user/riwayat-surat", riwayatSuratRoutes);
 app.use("/api/dashboard-mhs", dashboardmhsRoutes);
 app.use("/api/notifikasi", notifikasiRoutes);
+app.use("/api", profileRoutes);
 
 // --- Admin ---
 app.use("/api/cardadmin", dashboardRoutes);
