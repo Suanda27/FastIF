@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { User, Mail, Hash, GraduationCap } from 'lucide-react';
+import { User } from 'lucide-react';
 import Image from 'next/image';
 
 interface ProfileData {
@@ -23,9 +23,14 @@ export default function ProfileMhsCard({
   profile,
   onEditClick,
 }: ProfileMhsCardProps) {
-  // 🔥 fallback AMAN
   const nama = profile.name || profile.nama || '-';
   const prodi = profile.prodi || profile.jurusan || '-';
+
+  const baseAnimation = {
+    initial: { opacity: 0, x: -24 },
+    animate: { opacity: 1, x: 0 },
+    transition: { duration: 0.45 },
+  };
 
   return (
     <motion.div
@@ -65,27 +70,43 @@ export default function ProfileMhsCard({
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
+            <motion.div
+              {...baseAnimation}
+              transition={{ ...baseAnimation.transition, delay: 0.1 }}
+            >
               <p className="text-sm text-gray-500">Nama</p>
               <p className="font-semibold text-[#0A1C56]">{nama}</p>
-            </div>
+            </motion.div>
 
-            <div>
+            <motion.div
+              {...baseAnimation}
+              transition={{ ...baseAnimation.transition, delay: 0.2 }}
+            >
               <p className="text-sm text-gray-500">NIM</p>
-              <p className="font-semibold text-[#0A1C56]">{profile.nim}</p>
-            </div>
+              <p className="font-semibold text-[#0A1C56]">
+                {profile.nim}
+              </p>
+            </motion.div>
 
-            <div>
+            <motion.div
+              {...baseAnimation}
+              transition={{ ...baseAnimation.transition, delay: 0.3 }}
+            >
               <p className="text-sm text-gray-500">Prodi</p>
-              <p className="font-semibold text-[#0A1C56]">{prodi}</p>
-            </div>
+              <p className="font-semibold text-[#0A1C56]">
+                {prodi}
+              </p>
+            </motion.div>
 
-            <div>
+            <motion.div
+              {...baseAnimation}
+              transition={{ ...baseAnimation.transition, delay: 0.4 }}
+            >
               <p className="text-sm text-gray-500">Email</p>
               <p className="font-semibold text-[#0A1C56]">
                 {profile.email}
               </p>
-            </div>
+            </motion.div>
           </div>
 
           <div className="mt-8 text-center">

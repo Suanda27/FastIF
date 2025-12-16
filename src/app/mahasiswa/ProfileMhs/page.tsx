@@ -26,28 +26,24 @@ interface ProfileUI {
 
 export default function ProfileMhsPage() {
   const [profile, setProfile] = useState<ProfileUI | null>(null);
+  const [pendingProfile, setPendingProfile] = useState<ProfileUI | null>(null); // 🔥 BARU
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
+  // 🔹 FETCH PROFILE
   useEffect(() => {
     const fetchProfile = async () => {
       try {
         const res = await fetch(
           'http://localhost:8001/api/user/profile',
-          {
-            credentials: 'include',
-          }
+          { credentials: 'include' }
         );
 
-        if (!res.ok) {
-          throw new Error('Gagal mengambil profil');
-        }
+        if (!res.ok) throw new Error('Gagal mengambil profil');
 
         const data: ProfileAPI = await res.json();
-        console.log('PROFILE API:', data);
 
-        // 🔥 MAPPING API → UI
         setProfile({
           name: data.nama,
           nim: data.nim,
@@ -56,7 +52,6 @@ export default function ProfileMhsPage() {
           photo: data.photo,
         });
       } catch (err: any) {
-        console.error(err);
         setError(err.message || 'Terjadi kesalahan');
       } finally {
         setLoading(false);
@@ -66,21 +61,41 @@ export default function ProfileMhsPage() {
     fetchProfile();
   }, []);
 
-  const handleSaveProfile = (updatedProfile: ProfileUI) => {
-    setProfile(updatedProfile);
+  // 🔹 SAVE PROFILE
+  const handleSaveProfile = async (updatedProfile: ProfileUI) => {
+    const res = await fetch(
+      'http://localhost:8001/api/user/profile',
+      {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          name: updatedProfile.name,
+          email: updatedProfile.email,
+          prodi: updatedProfile.prodi,
+        }),
+      }
+    );
+
+    if (!res.ok) {
+      throw new Error('Gagal memperbarui profil');
+    }
+
+    const result = await res.json();
+
+    // ✅ SIMPAN DULU (JANGAN LANGSUNG setProfile)
+    setPendingProfile({
+      name: result.profile.nama,
+      nim: result.profile.nim,
+      email: result.profile.email,
+      prodi: result.profile.jurusan,
+      photo: result.profile.photo,
+    });
   };
 
-  if (loading) {
-    return <div className="p-10">Loading profil...</div>;
-  }
-
-  if (error) {
-    return <div className="p-10 text-red-500">{error}</div>;
-  }
-
-  if (!profile) {
-    return <div className="p-10">Profil tidak ditemukan</div>;
-  }
+  if (loading) return <div className="p-10">Loading profil...</div>;
+  if (error) return <div className="p-10 text-red-500">{error}</div>;
+  if (!profile) return <div className="p-10">Profil tidak ditemukan</div>;
 
   return (
     <div className="flex min-h-screen bg-gray-50">
@@ -118,9 +133,17 @@ export default function ProfileMhsPage() {
 
       <EditProfileModal
         isOpen={isEditModalOpen}
-        onClose={() => setIsEditModalOpen(false)}
         profile={profile}
         onSave={handleSaveProfile}
+        onClose={() => {
+          setIsEditModalOpen(false);
+
+          // 🔥 UPDATE PROFILE SETELAH MODAL TERTUTUP
+          if (pendingProfile) {
+            setProfile(pendingProfile);
+            setPendingProfile(null);
+          }
+        }}
       />
     </div>
   );
