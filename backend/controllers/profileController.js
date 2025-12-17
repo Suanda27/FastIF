@@ -1,11 +1,9 @@
 import {
   getProfileByUserId,
-  updateProfileByUserId, // ⬅️ TAMBAH
+  updateProfileByUserId,
 } from "../models/profileModel.js";
 
-/* ===============================
-   GET PROFILE (SUDAH ADA)
-================================ */
+// GET PROFILE
 export const getProfile = async (req, res) => {
   try {
     if (!req.session.user) {
@@ -27,9 +25,7 @@ export const getProfile = async (req, res) => {
   }
 };
 
-/* ===============================
-   UPDATE PROFILE 🔥
-================================ */
+// UPDATE PROFILE  
 export const updateProfile = async (req, res) => {
   try {
     if (!req.session.user) {
@@ -38,21 +34,21 @@ export const updateProfile = async (req, res) => {
 
     const id_user = req.session.user.id_user;
 
-    // 🔥 hanya field yang boleh diubah
-    const { name, email, prodi } = req.body;
+    // hanya field yang boleh diubah
+    const { name, nim, email } = req.body;
 
     // validasi sederhana
-    if (!name || !email || !prodi) {
+    if (!name || !email || !nim) {
       return res.status(400).json({
-        message: "Nama, Email, dan Prodi wajib diisi",
+        message: "Nama, Nim, dan Email wajib diisi",
       });
     }
 
-    // ❌ NIM TIDAK IKUT DIUPDATE
+    // Jurusan TIDAK IKUT DIUPDATE
     await updateProfileByUserId(id_user, {
       nama: name,
+      nim,
       email,
-      jurusan: prodi,
     });
 
     // ambil ulang data terbaru

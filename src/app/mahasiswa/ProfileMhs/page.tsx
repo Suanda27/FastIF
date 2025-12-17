@@ -31,7 +31,7 @@ export default function ProfileMhsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  // 🔹 FETCH PROFILE
+  // FETCH PROFILE
   useEffect(() => {
     const fetchProfile = async () => {
       try {
@@ -61,7 +61,7 @@ export default function ProfileMhsPage() {
     fetchProfile();
   }, []);
 
-  // 🔹 SAVE PROFILE
+  // SAVE PROFILE
   const handleSaveProfile = async (updatedProfile: ProfileUI) => {
     const res = await fetch(
       'http://localhost:8001/api/user/profile',
@@ -71,8 +71,8 @@ export default function ProfileMhsPage() {
         credentials: 'include',
         body: JSON.stringify({
           name: updatedProfile.name,
+          nim: updatedProfile.nim,
           email: updatedProfile.email,
-          prodi: updatedProfile.prodi,
         }),
       }
     );
@@ -83,7 +83,7 @@ export default function ProfileMhsPage() {
 
     const result = await res.json();
 
-    // ✅ SIMPAN DULU (JANGAN LANGSUNG setProfile)
+    // SIMPAN DULU (JANGAN LANGSUNG setProfile)
     setPendingProfile({
       name: result.profile.nama,
       nim: result.profile.nim,
@@ -138,7 +138,7 @@ export default function ProfileMhsPage() {
         onClose={() => {
           setIsEditModalOpen(false);
 
-          // 🔥 UPDATE PROFILE SETELAH MODAL TERTUTUP
+          // UPDATE PROFILE SETELAH MODAL TERTUTUP
           if (pendingProfile) {
             setProfile(pendingProfile);
             setPendingProfile(null);

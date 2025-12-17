@@ -26,9 +26,8 @@ interface EditProfileModalProps {
   onSave: (updatedProfile: ProfileData) => Promise<void>;
 }
 
-/* =======================
-   SUCCESS MODAL
-======================= */
+//SUCCESS MODAL
+
 function SuccessModal({
   open,
   onClose,
@@ -81,9 +80,7 @@ function SuccessModal({
   );
 }
 
-/* =======================
-   MAIN MODAL
-======================= */
+// MAIN MODAL
 export default function EditProfileModal({
   isOpen,
   onClose,
@@ -188,8 +185,10 @@ export default function EditProfileModal({
                   </label>
                   <input
                     value={formData.nim}
-                    disabled
-                    className="w-full px-4 py-3 border rounded-lg text-[#0A1C56] bg-gray-100"
+                    onChange={(e) =>
+                      setFormData({ ...formData, nim: e.target.value })
+                    } 
+                    className="w-full px-4 py-3 border rounded-lg text-[#0A1C56] focus:ring-2 focus:ring-[#0A1C56]"
                   />
                 </div>
 
@@ -217,10 +216,8 @@ export default function EditProfileModal({
                   </label>
                   <input
                     value={formData.prodi}
-                    onChange={(e) =>
-                      setFormData({ ...formData, prodi: e.target.value })
-                    }
-                    className="w-full px-4 py-3 border rounded-lg text-[#0A1C56] focus:ring-2 focus:ring-[#0A1C56]"
+                    disabled
+                    className="w-full px-4 py-3 border rounded-lg text-[#0A1C56] bg-gray-100"
                   />
                 </div>
 

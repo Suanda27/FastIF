@@ -1,8 +1,6 @@
 import db from "../config/db.js";
 
-/* ===============================
-   GET PROFILE
-================================ */
+// GET PROFILE
 export const getProfileByUserId = (id_user) => {
   return new Promise((resolve, reject) => {
     const query = `
@@ -24,25 +22,23 @@ export const getProfileByUserId = (id_user) => {
   });
 };
 
-/* ===============================
-   UPDATE PROFILE (TANPA NIM) 🔒
-================================ */
+// UPDATE PROFILE
 export const updateProfileByUserId = (id_user, data) => {
   return new Promise((resolve, reject) => {
     const query = `
       UPDATE user
       SET
         nama = ?,
-        email = ?,
-        jurusan = ?
+        nim = ?,
+        email = ?
       WHERE id_user = ?
         AND role = 'mahasiswa'
     `;
 
     const values = [
       data.nama,
+      data.nim,
       data.email,
-      data.jurusan,
       id_user,
     ];
 
