@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   X,
@@ -12,9 +13,9 @@ import {
   Maximize2,
   Minimize2
 } from "lucide-react";
-import { useState } from "react";
 import { Surat } from "../page";
 
+/* =================== INTERFACES =================== */
 export interface DetailModalProps {
   surat: Surat | null;
   isOpen: boolean;
@@ -33,6 +34,7 @@ export interface InfoBoxStatusProps {
   delay?: number;
 }
 
+/* =================== MAIN COMPONENT =================== */
 export default function DetailModal({ surat, isOpen, onClose }: DetailModalProps) {
   const [showPreview, setShowPreview] = useState(false);
   const [fullscreenPreview, setFullscreenPreview] = useState(false);
@@ -43,34 +45,19 @@ export default function DetailModal({ surat, isOpen, onClose }: DetailModalProps
   const fileUrl = `http://localhost:8001/uploads/${fileName}`;
   const ext = fileName.split(".").pop()?.toLowerCase() || "";
 
-  function formatTanggal(tgl: string) {
-  if (!tgl) return "-";
-  return new Date(tgl).toLocaleDateString("id-ID", {
-    day: "numeric",
-    month: "long",
-    year: "numeric"
-  });
-}
-
+  const formatTanggal = (tgl: string) =>
+    tgl
+      ? new Date(tgl).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })
+      : "-";
 
   const renderPreview = (isFullscreen = false) => {
     const height = isFullscreen ? "h-[90vh]" : "h-80";
 
-    if (ext === "pdf") {
-      return <iframe src={fileUrl} className={`w-full ${height}`} />;
-    }
-
-    if (["jpg", "jpeg", "png"].includes(ext ?? "")) {
-      return <img src={fileUrl} className="w-full h-auto" />;
-    }
+    if (ext === "pdf") return <iframe src={fileUrl} className={`w-full ${height}`} />;
+    if (["jpg", "jpeg", "png"].includes(ext)) return <img src={fileUrl} className="w-full h-auto" />;
 
     if (["doc", "docx", "ppt", "pptx", "xls", "xlsx"].includes(ext)) {
-      return (
-        <iframe
-          src={`https://docs.google.com/gview?url=${fileUrl}&embedded=true`}
-          className={`w-full ${height}`}
-        ></iframe>
-      );
+      return <div className="p-6 text-center text-gray-600">File akan diunduh.</div>;
     }
 
     return (
@@ -86,7 +73,7 @@ export default function DetailModal({ surat, isOpen, onClose }: DetailModalProps
 
   return (
     <>
-      {/* =================== MAIN DETAIL MODAL =================== */}
+      {/* =================== MAIN MODAL =================== */}
       <AnimatePresence>
         {isOpen && (
           <>
@@ -123,97 +110,76 @@ export default function DetailModal({ surat, isOpen, onClose }: DetailModalProps
                 {/* Content */}
                 <div className="p-6 overflow-y-auto max-h-[calc(90vh-80px)]">
                   <div className="space-y-6">
-                    {/* INFO COMPONENTS */}
-                    <InfoBox
-                      icon={<Hash className="w-5 h-5 text-white" />}
-                      label="Nomor Surat"
-                      value={surat.nomorSurat}
-                      delay={0.1}
-                    />
+                    {/* Info */}
+                    <InfoBox icon={<Hash className="w-5 h-5 text-white" />} label="Nomor Surat" value={surat.nomorSurat} delay={0.1} />
+                    <InfoBox icon={<FileText className="w-5 h-5 text-white" />} label="Jenis Surat" value={surat.jenisSurat} delay={0.2} />
+                    <InfoBox icon={<Calendar className="w-5 h-5 text-white" />} label="Tanggal Pengajuan" value={formatTanggal(surat.tanggal)} delay={0.3} />
+                    <InfoBox icon={<FileText className="w-5 h-5 text-white" />} label="Keperluan" value={surat.keperluan ?? "—"} delay={0.35} />
 
-                    <InfoBox
-                      icon={<FileText className="w-5 h-5 text-white" />}
-                      label="Jenis Surat"
-                      value={surat.jenisSurat}
-                      delay={0.2}
-                    />
-
-                    <InfoBox
-                      icon={<Calendar className="w-5 h-5 text-white" />}
-                      label="Tanggal Pengajuan"
-                      value={formatTanggal(surat.tanggal)}
-                      delay={0.3}
-                    />
-
-                    <InfoBox
-                      icon={<FileText className="w-5 h-5 text-white" />}
-                      label="Keperluan"
-                      value={surat.keperluan ?? "—"}
-                      delay={0.35}
-                    />
-
-                    {/* =================== LAMPIRAN + PREVIEW =================== */}
+                    {/* Lampiran + Preview */}
                     {surat.file && (
-                      <motion.div
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.4 }}
-                        className="p-4 bg-gray-50 rounded-lg"
-                      >
-                        <p className="text-sm font-medium text-gray-600 mb-2">
-                          Lampiran Surat
-                        </p>
+                      <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.4 }} className="p-4 bg-gray-50 rounded-lg">
+                        <p className="text-sm font-medium text-gray-600 mb-2">Lampiran Surat</p>
 
                         <div className="flex items-center gap-2">
                           <button
-                            onClick={() => setShowPreview(!showPreview)}
+                            onClick={() => {
+                              if (["doc", "docx", "ppt", "pptx", "xls", "xlsx"].includes(ext)) {
+                                window.open(fileUrl, "_blank");
+                              } else {
+                                setShowPreview(!showPreview);
+                              }
+                            }}
                             className="flex items-center gap-2 px-4 py-2 bg-[#1976D2] hover:bg-[#0A1C56] text-white text-sm rounded-lg transition"
                           >
                             <Eye className="w-4 h-4" />
-                            {showPreview ? "Sembunyikan" : "Lihat File"}
+                            {["doc", "docx", "ppt", "pptx", "xls", "xlsx"].includes(ext)
+                              ? "Download File"
+                              : showPreview
+                              ? "Sembunyikan"
+                              : "Lihat File"}
                           </button>
 
-                          {showPreview && (
+                          {showPreview && !["doc", "docx", "ppt", "pptx", "xls", "xlsx"].includes(ext) && (
                             <button
                               onClick={() => setFullscreenPreview(true)}
                               className="flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-black text-white text-sm rounded-lg transition"
                             >
-                              <Maximize2 className="w-4 h-4" />
-                              Perbesar
+                              <Maximize2 className="w-4 h-4" /> Perbesar
                             </button>
                           )}
                         </div>
 
-                        {/* PREVIEW */}
-                        {showPreview && (
-                          <div className="mt-4 rounded-lg overflow-hidden border shadow">
-                            {renderPreview(false)}
-                          </div>
+                        {showPreview && !["doc", "docx", "ppt", "pptx", "xls", "xlsx"].includes(ext) && (
+                          <div className="mt-4 rounded-lg overflow-hidden border shadow">{renderPreview(false)}</div>
                         )}
                       </motion.div>
                     )}
 
                     <InfoBoxStatus surat={surat} delay={0.45} />
-
-                    <InfoBox
-                      icon={<User className="w-5 h-5 text-white" />}
-                      label="Keterangan"
-                      value={surat.keterangan ?? "—"}
-                      delay={0.5}
-                    />
+                    <InfoBox icon={<User className="w-5 h-5 text-white" />} label="Keterangan" value={surat.keterangan ?? "—"} delay={0.5} />
                   </div>
 
-                  {/* FOOTER */}
+                  {/* Footer */}
                   <div className="mt-8 flex justify-end gap-3">
-                    <button
-                      onClick={onClose}
-                      className="px-6 py-2.5 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg"
-                    >
+                    <button onClick={onClose} className="px-6 py-2.5 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg">
                       Tutup
                     </button>
 
-                    <button className="px-6 py-2.5 bg-[#1976D2] hover:bg-[#0A1C56] text-white rounded-lg shadow-lg">
-                      Cetak Surat
+                    <button
+                      onClick={() => {
+                        if (fileUrl && surat.file) {
+                          const link = document.createElement("a");
+                          link.href = fileUrl;
+                          link.download = surat.file;
+                          document.body.appendChild(link);
+                          link.click();
+                          document.body.removeChild(link);
+                        }
+                      }}
+                      className="px-6 py-2.5 bg-[#1976D2] hover:bg-[#0A1C56] text-white rounded-lg shadow-lg"
+                    >
+                      Download Surat
                     </button>
                   </div>
                 </div>
@@ -223,7 +189,7 @@ export default function DetailModal({ surat, isOpen, onClose }: DetailModalProps
         )}
       </AnimatePresence>
 
-      {/* =================== FULLSCREEN PREVIEW MODAL =================== */}
+      {/* =================== FULLSCREEN PREVIEW =================== */}
       <AnimatePresence>
         {fullscreenPreview && (
           <>
@@ -243,8 +209,7 @@ export default function DetailModal({ surat, isOpen, onClose }: DetailModalProps
             >
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-white text-lg font-semibold flex items-center gap-2">
-                  <FileText className="w-5 h-5" />
-                  Preview Lampiran
+                  <FileText className="w-5 h-5" /> Preview Lampiran
                 </h2>
 
                 <button
@@ -255,9 +220,7 @@ export default function DetailModal({ surat, isOpen, onClose }: DetailModalProps
                 </button>
               </div>
 
-              <div className="bg-white rounded-xl shadow-xl flex-1 overflow-hidden">
-                {renderPreview(true)}
-              </div>
+              <div className="bg-white rounded-xl shadow-xl flex-1 overflow-hidden">{renderPreview(true)}</div>
             </motion.div>
           </>
         )}
@@ -266,18 +229,10 @@ export default function DetailModal({ surat, isOpen, onClose }: DetailModalProps
   );
 }
 
-/* --------------------------------------------------
-   REUSABLE COMPONENTS
--------------------------------------------------- */
-
+/* =================== REUSABLE COMPONENTS =================== */
 function InfoBox({ icon, label, value, delay }: InfoBoxProps) {
   return (
-    <motion.div
-      initial={{ opacity: 0, x: -20 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ delay }}
-      className="flex items-start gap-4 p-4 bg-gray-50 rounded-lg"
-    >
+    <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay }} className="flex items-start gap-4 p-4 bg-gray-50 rounded-lg">
       <div className="p-2 bg-[#1976D2] rounded-lg">{icon}</div>
       <div>
         <p className="text-xs text-gray-600">{label}</p>
@@ -289,12 +244,7 @@ function InfoBox({ icon, label, value, delay }: InfoBoxProps) {
 
 function InfoBoxStatus({ surat, delay }: InfoBoxStatusProps) {
   return (
-    <motion.div
-      initial={{ opacity: 0, x: -20 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ delay }}
-      className="flex items-start gap-4 p-4 bg-gray-50 rounded-lg"
-    >
+    <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay }} className="flex items-start gap-4 p-4 bg-gray-50 rounded-lg">
       <div className="p-2 bg-[#1976D2] rounded-lg">
         <CheckCircle className="w-5 h-5 text-white" />
       </div>

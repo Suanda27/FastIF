@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   X,
@@ -12,8 +13,8 @@ import {
   Maximize2,
   Minimize2
 } from 'lucide-react';
-import { useState } from 'react';
 
+/* =================== TYPES =================== */
 interface SuratData {
   id: number;
   nomorSurat: string;
@@ -31,6 +32,7 @@ interface ModalDetailProps {
   surat: SuratData | null;
 }
 
+/* =================== MAIN COMPONENT =================== */
 export default function ModalDetail({ isOpen, onClose, surat }: ModalDetailProps) {
   const [showPreview, setShowPreview] = useState(false);
   const [fullscreenPreview, setFullscreenPreview] = useState(false);
@@ -44,28 +46,14 @@ export default function ModalDetail({ isOpen, onClose, surat }: ModalDetailProps
     const height = isFullscreen ? 'h-[90vh]' : 'h-80';
 
     if (!fileUrl) {
-      return (
-        <div className="p-4 text-center text-gray-600">
-          Tidak ada file.
-        </div>
-      );
+      return <div className="p-4 text-center text-gray-600">Tidak ada file.</div>;
     }
 
-    if (ext === 'pdf') {
-      return <iframe src={fileUrl} className={`w-full ${height}`} />;
-    }
-
-    if (['jpg', 'jpeg', 'png'].includes(ext)) {
-      return <img src={fileUrl} className="w-full h-auto" />;
-    }
+    if (ext === 'pdf') return <iframe src={fileUrl} className={`w-full ${height}`} />;
+    if (['jpg', 'jpeg', 'png'].includes(ext)) return <img src={fileUrl} className="w-full h-auto" />;
 
     if (['doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx'].includes(ext)) {
-      return (
-        <iframe
-          src={`https://docs.google.com/gview?url=${fileUrl}&embedded=true`}
-          className={`w-full ${height}`}
-        />
-      );
+      return <div className="p-4 text-center text-gray-600">Klik tombol "Lihat File" untuk mengunduh.</div>;
     }
 
     return (
@@ -79,8 +67,22 @@ export default function ModalDetail({ isOpen, onClose, surat }: ModalDetailProps
     );
   };
 
+  const handleFileClick = () => {
+    if (['doc','docx','ppt','pptx','xls','xlsx'].includes(ext) && fileUrl) {
+      const link = document.createElement('a');
+      link.href = fileUrl;
+      link.download = surat.file!;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } else {
+      setShowPreview(!showPreview);
+    }
+  };
+
   return (
     <>
+      {/* =================== MAIN MODAL =================== */}
       <AnimatePresence>
         {isOpen && (
           <>
@@ -108,7 +110,6 @@ export default function ModalDetail({ isOpen, onClose, surat }: ModalDetailProps
                     <FileText className="w-5 h-5 sm:w-6 sm:h-6" />
                     Detail Surat
                   </h2>
-
                   <motion.button
                     whileHover={{ scale: 1.1, rotate: 90 }}
                     whileTap={{ scale: 0.9 }}
@@ -123,81 +124,11 @@ export default function ModalDetail({ isOpen, onClose, surat }: ModalDetailProps
                 <div className="p-4 sm:p-6 overflow-y-auto max-h-[calc(90vh-80px)]">
                   <div className="space-y-4 sm:space-y-6">
 
-                    {/* NOMOR SURAT */}
-                    <motion.div
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.1 }}
-                      className="flex items-start gap-4 p-3 sm:p-4 bg-gray-50 rounded-lg"
-                    >
-                      <div className="p-2 bg-[#1976D2] rounded-lg flex-shrink-0">
-                        <Hash className="w-5 h-5 text-white" />
-                      </div>
-
-                      <div className="flex-1 min-w-0">
-                        <p className="text-xs sm:text-sm text-gray-600 mb-1">Nomor Surat</p>
-                        <p className="text-base sm:text-lg font-bold text-[#0A1C56] break-all">
-                          {surat.nomorSurat}
-                        </p>
-                      </div>
-                    </motion.div>
-
-                    {/* JENIS SURAT */}
-                    <motion.div
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.2 }}
-                      className="flex items-start gap-4 p-3 sm:p-4 bg-gray-50 rounded-lg"
-                    >
-                      <div className="p-2 bg-[#1976D2] rounded-lg flex-shrink-0">
-                        <FileText className="w-5 h-5 text-white" />
-                      </div>
-
-                      <div className="flex-1 min-w-0">
-                        <p className="text-xs sm:text-sm text-gray-600 mb-1">Jenis Surat</p>
-                        <p className="text-base sm:text-lg font-semibold text-[#0A1C56]">
-                          {surat.jenisSurat}
-                        </p>
-                      </div>
-                    </motion.div>
-
-                    {/* TANGGAL */}
-                    <motion.div
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.3 }}
-                      className="flex items-start gap-4 p-3 sm:p-4 bg-gray-50 rounded-lg"
-                    >
-                      <div className="p-2 bg-[#1976D2] rounded-lg flex-shrink-0">
-                        <Calendar className="w-5 h-5 text-white" />
-                      </div>
-
-                      <div className="flex-1 min-w-0">
-                        <p className="text-xs sm:text-sm text-gray-600 mb-1">Tanggal Pengajuan</p>
-                        <p className="text-base sm:text-lg font-semibold text-[#0A1C56]">
-                          {surat.tanggal}
-                        </p>
-                      </div>
-                    </motion.div>
-
-                    {/* KEPERLUAN */}
-                    <motion.div
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.32 }}
-                      className="flex items-start gap-4 p-3 sm:p-4 bg-gray-50 rounded-lg"
-                    >
-                      <div className="p-2 bg-[#1976D2] rounded-lg flex-shrink-0">
-                        <FileText className="w-5 h-5 text-white" />
-                      </div>
-
-                      <div className="flex-1 min-w-0">
-                        <p className="text-xs sm:text-sm text-gray-600 mb-1">Keperluan</p>
-                        <p className="text-base sm:text-lg font-semibold text-[#0A1C56]">
-                          {surat.keperluan || '—'}
-                        </p>
-                      </div>
-                    </motion.div>
+                    {/* INFO BOXES */}
+                    <InfoBox label="Nomor Surat" value={surat.nomorSurat} icon={<Hash className="w-5 h-5 text-white" />} delay={0.1} />
+                    <InfoBox label="Jenis Surat" value={surat.jenisSurat} icon={<FileText className="w-5 h-5 text-white" />} delay={0.2} />
+                    <InfoBox label="Tanggal Pengajuan" value={surat.tanggal} icon={<Calendar className="w-5 h-5 text-white" />} delay={0.3} />
+                    <InfoBox label="Keperluan" value={surat.keperluan || '—'} icon={<FileText className="w-5 h-5 text-white" />} delay={0.32} />
 
                     {/* FILE PREVIEW */}
                     {surat.file && (
@@ -208,81 +139,38 @@ export default function ModalDetail({ isOpen, onClose, surat }: ModalDetailProps
                         className="p-4 bg-gray-50 rounded-lg"
                       >
                         <p className="text-sm font-medium text-gray-600 mb-2">Lampiran Surat</p>
-
                         <div className="flex items-center gap-2">
                           <button
-                            onClick={() => setShowPreview(!showPreview)}
+                            onClick={handleFileClick}
                             className="flex items-center gap-2 px-4 py-2 bg-[#1976D2] hover:bg-[#0A1C56] text-white text-sm rounded-lg transition"
                           >
                             <Eye className="w-4 h-4" />
-                            {showPreview ? 'Sembunyikan' : 'Lihat File'}
+                            {['doc','docx','ppt','pptx','xls','xlsx'].includes(ext)
+                              ? 'Download File'
+                              : showPreview
+                                ? 'Sembunyikan'
+                                : 'Lihat File'}
                           </button>
-
-                          {showPreview && (
+                          {showPreview && !['doc','docx','ppt','pptx','xls','xlsx'].includes(ext) && (
                             <button
                               onClick={() => setFullscreenPreview(true)}
                               className="flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-black text-white text-sm rounded-lg transition"
                             >
-                              <Maximize2 className="w-4 h-4" />
-                              Perbesar
+                              <Maximize2 className="w-4 h-4" /> Perbesar
                             </button>
                           )}
                         </div>
 
-                        {showPreview && (
-                          <div className="mt-4 rounded-lg overflow-hidden border shadow">
-                            {renderPreview(false)}
-                          </div>
+                        {showPreview && !['doc','docx','ppt','pptx','xls','xlsx'].includes(ext) && (
+                          <div className="mt-4 rounded-lg overflow-hidden border shadow">{renderPreview(false)}</div>
                         )}
                       </motion.div>
                     )}
 
-                    {/* STATUS */}
-                    <motion.div
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: surat.file ? 0.45 : 0.4 }}
-                      className="flex items-start gap-4 p-3 sm:p-4 bg-gray-50 rounded-lg"
-                    >
-                      <div className="p-2 bg-[#1976D2] rounded-lg flex-shrink-0">
-                        <CheckCircle className="w-5 h-5 text-white" />
-                      </div>
+                    {/* STATUS & KETERANGAN */}
+                    <InfoBoxStatus surat={surat} delay={surat.file ? 0.45 : 0.4} />
+                    <InfoBox label="Keterangan" value={surat.keterangan || '—'} icon={<User className="w-5 h-5 text-white" />} delay={surat.file ? 0.55 : 0.5} />
 
-                      <div className="flex-1">
-                        <p className="text-xs sm:text-sm text-gray-600 mb-1">Status</p>
-
-                        <span
-                          className={`px-4 py-1.5 rounded-full text-sm text-white ${
-                            surat.status === 'Selesai'
-                              ? 'bg-green-500'
-                              : surat.status === 'Diproses'
-                              ? 'bg-blue-500'
-                              : 'bg-yellow-500'
-                          }`}
-                        >
-                          {surat.status}
-                        </span>
-                      </div>
-                    </motion.div>
-
-                    {/* KETERANGAN */}
-                    <motion.div
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: surat.file ? 0.55 : 0.5 }}
-                      className="flex items-start gap-4 p-3 sm:p-4 bg-gray-50 rounded-lg"
-                    >
-                      <div className="p-2 bg-[#1976D2] rounded-lg flex-shrink-0">
-                        <User className="w-5 h-5 text-white" />
-                      </div>
-
-                      <div className="flex-1">
-                        <p className="text-xs sm:text-sm text-gray-600 mb-1">Keterangan</p>
-                        <p className="text-sm sm:text-base text-gray-700">
-                          {surat.keterangan || '—'}
-                        </p>
-                      </div>
-                    </motion.div>
                   </div>
 
                   {/* FOOTER */}
@@ -299,9 +187,19 @@ export default function ModalDetail({ isOpen, onClose, surat }: ModalDetailProps
                     <motion.button
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
+                      onClick={() => {
+                        if (fileUrl && surat.file) {
+                          const link = document.createElement('a');
+                          link.href = fileUrl;
+                          link.download = surat.file;
+                          document.body.appendChild(link);
+                          link.click();
+                          document.body.removeChild(link);
+                        }
+                      }}
                       className="px-6 py-2.5 bg-[#1976D2] hover:bg-[#0A1C56] text-white rounded-lg shadow-lg text-sm sm:text-base"
                     >
-                      Cetak Surat
+                      Download surat
                     </motion.button>
                   </div>
                 </div>
@@ -311,7 +209,7 @@ export default function ModalDetail({ isOpen, onClose, surat }: ModalDetailProps
         )}
       </AnimatePresence>
 
-      {/* FULLSCREEN PREVIEW */}
+      {/* =================== FULLSCREEN PREVIEW =================== */}
       <AnimatePresence>
         {fullscreenPreview && (
           <>
@@ -331,10 +229,8 @@ export default function ModalDetail({ isOpen, onClose, surat }: ModalDetailProps
             >
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-white text-lg font-semibold flex items-center gap-2">
-                  <FileText className="w-5 h-5" />
-                  Preview Lampiran
+                  <FileText className="w-5 h-5" /> Preview Lampiran
                 </h2>
-
                 <button
                   onClick={() => setFullscreenPreview(false)}
                   className="text-white bg-white/20 hover:bg-white/30 p-2 rounded-full"
@@ -351,5 +247,52 @@ export default function ModalDetail({ isOpen, onClose, surat }: ModalDetailProps
         )}
       </AnimatePresence>
     </>
+  );
+}
+
+/* =================== REUSABLE COMPONENTS =================== */
+function InfoBox({ icon, label, value, delay }: { icon: React.ReactNode; label: string; value: string; delay?: number }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: -20 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ delay }}
+      className="flex items-start gap-4 p-3 sm:p-4 bg-gray-50 rounded-lg"
+    >
+      <div className="p-2 bg-[#1976D2] rounded-lg flex-shrink-0">{icon}</div>
+      <div className="flex-1 min-w-0">
+        <p className="text-xs sm:text-sm text-gray-600 mb-1">{label}</p>
+        <p className="text-base sm:text-lg font-semibold text-[#0A1C56] break-all">{value}</p>
+      </div>
+    </motion.div>
+  );
+}
+
+function InfoBoxStatus({ surat, delay }: { surat: SuratData; delay?: number }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: -20 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ delay }}
+      className="flex items-start gap-4 p-3 sm:p-4 bg-gray-50 rounded-lg"
+    >
+      <div className="p-2 bg-[#1976D2] rounded-lg flex-shrink-0">
+        <CheckCircle className="w-5 h-5 text-white" />
+      </div>
+      <div className="flex-1">
+        <p className="text-xs sm:text-sm text-gray-600 mb-1">Status</p>
+        <span
+          className={`px-4 py-1.5 rounded-full text-sm text-white ${
+            surat.status === 'Selesai'
+              ? 'bg-green-500'
+              : surat.status === 'Diproses'
+              ? 'bg-blue-500'
+              : 'bg-yellow-500'
+          }`}
+        >
+          {surat.status}
+        </span>
+      </div>
+    </motion.div>
   );
 }
