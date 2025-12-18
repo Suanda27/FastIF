@@ -53,7 +53,15 @@ app.use(morgan("tiny"));
 app.use(sessionConfig);
 
 // ===== Static Files =====
-app.use("/uploads", express.static(uploadsDir));
+app.use(
+  "/uploads",
+  express.static(uploadsDir, {
+    setHeaders: (res) => {
+      res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");
+    },
+  })
+);
+
 
 // ===== Routes =====
 
