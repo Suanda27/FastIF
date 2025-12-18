@@ -16,10 +16,10 @@ export const insertSuratSurvey = async (data) => {
 };
 
 // INSERT ke tabel pengajuan_surat
-export const insertPengajuanSurat = async (id_surat, keperluan, file_surat) => {
+export const insertPengajuanSurat = async (id_surat, keperluan, instansi_tujuan, file_surat) => {
   const sql = `
-    INSERT INTO pengajuan_surat (id_surat, keperluan, file_surat)
-    VALUES (?, ?, ?)
+    INSERT INTO pengajuan_surat (id_surat, keperluan, instansi_tujuan, file_surat)
+    VALUES (?, ?, ?, ?)
   `;
-  await db.promise().query(sql, [id_surat, keperluan, file_surat]);
+  await db.promise().query(sql, [id_surat, keperluan, instansi_tujuan, file_surat]);
 };

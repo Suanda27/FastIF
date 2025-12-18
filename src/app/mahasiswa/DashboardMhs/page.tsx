@@ -31,6 +31,19 @@ export default function DashboardMhsPage() {
     }
   };
 
+  const formatTanggalIndonesia = (dateString: string) => {
+  if (!dateString) return "-";
+
+  const date = new Date(dateString);
+
+  return new Intl.DateTimeFormat("id-ID", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+  }).format(date);
+};
+
+
   useEffect(() => {
     async function loadAll() {
       try {
@@ -56,7 +69,7 @@ export default function DashboardMhsPage() {
         );
 
         const mappedActivities = (actData?.data ?? []).map((item: any) => ({
-          date: item.tanggal,
+          date: formatTanggalIndonesia(item.tanggal),
           type: item.jenis_surat,
           status:
             item.status === "diterima"

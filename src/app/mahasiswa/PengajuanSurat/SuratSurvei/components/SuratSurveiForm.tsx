@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Upload, FileCheck, X, AlertCircle, Send } from "lucide-react";
+import { Upload, FileCheck, X, AlertCircle, Send, CheckCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import TextAreaField from "../../SuratPengantar/components/TextAreaField";
 
@@ -26,6 +26,9 @@ export default function SuratSurveiForm() {
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [closeTimeout, setCloseTimeout] = useState<any>(null);
+
 
   useEffect(() => {
     let mounted = true;
@@ -140,9 +143,14 @@ export default function SuratSurveiForm() {
 
       const data = await res.json();
       if (data.success) {
-        router.push("/mahasiswa/StatusSurat");
+      setShowSuccess(true);
+      const timeout = setTimeout(() => {
+        setShowSuccess(false);
+      router.push("/mahasiswa/StatusSurat");
+      }, 2000);
+        setCloseTimeout(timeout);
       } else {
-        // tampilkan error sederhana
+        // tampilkan error
         alert(data.message ?? "Gagal mengajukan. Silakan coba lagi.");
       }
     } catch (err) {
@@ -200,7 +208,7 @@ export default function SuratSurveiForm() {
                 if (errors.instansi) setErrors((prev) => ({ ...prev, instansi: undefined }));
               }}
               placeholder="Nama instansi atau lembaga tujuan..."
-              className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#1976D2] focus:border-transparent bg-gray-50 placeholder:text-sm"
+              className="w-full px-4 py-2 rounded-lg border border-gray-300 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1976D2] focus:border-[#1976D2] transition"
 
             />
             {errors.instansi && (
@@ -311,6 +319,42 @@ export default function SuratSurveiForm() {
             )}
           </motion.button>
         </form>
+        {showSuccess && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+          >
+            <motion.div
+              initial={{ scale: 0.8, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full text-center"
+            >
+              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <CheckCircle className="w-10 h-10 text-green-500" />
+              </div>
+
+              <h3 className="text-2xl font-bold text-[#0A1C56] mb-2">
+                Berhasil!
+              </h3>
+
+              <p className="text-gray-600 mb-6">
+                Pengajuan Surat Survei berhasil dikirim dan akan diproses.
+              </p>
+
+              <button
+                onClick={() => {
+                  clearTimeout(closeTimeout);
+                  setShowSuccess(false);
+                  router.push("/mahasiswa/StatusSurat");
+                }}
+                className="px-6 py-2 rounded-lg bg-[#0A1C56] text-white font-semibold hover:bg-[#1976D2]"
+              >
+                OK
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
       </div>
     </motion.div>
   );

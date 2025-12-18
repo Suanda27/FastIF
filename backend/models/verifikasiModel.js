@@ -10,6 +10,15 @@ export const updateSuratStatus = (id_surat, status) => {
     ]);
 };
 
+// Update Keterangan Surat
+export const updateSuratKeterangan = (id_surat, keterangan) => {
+  return db.promise().query(
+    `UPDATE surat SET keterangan = ? WHERE id_surat = ?`,
+    [keterangan, id_surat]
+  );
+};
+
+
 // INSERT LOG VERIFIKASI (BARU)
 export const insertVerifikasiLog = (
   id_surat,

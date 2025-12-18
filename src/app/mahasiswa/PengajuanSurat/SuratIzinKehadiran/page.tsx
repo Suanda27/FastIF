@@ -7,6 +7,7 @@ import SidebarMhs from '../../components/SidebarMhs';
 import FormField from './components/FormField';
 import FileUpload from './components/FileUpload';
 import StudentHeader from '../../components/StudentHeader';
+import { useRouter } from "next/navigation";
 
 interface FormData {
   namaOrangTua: string;
@@ -30,6 +31,7 @@ const jenisPerizinanOptions = [
 ];
 
 export default function SuratIzinKehadiranPage() {
+  const router = useRouter();
   const [formData, setFormData] = useState<FormData>({
     namaOrangTua: '',
     noHpOrangTua: '',
@@ -136,7 +138,8 @@ export default function SuratIzinKehadiranPage() {
       const timeout = setTimeout(() => {
         setShowSuccess(false);
         resetForm();
-      }, 3000);
+      router.push("/mahasiswa/StatusSurat");
+      }, 2000);
 
       setCloseTimeout(timeout);
     } catch (error) {
@@ -365,6 +368,7 @@ export default function SuratIzinKehadiranPage() {
                 setShowSuccess(false);
                 clearTimeout(closeTimeout);
                 resetForm();
+                router.push("/mahasiswa/StatusSurat");
               }}
               className="px-6 py-2 rounded-lg bg-[#0A1C56] text-white font-semibold shadow-md hover:bg-[#1976D2] transition-all"
             >

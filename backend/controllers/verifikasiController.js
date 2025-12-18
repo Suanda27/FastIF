@@ -1,5 +1,6 @@
 import {
   updateSuratStatus,
+  updateSuratKeterangan,
   getSuratDetailById,
   insertVerifikasiLog,
   getSuratDiproses,
@@ -39,6 +40,9 @@ export const verifikasiSurat = async (req, res) => {
   try {
     // UPDATE STATUS
     await updateSuratStatus(id_surat, status);
+
+    // UPDATE KETERANGAN SURAT (AMBIL DARI CATATAN ADMIN)
+    await updateSuratKeterangan(id_surat, catatan || null);
 
     // INSERT LOG VERIFIKASI
     await insertVerifikasiLog(id_surat, id_admin, status, catatan || null);

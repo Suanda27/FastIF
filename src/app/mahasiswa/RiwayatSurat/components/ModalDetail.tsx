@@ -127,7 +127,7 @@ export default function ModalDetail({ isOpen, onClose, surat }: ModalDetailProps
                     {/* INFO BOXES */}
                     <InfoBox label="Nomor Surat" value={surat.nomorSurat} icon={<Hash className="w-5 h-5 text-white" />} delay={0.1} />
                     <InfoBox label="Jenis Surat" value={surat.jenisSurat} icon={<FileText className="w-5 h-5 text-white" />} delay={0.2} />
-                    <InfoBox label="Tanggal Pengajuan" value={surat.tanggal} icon={<Calendar className="w-5 h-5 text-white" />} delay={0.3} />
+                    <InfoBox label="Tanggal Pengajuan" value={new Date(surat.tanggal).toLocaleDateString('id-ID', {day: '2-digit',month: 'long',year: 'numeric',})} icon={<Calendar className="w-5 h-5 text-white" />} delay={0.3} />
                     <InfoBox label="Keperluan" value={surat.keperluan || '—'} icon={<FileText className="w-5 h-5 text-white" />} delay={0.32} />
 
                     {/* FILE PREVIEW */}

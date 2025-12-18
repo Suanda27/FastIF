@@ -8,7 +8,8 @@ export const pengajuanSurvey = async (req, res) => {
     }
 
     const id_user = req.session.user.id_user;
-    const { keperluan } = req.body;
+    const { keperluan, instansi } = req.body;
+    const instansi_tujuan = instansi ?? null;
     const file_surat = req.file ? req.file.filename : null;
 
     // Cari id template yang nama_template mengandung "survei" atau "survey"
@@ -29,7 +30,7 @@ export const pengajuanSurvey = async (req, res) => {
     });
 
     // Insert ke tabel pengajuan_surat
-    await insertPengajuanSurat(id_surat, keperluan, file_surat);
+    await insertPengajuanSurat(id_surat, keperluan, instansi_tujuan, file_surat);
 
     res.json({
       success: true,
