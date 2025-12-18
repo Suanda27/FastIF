@@ -139,6 +139,34 @@ function Field({ label, value, large }: { label: string; value: any; large?: boo
 }
 
 function LampiranItem({ file, onPreview }: { file: string; onPreview: () => void }) {
+  const ext = file.split(".").pop()?.toLowerCase();
+
+  const isWord = ext === "doc" || ext === "docx";
+  const canPrint = ["pdf", "jpg", "jpeg", "png"].includes(ext ?? "");
+
+  const fileUrl = `http://localhost:8001/uploads/${file}`;
+
+  const handleCetak = () => {
+    // WORD → langsung download
+    if (isWord) {
+      const link = document.createElement("a");
+      link.href = fileUrl;
+      link.download = file;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      return;
+    }
+
+    // PDF / IMAGE → buka preview untuk print
+    if (canPrint) {
+      onPreview();
+      return;
+    }
+
+    alert("File tidak dapat dicetak");
+  };
+
   return (
     <div className="flex justify-between items-center bg-white/70 border border-gray-200 rounded-lg px-3 py-2 hover:shadow-md transition">
       <div className="flex items-center gap-2 text-gray-700">
@@ -147,16 +175,15 @@ function LampiranItem({ file, onPreview }: { file: string; onPreview: () => void
       </div>
 
       <div className="flex gap-2">
-        <a
-          href={`http://localhost:8001/uploads/${file}`}
-          download
+        <button
+          onClick={handleCetak}
           className="text-xs px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition"
         >
-          Download
-        </a>
+          Cetak
+        </button>
 
         <button
-          onClick={onPreview}
+          onClick={() => onPreview()}
           className="text-xs px-3 py-1 border border-gray-300 rounded-md hover:bg-gray-100 transition"
         >
           Preview
@@ -165,3 +192,5 @@ function LampiranItem({ file, onPreview }: { file: string; onPreview: () => void
     </div>
   );
 }
+
+

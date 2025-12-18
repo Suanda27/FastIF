@@ -29,7 +29,7 @@ const Arsip = {
         -- DETAIL PENGAJUAN SURAT
         ps.keperluan AS ps_keperluan,
         ps.file_surat AS ps_file_surat,
-        ps.deskripsi AS ps_deskripsi
+        ps.instansi_tujuan AS ps_instansi_tujuan
 
       FROM surat s
       JOIN user u ON s.id_user = u.id_user
@@ -80,7 +80,7 @@ const Arsip = {
           tanggal_pengajuan: r.tanggal_pengajuan,
 
           keperluan: r.ps_keperluan || r.surat_keperluan || null,
-          deskripsi_pengajuan: r.ps_deskripsi || null,
+          instansi_tujuan: r.ps_instansi_tujuan || null,
 
           files,
 
