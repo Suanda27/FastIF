@@ -22,10 +22,9 @@ const Dashboard = {
         u.jurusan,
         s.jenis_surat AS jenis,
         s.status,
-        s.tanggal_pengajuan
+        s.tanggal_pengajuan AS created_at
       FROM surat s
       JOIN user u ON s.id_user = u.id_user
-      ORDER BY s.tanggal_pengajuan DESC
     `;
 
     db.query(tableQuery, callback);

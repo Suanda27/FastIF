@@ -6,7 +6,7 @@ import { motion, Variants, AnimatePresence } from "framer-motion";
 interface Activity {
   date: string;
   type: string;
-  status: "Selesai" | "Ditangguhkan";
+  status: "Diproses" | "Selesai" | "Ditangguhkan";
 }
 
 interface ActivityTableProps {
@@ -124,6 +124,8 @@ export default function ActivityTable({ activities }: ActivityTableProps) {
                         className={`inline-flex items-center px-4 py-1 rounded-full text-sm font-semibold shadow-sm ${
                           activity.status === "Selesai"
                             ? "bg-green-500 text-white"
+                            : activity.status === "Diproses"
+                            ? "bg-blue-500 text-white"
                             : "bg-yellow-500 text-white"
                         }`}
                         aria-label={`Status: ${activity.status}`}

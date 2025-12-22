@@ -1,8 +1,6 @@
 import db from "../config/db.js";
 
-// ==========================
 // Ambil Statistik Mahasiswa
-// ==========================
 export const getUserStats = (userId, callback) => {
   const query = `
         SELECT 
@@ -16,27 +14,22 @@ export const getUserStats = (userId, callback) => {
   db.query(query, [userId], callback);
 };
 
-// ==========================
-// Ambil Aktivitas Mahasiswa
-// ==========================
+// Aktivitas Mahasiswa
 export const getUserActivity = (userId, callback) => {
   const query = `
-        SELECT 
-            tanggal_pengajuan AS tanggal, 
-            jenis_surat, 
-            status
-        FROM surat
-        WHERE id_user = ?
-        ORDER BY tanggal_pengajuan DESC
-        LIMIT 10;
-    `;
+    SELECT 
+      id_surat,
+      tanggal_pengajuan AS created_at,
+      jenis_surat AS jenis,
+      status
+    FROM surat
+    WHERE id_user = ?;
+  `;
 
   db.query(query, [userId], callback);
 };
 
-// ==========================
 // Ambil Template Surat
-// ==========================
 export const getTemplates = (callback) => {
   const query = "SELECT * FROM template_surat";
   db.query(query, callback);

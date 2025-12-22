@@ -13,6 +13,7 @@ interface Surat {
   jurusan: string;
   jenis: string;
   status: StatusSurat;
+  created_at: string;
 }
 
 const statusColor: Record<StatusSurat, string> = {
@@ -51,6 +52,18 @@ const mapStatus = (status: string): StatusSurat => {
   return "Ditangguhkan";
 };
 
+const sortSurat = (a: any, b: any) => {
+  const dateA = new Date(a.created_at).getTime();
+  const dateB = new Date(b.created_at).getTime();
+
+  // 1️⃣ Diproses selalu di atas
+  if (a.status === "Diproses" && b.status !== "Diproses") return -1;
+  if (a.status !== "Diproses" && b.status === "Diproses") return 1;
+
+  // 2️⃣ Urutkan berdasarkan tanggal (lama → baru)
+  return dateA - dateB;
+};
+
 export default function DashboardPage() {
   const [stats, setStats] = useState({
     pengajuan: 0,
@@ -62,11 +75,11 @@ export default function DashboardPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
-  // 🔥 Data sudah disaring agar hanya "Diproses"
-  const dataSurat = useMemo(
-    () => allSurat.filter((item) => item.status === "Diproses"),
-    [allSurat]
-  );
+  // Sorting Data
+  const dataSurat = useMemo(() => {
+  return [...allSurat]
+    .sort(sortSurat);
+  }, [allSurat]);
 
   const totalPages = Math.ceil(dataSurat.length / itemsPerPage);
 
@@ -98,6 +111,7 @@ export default function DashboardPage() {
           ...item,
           jurusan: item.jurusan || "-",
           status: mapStatus(item.status),
+          created_at: item.created_at,
         }));
 
         setAllSurat(mapped);

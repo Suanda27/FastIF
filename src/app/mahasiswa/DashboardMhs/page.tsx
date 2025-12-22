@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { motion } from "framer-motion";
 
 import Sidebar from "../components/SidebarMhs";
@@ -41,7 +41,31 @@ export default function DashboardMhsPage() {
     month: "long",
     year: "numeric",
   }).format(date);
-};
+  };
+
+  type StatusSurat = "Diproses" | "Selesai" | "Ditangguhkan";
+
+  const mapStatus = (status: string): StatusSurat => {
+  const low = status.toLowerCase();
+  if (low === "diproses") return "Diproses";
+  if (low === "diterima") return "Selesai";
+  return "Ditangguhkan";
+  };
+
+  const sortSurat = (a: any, b: any) => {
+  const dateA = new Date(a.created_at).getTime();
+  const dateB = new Date(b.created_at).getTime();
+
+  // Diproses selalu di atas
+  if (a.status === "Diproses" && b.status !== "Diproses") return -1;
+  if (a.status !== "Diproses" && b.status === "Diproses") return 1;
+
+  // Lama → baru
+  return dateA - dateB;
+  };
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
 
   useEffect(() => {
@@ -68,18 +92,7 @@ export default function DashboardMhsPage() {
           `http://localhost:8001/api/dashboard-mhs/aktivitas/${user.id_user}`
         );
 
-        const mappedActivities = (actData?.data ?? []).map((item: any) => ({
-          date: formatTanggalIndonesia(item.tanggal),
-          type: item.jenis_surat,
-          status:
-            item.status === "diterima"
-              ? "Selesai"
-              : item.status === "diproses"
-              ? "Diproses"
-              : "Ditangguhkan",
-        }));
-
-        setActivities(mappedActivities);
+        setActivities(actData?.data || []);
 
         // ===== Template Surat =====
         const templateData = await apiFetch(
@@ -96,6 +109,25 @@ export default function DashboardMhsPage() {
     loadAll();
   }, []);
 
+  const sortedActivities = useMemo(() => {
+  return [...activities]
+    .map((item: any) => ({
+      created_at: item.created_at,
+      type: item.jenis,
+      status: mapStatus(item.status),
+      date: formatTanggalIndonesia(item.created_at),
+    }))
+    .sort(sortSurat);
+  }, [activities]);
+
+  const totalPages = Math.ceil(sortedActivities.length / itemsPerPage);
+
+  const paginatedActivities = useMemo(() => {
+  return sortedActivities.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+  }, [sortedActivities, currentPage]);
 
 
   return (
@@ -153,11 +185,48 @@ export default function DashboardMhsPage() {
 
           {/* ===== AKTIVITAS ===== */}
           <div className="mb-8">
-            <ActivityTable activities={activities} key={activities.length} />
+            <ActivityTable activities={paginatedActivities} key={currentPage}/>
           </div>
 
+          {totalPages > 1 && (
+  <div className="flex justify-center items-center gap-3 mt-4">
+    <button
+      className="px-3 py-1 rounded-lg bg-blue-900 text-white hover:bg-blue-600 transition disabled:opacity-40"
+      onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+      disabled={currentPage === 1}
+    >
+      Prev
+    </button>
+
+    {Array.from({ length: totalPages }, (_, i) => (
+      <button
+        key={i}
+        onClick={() => setCurrentPage(i + 1)}
+        className={`px-3 py-1 rounded-lg text-white transition ${
+          currentPage === i + 1
+            ? "bg-blue-700"
+            : "bg-blue-900 hover:bg-blue-600"
+        }`}
+      >
+        {i + 1}
+      </button>
+    ))}
+
+    <button
+      className="px-3 py-1 rounded-lg bg-blue-900 text-white hover:bg-blue-600 transition disabled:opacity-40"
+      onClick={() =>
+        setCurrentPage((p) => Math.min(p + 1, totalPages))
+      }
+      disabled={currentPage === totalPages}
+    >
+      Next
+    </button>
+  </div>
+)}
+
+
           {/* ===== TEMPLATE SURAT ===== */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
             {templates.map((letter: any) => (
               <LetterCard
                 key={letter.id_template}
