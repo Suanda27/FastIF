@@ -3,10 +3,26 @@ import bcrypt from "bcrypt";
 
 // ================= REGISTER =================
 export const register = (req, res) => {
-  const { nama, email, password, nim } = req.body;
+  const { nama, email, password, nim, prodi } = req.body;
 
-  if (!nama || !email || !password || !nim) {
+  if (!nama || !email || !password || !nim || !prodi) {
     return res.status(400).json({ message: "Data tidak lengkap" });
+  }
+
+  // validasi prodi static
+  const ALLOWED_PRODI = [
+  "Teknik Informatika",
+  "Teknologi Geomatika",
+  "Terapan Animasi",
+  "Terapan Teknologi Rekayasa Multimedia",
+  "Terapan Rekayasa Keamanan Siber",
+  "Terapan Rekayasa Perangkat Lunak",
+  "Teknik Komputer",
+  "Terapan Teknologi Permainan",
+  ];
+
+  if (!ALLOWED_PRODI.includes(prodi)) {
+    return res.status(400).json({ message: "Prodi tidak valid" });
   }
 
   db.query(
@@ -27,9 +43,10 @@ export const register = (req, res) => {
       const hashedPassword = await bcrypt.hash(password, 10);
 
       db.query(
-        `INSERT INTO user (nama, email, password, nim, role)
-         VALUES (?, ?, ?, ?, 'mahasiswa')`,
-        [nama, email, hashedPassword, nim],
+        `INSERT INTO user 
+         (nama, email, password, nim, role, jurusan, prodi)
+         VALUES (?, ?, ?, ?, 'mahasiswa', 'Teknik Informatika', ?)`,
+        [nama, email, hashedPassword, nim, prodi],
         (err) => {
           if (err) {
             console.error(err);
@@ -39,6 +56,8 @@ export const register = (req, res) => {
           res.status(201).json({
             success: true,
             message: "Registrasi berhasil",
+            jurusan: "Teknik Informatika",
+            prodi,
           });
         }
       );

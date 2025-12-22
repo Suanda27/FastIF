@@ -58,6 +58,7 @@ export default function RegisterPage() {
     email: '',
     password: '',
     confirmPassword: '',
+    prodi: 'Teknik Informatika',
   });
   const [errors, setErrors] = useState({
     nama: '',
@@ -93,7 +94,7 @@ export default function RegisterPage() {
       nim: '',
       email: '',
       password: '',
-      confirmPassword: '',
+      confirmPassword: '',  
     };
     let hasError = false;
 
@@ -150,6 +151,7 @@ export default function RegisterPage() {
         nim: formData.nim,
         email: formData.email,
         password: formData.password,
+        prodi: formData.prodi,
       }),
     });
 
@@ -239,6 +241,25 @@ export default function RegisterPage() {
               {errors.email && (
                 <p className="mt-1 text-sm text-red-600">{errors.email}</p>
               )}
+            </div>
+
+            <div>
+              <select
+                name="prodi"
+                value={formData.prodi}
+                onChange={(e) =>
+                setFormData((prev) => ({ ...prev, prodi: e.target.value }))
+                }
+                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#0A1C56] focus:border-transparent text-gray-900">
+                <option value="Teknik Informatika">Teknik Informatika</option>
+                <option value="Teknologi Geomatika">Teknologi Geomatika</option>
+                <option value="Terapan Animasi">Terapan Animasi</option>
+                <option value="Terapan Teknologi Rekayasa Multimedia">Terapan Teknologi Rekayasa Multimedia</option>
+                <option value="Terapan Rekayasa Keamanan Siber">Terapan Rekayasa Keamanan Siber</option>
+                <option value="Terapan Rekayasa Perangkat Lunak">Terapan Rekayasa Perangkat Lunak</option>
+                <option value="Teknik Komputer">Teknik Komputer</option>
+                <option value="Terapan Teknologi Permainan">Terapan Teknologi Permainan</option>
+              </select>
             </div>
 
             <div>
