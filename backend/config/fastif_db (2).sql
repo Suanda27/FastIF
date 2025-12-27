@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 18, 2025 at 02:47 PM
+-- Generation Time: Dec 26, 2025 at 08:29 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -88,7 +88,9 @@ INSERT INTO `pengajuan_surat` (`id_pengajuan`, `id_surat`, `keperluan`, `file_su
 (20, 57, 'tes', '1766044325665-CamScanner_29-11-2025_05.31.pdf', 'tes', '2025-12-18 14:52:05'),
 (21, 58, 'tes', '1766045949620-cv_(1).pdf', 'tes', '2025-12-18 15:19:09'),
 (22, 59, 'tes', '1766054719148-1765296205901-CV_dan_Permohonan_Lamaran_Kerja_.docx', 'tes', '2025-12-18 17:45:19'),
-(23, 60, 'tes', '1766054768640-1765296205901-CV_dan_Permohonan_Lamaran_Kerja_.docx', 'tes', '2025-12-18 17:46:08');
+(23, 60, 'tes', '1766054768640-1765296205901-CV_dan_Permohonan_Lamaran_Kerja_.docx', 'tes', '2025-12-18 17:46:08'),
+(24, 61, 'tes tanggal', '1766391537842-Ijazah.pdf', 'tes tanggal', '2025-12-22 15:18:57'),
+(25, 62, 'tes tanggal survey', '1766391587427-Ijazah.pdf', 'tes tanggal survey', '2025-12-22 15:19:47');
 
 -- --------------------------------------------------------
 
@@ -132,7 +134,9 @@ INSERT INTO `surat` (`id_surat`, `id_user`, `id_template`, `jenis_surat`, `tangg
 (57, 4, 12, 'Surat Survey', '2025-12-18 14:52:05', 'diproses', NULL, '2025-12-18 14:52:05', 'tes', '1766044325665-CamScanner_29-11-2025_05.31.pdf'),
 (58, 4, 12, 'Surat Survey', '2025-12-18 15:19:09', 'diproses', NULL, '2025-12-18 15:19:09', 'tes', '1766045949620-cv_(1).pdf'),
 (59, 4, 12, 'Surat Survey', '2025-12-18 17:45:19', 'diproses', NULL, '2025-12-18 17:45:19', 'tes', '1766054719148-1765296205901-CV_dan_Permohonan_Lamaran_Kerja_.docx'),
-(60, 6, 12, 'Surat Survey', '2025-12-18 17:46:08', 'diproses', NULL, '2025-12-18 17:46:08', 'tes', '1766054768640-1765296205901-CV_dan_Permohonan_Lamaran_Kerja_.docx');
+(60, 6, 12, 'Surat Survey', '2025-12-18 17:46:08', 'diproses', NULL, '2025-12-18 17:46:08', 'tes', '1766054768640-1765296205901-CV_dan_Permohonan_Lamaran_Kerja_.docx'),
+(61, 4, 12, 'Surat Survey', '2025-12-22 15:18:57', 'diproses', NULL, '2025-12-22 15:18:57', 'tes tanggal', '1766391537842-Ijazah.pdf'),
+(62, 4, 12, 'Surat Survey', '2025-12-22 15:19:47', 'diproses', NULL, '2025-12-22 15:19:47', 'tes tanggal survey', '1766391587427-Ijazah.pdf');
 
 -- --------------------------------------------------------
 
@@ -171,7 +175,8 @@ CREATE TABLE `user` (
   `password` varchar(255) DEFAULT NULL,
   `role` enum('mahasiswa','admin') DEFAULT 'mahasiswa',
   `nim` varchar(20) DEFAULT NULL,
-  `jurusan` varchar(100) DEFAULT NULL,
+  `jurusan` varchar(100) DEFAULT 'Teknik Informatika',
+  `prodi` varchar(100) DEFAULT NULL,
   `nip` varchar(20) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -179,13 +184,15 @@ CREATE TABLE `user` (
 -- Dumping data for table `user`
 --
 
-INSERT INTO `user` (`id_user`, `nama`, `email`, `password`, `role`, `nim`, `jurusan`, `nip`) VALUES
-(1, 'Budi Santoso', 'budi@student.ac.id', '$2b$10$LbODiWgRT0t2yadrRHqOGuks3HT16Ru/Horjbib0MxInCJd69uqL2', 'mahasiswa', '20221001', 'Rekayasa Perangkat Lunak', NULL),
-(2, 'Dewi Kartika', 'dewi@student.ac.id', '$2b$10$2kiVCjmcrtUxjsudayRUdO1OuTp34pdk0iCvVfGI2Kg2.zKba4fN6', 'mahasiswa', '20221002', 'Sistem Informasi', NULL),
-(3, 'Rizky Pratama', 'rizky@student.ac.id', 'rizki123', 'mahasiswa', '20221003', 'Informatika', NULL),
-(4, 'Mahasiswa', 'doni@student.ac.id', '$2b$10$Y.KARyX1kQ6LNMV.HHCT4eaQD9GyvLZUJvTXs48zwkWqEUffhUi8m', 'mahasiswa', '20221004', 'Terapan Teknologi Permainan', NULL),
-(5, 'admin', 'admin@kampus.ac.id', '$2b$10$kquTtnU36yy0Yo27X2Zi4eLC6rDv2pvWElobK7Yrq56Wm3UY4FaKm', 'admin', NULL, NULL, '19870001'),
-(6, 'putra', 'putra@gmail.com', '$2b$10$lOPJPLHtVhwklfETyj6fWuDr1avBH9OrWkGk3VeDf4Xw.EjwVnBUi', 'mahasiswa', '3312411002', 'Informatika', NULL);
+INSERT INTO `user` (`id_user`, `nama`, `email`, `password`, `role`, `nim`, `jurusan`, `prodi`, `nip`) VALUES
+(1, 'Budi Santoso', 'budi@student.ac.id', '$2b$10$LbODiWgRT0t2yadrRHqOGuks3HT16Ru/Horjbib0MxInCJd69uqL2', 'mahasiswa', '20221001', 'Rekayasa Perangkat Lunak', NULL, NULL),
+(2, 'Dewi Kartika', 'dewi@student.ac.id', '$2b$10$2kiVCjmcrtUxjsudayRUdO1OuTp34pdk0iCvVfGI2Kg2.zKba4fN6', 'mahasiswa', '20221002', 'Sistem Informasi', NULL, NULL),
+(3, 'Rizky Pratama', 'rizky@student.ac.id', '$2b$10$onZzkckog.AMc1WL9eAcT.uvVkhTNmlNnFtqMeQIRr7fCklMQrAme', 'mahasiswa', '20221003', 'Informatika', NULL, NULL),
+(4, 'Mahasiswa', 'doni@student.ac.id', '$2b$10$Y.KARyX1kQ6LNMV.HHCT4eaQD9GyvLZUJvTXs48zwkWqEUffhUi8m', 'mahasiswa', '20221004', 'Terapan Teknologi Permainan', NULL, NULL),
+(5, 'admin', 'admin@kampus.ac.id', '$2b$10$kquTtnU36yy0Yo27X2Zi4eLC6rDv2pvWElobK7Yrq56Wm3UY4FaKm', 'admin', NULL, NULL, NULL, '19870001'),
+(6, 'putra', 'putra@gmail.com', '$2b$10$lOPJPLHtVhwklfETyj6fWuDr1avBH9OrWkGk3VeDf4Xw.EjwVnBUi', 'mahasiswa', '3312411002', 'Informatika', NULL, NULL),
+(7, 'Martin', 'martin@gmail.com', '$2b$10$C05eRDpKBQfyCa.pJ6TnfOCmZkTFt8Ze1Cebd8nn6uAbyPWrZtYLW', 'mahasiswa', '3312411001', 'Teknik Informatika', 'Terapan Teknologi Rekayasa Multimedia', NULL),
+(8, 'Rizki', 'rizki@gmail.com', '$2b$10$RuGDf9mARwyRYWyWujPvo.gmM.QgT.Zbncegozu.hnlvF8jXvc4..', 'mahasiswa', '33124110012', 'Teknik Informatika', 'Terapan Rekayasa Keamanan Siber', NULL);
 
 -- --------------------------------------------------------
 
@@ -284,13 +291,13 @@ ALTER TABLE `form_surat_izin`
 -- AUTO_INCREMENT for table `pengajuan_surat`
 --
 ALTER TABLE `pengajuan_surat`
-  MODIFY `id_pengajuan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `id_pengajuan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT for table `surat`
 --
 ALTER TABLE `surat`
-  MODIFY `id_surat` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=61;
+  MODIFY `id_surat` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=63;
 
 --
 -- AUTO_INCREMENT for table `template_surat`
@@ -302,7 +309,7 @@ ALTER TABLE `template_surat`
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `verifikasi`
