@@ -4,7 +4,7 @@ import {
 } from "../models/pengajuanSurveyModel.js";
 import db from "../config/db.js";
 
-export const pengajuanSurvey = async (req, res) => {
+export const pengajuanMagang = async (req, res) => {
   try {
     if (!req.session.user) {
       return res.status(401).json({ success: false, message: "Belum login" });
@@ -14,9 +14,10 @@ export const pengajuanSurvey = async (req, res) => {
     const { keperluan, instansi } = req.body;
     const file_surat = req.file ? req.file.filename : null;
 
-    const jenis_surat = "Surat Survey"; // 🔑 KUNCI UTAMA
+    // 🔑 IDENTITAS SURAT (WAJIB)
+    const jenis_surat = "Surat Izin Magang";
 
-    // Ambil template BERDASARKAN jenis surat (BUKAN LIKE)
+    // 🎯 Ambil template BERDASARKAN NAMA PASTI
     const [rows] = await db
       .promise()
       .query(
@@ -26,7 +27,7 @@ export const pengajuanSurvey = async (req, res) => {
 
     const id_template = rows.length ? rows[0].id_template : null;
 
-    // Insert ke tabel surat
+    // INSERT surat (generic)
     const id_surat = await insertSurat({
       id_user,
       id_template,
@@ -35,7 +36,7 @@ export const pengajuanSurvey = async (req, res) => {
       file_surat,
     });
 
-    // Insert detail survey
+    // INSERT detail
     await insertPengajuanSurat({
       id_surat,
       keperluan,
@@ -45,7 +46,7 @@ export const pengajuanSurvey = async (req, res) => {
 
     res.json({
       success: true,
-      message: "Pengajuan Surat Survey berhasil dikirim",
+      message: "Pengajuan Surat Izin Magang berhasil dikirim",
       id_surat,
     });
   } catch (error) {

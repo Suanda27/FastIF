@@ -114,7 +114,7 @@ export default function SuratPengantarForm() {
     if (selectedFile) form.append("file", selectedFile);
 
     try {
-      const res = await fetch("http://localhost:8001/api/user/pengajuan-surat/pengantar", {
+      const res = await fetch("http://localhost:8001/api/user/pengajuan-pengantar/pengantar", {
         method: "POST",
         body: form,
         credentials: "include",

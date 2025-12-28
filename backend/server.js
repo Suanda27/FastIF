@@ -20,6 +20,12 @@ import pengajuanRoutes from "./routes/pengajuanRoutes.js";
 import pengajuanSurveyRoutes from "./routes/pengajuanSurveyRoutes.js";
 import previewRoutes from "./routes/previewRoutes.js";
 import notifikasiRoutes from "./routes/notifikasiRoutes.js";
+import pengajuanPengantarRoutes from "./routes/pengajuanPengantarRoutes.js";
+import pengajuanBeasiswaRoutes from "./routes/pengajuanBeasiswaRoutes.js";
+import pengajuanMagangRoutes from "./routes/pengajuanMagangRoutes.js";
+import pengajuanLulusRoutes from "./routes/pengajuanLulusRoutes.js";
+
+
 
 
 import dashboardmhsRoutes from "./routes/dashboardmhsRoutes.js";
@@ -72,6 +78,12 @@ app.use("/api", authRoutes);
 app.use("/api/formulir", formulirRoutes);
 app.use("/api/user/pengajuan-surat", pengajuanRoutes);
 app.use("/api/user/pengajuan-survei", pengajuanSurveyRoutes);
+app.use("/api/user/pengajuan-pengantar", pengajuanPengantarRoutes);
+app.use("/api/user/pengajuan-beasiswa", pengajuanBeasiswaRoutes);
+app.use("/api/user/pengajuan-magang", pengajuanMagangRoutes);
+app.use("/api/user/pengajuan-lulus", pengajuanLulusRoutes);
+
+
 
 // --- Mahasiswa ---
 app.use("/api/user/status-surat", statusSuratMhsRoutes);

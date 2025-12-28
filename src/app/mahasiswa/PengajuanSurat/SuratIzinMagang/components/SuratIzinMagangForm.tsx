@@ -115,27 +115,37 @@ export default function SuratIzinMagangForm() {
 
     setIsSubmitting(true);
 
-    // jika backend belum siap, simulasi pengiriman; sesuaikan bila akan kirim ke API
     const form = new FormData();
     form.append("instansi", instansi);
     form.append("keperluan", keperluan);
     if (selectedFile) form.append("file", selectedFile);
 
     try {
-      // replace/aktifkan fetch jika endpoint backend ada
-      // const res = await fetch("http://localhost:8001/api/user/pengajuan-magang", { method: "POST", body: form, credentials: "include" });
-      // const data = await res.json();
+      const res = await fetch(
+        "http://localhost:8001/api/user/pengajuan-magang/magang",
+        {
+          method: "POST",
+          body: form,
+          credentials: "include",
+        }
+      );
 
-      // sementara simulasi delay
-      await new Promise((r) => setTimeout(r, 1200));
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        alert(data.message ?? "Gagal mengajukan surat izin magang");
+        return;
+      }
+
       router.push("/mahasiswa/StatusSurat");
     } catch (err) {
       console.error(err);
-      alert("Terjadi kesalahan saat mengirim. Periksa koneksi atau backend.");
+      alert("Terjadi kesalahan saat mengirim. Periksa koneksi atau server.");
     } finally {
       setIsSubmitting(false);
     }
   };
+
 
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="w-full max-w-4xl mx-auto">

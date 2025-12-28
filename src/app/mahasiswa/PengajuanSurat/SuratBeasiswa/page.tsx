@@ -56,18 +56,38 @@ export default function SuratBeasiswaPage() {
     e.preventDefault();
     setIsSubmitting(true);
 
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    try {
+      const res = await fetch(
+        "http://localhost:8001/api/user/pengajuan-beasiswa/beasiswa",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify({
+            deskripsi: formData.deskripsi,
+          }),
+        }
+      );
 
-    setIsSubmitting(false);
-    setShowSuccess(true);
+      const data = await res.json();
 
-    setTimeout(() => {
-      setShowSuccess(false);
-      setFormData({
-        deskripsi: '',
-      });
-    }, 3000);
+      if (!res.ok || !data.success) {
+        alert(data.message ?? "Gagal mengajukan surat beasiswa");
+        return;
+      }
+
+      setShowSuccess(true);
+      setFormData({ deskripsi: "" });
+    } catch (error) {
+      console.error(error);
+      alert("Gagal menghubungi server");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
+
 
   const updateFormData = (field: keyof FormData, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
