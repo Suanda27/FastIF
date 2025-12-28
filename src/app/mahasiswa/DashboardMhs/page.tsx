@@ -7,7 +7,6 @@ import Sidebar from "../components/SidebarMhs";
 import StudentHeader from "../components/StudentHeader";
 import StatCard from "../components/StatCardMhs";
 import ActivityTable from "../components/ActivityTableMhs";
-import LetterCard from "../components/LetterCardMhs";
 
 export default function DashboardMhsPage() {
   const [loading, setLoading] = useState(true);
@@ -189,61 +188,40 @@ export default function DashboardMhsPage() {
           </div>
 
           {totalPages > 1 && (
-  <div className="flex justify-center items-center gap-3 mt-4">
-    <button
-      className="px-3 py-1 rounded-lg bg-blue-900 text-white hover:bg-blue-600 transition disabled:opacity-40"
-      onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
-      disabled={currentPage === 1}
-    >
-      Prev
-    </button>
+            <div className="flex justify-center items-center gap-3 mt-4">
+              <button
+                className="px-3 py-1 rounded-lg bg-blue-900 text-white hover:bg-blue-600 transition disabled:opacity-40"
+                onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+                disabled={currentPage === 1}
+              >
+                Prev
+              </button>
 
-    {Array.from({ length: totalPages }, (_, i) => (
-      <button
-        key={i}
-        onClick={() => setCurrentPage(i + 1)}
-        className={`px-3 py-1 rounded-lg text-white transition ${
-          currentPage === i + 1
-            ? "bg-blue-700"
-            : "bg-blue-900 hover:bg-blue-600"
-        }`}
-      >
-        {i + 1}
-      </button>
-    ))}
+              {Array.from({ length: totalPages }, (_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setCurrentPage(i + 1)}
+                  className={`px-3 py-1 rounded-lg text-white transition ${
+                    currentPage === i + 1
+                      ? "bg-blue-700"
+                      : "bg-blue-900 hover:bg-blue-600"
+                  }`}
+                >
+                  {i + 1}
+                </button>
+              ))}
 
-    <button
-      className="px-3 py-1 rounded-lg bg-blue-900 text-white hover:bg-blue-600 transition disabled:opacity-40"
-      onClick={() =>
-        setCurrentPage((p) => Math.min(p + 1, totalPages))
-      }
-      disabled={currentPage === totalPages}
-    >
-      Next
-    </button>
-  </div>
-)}
-
-
-          {/* ===== TEMPLATE SURAT ===== */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
-            {templates.map((letter: any) => (
-              <LetterCard
-                key={letter.id_template}
-                title={letter.nama_template}
-                exampleLink={
-                  letter.file_contoh
-                    ? `http://localhost:8001/uploads/${letter.file_contoh}`
-                    : null
+              <button
+                className="px-3 py-1 rounded-lg bg-blue-900 text-white hover:bg-blue-600 transition disabled:opacity-40"
+                onClick={() =>
+                  setCurrentPage((p) => Math.min(p + 1, totalPages))
                 }
-                templateLink={
-                  letter.file_template
-                    ? `http://localhost:8001/uploads/${letter.file_template}`
-                    : null
-                }
-              />
-            ))}
-          </div>
+                disabled={currentPage === totalPages}
+              >
+                Next
+              </button>
+            </div>
+          )}
         </main>
       </div>
     </div>

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Upload, FileCheck, X, AlertCircle, Send, CheckCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import TextAreaField from "../../SuratPengantar/components/TextAreaField";
+import LetterCard from "../../../components/LetterCardMhs";
 
 interface FormErrors {
   instansi?: string;
@@ -28,6 +29,31 @@ export default function SuratSurveiForm() {
   const [isDragging, setIsDragging] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [closeTimeout, setCloseTimeout] = useState<any>(null);
+  const [templates, setTemplates] = useState<any[]>([]);
+  const [templateLoading, setTemplateLoading] = useState(true);
+
+  useEffect(() => {
+  const loadTemplates = async () => {
+    try {
+      const res = await fetch("http://localhost:8001/api/formulir");
+      const data = await res.json();
+
+      // ambil hanya template SURVEI
+      const surveyTemplates = data?.data?.filter((t: any) =>
+        t.nama_template.toLowerCase().includes("survei")
+      );
+
+      setTemplates(surveyTemplates || []);
+    } catch (err) {
+      console.error("Gagal memuat template surat", err);
+      setTemplates([]);
+    } finally {
+      setTemplateLoading(false);
+    }
+  };
+
+  loadTemplates();
+  }, []);
 
 
   useEffect(() => {
@@ -238,6 +264,40 @@ export default function SuratSurveiForm() {
                 {errors.keperluan}
               </motion.p>
             )}
+          </div>
+          
+          {/* TEMPLATE SURAT */}
+          <div>
+            <h3 className="text-lg font-bold text-[#0A1C56] mb-6">
+              Template Surat
+            </h3>
+
+            {templateLoading ? (
+              <p className="text-sm text-gray-500">Memuat template...</p>
+              ) : templates.length === 0 ? (
+                <p className="text-sm text-gray-500">
+                  Template surat belum tersedia.
+                </p>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {templates.map((tpl: any) => (
+                      <LetterCard
+                        key={tpl.id_template}
+                        title={tpl.nama_template}
+                        exampleLink={
+                          tpl.file_contoh
+                            ? `http://localhost:8001/uploads/${tpl.file_contoh}`
+                            : null
+                        }
+                        templateLink={
+                          tpl.file_template
+                            ? `http://localhost:8001/uploads/${tpl.file_template}`
+                            : null
+                        }
+                      />
+                    ))}
+                  </div>
+                )}
           </div>
 
           {/* UPLOAD FILE */}

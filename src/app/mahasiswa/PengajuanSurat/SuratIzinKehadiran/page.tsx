@@ -7,6 +7,7 @@ import SidebarMhs from '../../components/SidebarMhs';
 import FormField from './components/FormField';
 import FileUpload from './components/FileUpload';
 import StudentHeader from '../../components/StudentHeader';
+import LetterCard from '../../components/LetterCardMhs';
 import { useRouter } from "next/navigation";
 
 interface FormData {
@@ -46,6 +47,10 @@ export default function SuratIzinKehadiranPage() {
     buktiPendukung: null,
   });
 
+  const [templates, setTemplates] = useState<any[]>([]);
+  const [templateLoading, setTemplateLoading] = useState(true);
+
+
   // ----- NEW: profile state + fetch -----
   const [profile, setProfile] = useState<{ nama?: string; nim?: string; jurusan?: string } | null>(null);
   const [profileLoading, setProfileLoading] = useState(true);
@@ -78,7 +83,28 @@ export default function SuratIzinKehadiranPage() {
       mounted = false;
     };
   }, []);
-  // ----- end new -----
+
+  useEffect(() => {
+  const loadTemplates = async () => {
+    try {
+      const res = await fetch("http://localhost:8001/api/formulir");
+      const data = await res.json();
+
+      const izinTemplates = data?.data?.filter((t: any) =>
+        t.nama_template.toLowerCase().includes("izin perkuliahan")
+      );
+
+      setTemplates(izinTemplates || []);
+    } catch (err) {
+      console.error("Gagal memuat template izin", err);
+      setTemplates([]);
+    } finally {
+      setTemplateLoading(false);
+    }
+  };
+
+  loadTemplates();
+  }, []);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
@@ -267,9 +293,40 @@ export default function SuratIzinKehadiranPage() {
                   value={formData.tanggalTerakhir}
                   onChange={(val) => updateFormData('tanggalTerakhir', val)}
                 />
+              </div>
 
-                {/* kalau mau, bisa sisakan kolom ini kosong atau untuk field lain */}
-                <div />
+              {/* TEMPLATE SURAT IZIN */}
+              <div className="border-t border-gray-200 pt-6 mt-6">
+                <h3 className="text-lg font-bold text-[#0A1C56] mb-4">
+                  Template Surat Izin
+                </h3>
+
+                {templateLoading ? (
+                  <p className="text-sm text-gray-500">Memuat template...</p>
+                ) : templates.length === 0 ? (
+                  <p className="text-sm text-gray-500">
+                    Template surat belum tersedia.
+                  </p>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {templates.map((tpl: any) => (
+                      <LetterCard
+                        key={tpl.id_template}
+                        title={tpl.nama_template}
+                        exampleLink={
+                          tpl.file_contoh
+                            ? `http://localhost:8001/uploads/${tpl.file_contoh}`
+                            : null
+                        }
+                        templateLink={
+                          tpl.file_template
+                            ? `http://localhost:8001/uploads/${tpl.file_template}`
+                            : null
+                        }
+                      />
+                    ))}
+                  </div>
+                )}
               </div>
 
               {/* Dokumen Pendukung */}

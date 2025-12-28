@@ -4,6 +4,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Upload, FileCheck, X, AlertCircle, Send } from "lucide-react";
 import { motion } from "framer-motion";
+import LetterCard from '../../../components/LetterCardMhs';
 import TextAreaField from "../../SuratPengantar/components/TextAreaField";
 
 interface FormErrors {
@@ -15,6 +16,9 @@ interface FormErrors {
 export default function SuratPengantarForm() {
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const [templates, setTemplates] = useState<any[]>([]);
+  const [templateLoading, setTemplateLoading] = useState(true);
 
   // Profil user
   const [profile, setProfile] = useState<{ nama?: string; nim?: string; jurusan?: string } | null>(null);
@@ -58,6 +62,28 @@ export default function SuratPengantarForm() {
     loadProfile();
     return () => { mounted = false; };
   }, []);
+
+  useEffect(() => {
+    const loadTemplates = async () => {
+      try {
+        const res = await fetch("http://localhost:8001/api/formulir");
+        const data = await res.json();
+  
+        const izinTemplates = data?.data?.filter((t: any) =>
+          t.nama_template.toLowerCase().includes("pengantar")
+        );
+  
+        setTemplates(izinTemplates || []);
+      } catch (err) {
+        console.error("Gagal memuat template izin", err);
+        setTemplates([]);
+      } finally {
+        setTemplateLoading(false);
+      }
+    };
+  
+    loadTemplates();
+    }, []);
 
   // VALIDASI FORM
   const validateForm = (): boolean => {
@@ -163,7 +189,7 @@ export default function SuratPengantarForm() {
                 if (errors.instansi) setErrors((prev) => ({ ...prev, instansi: undefined }));
               }}
               placeholder="Nama instansi atau lembaga tujuan..."
-              className="w-full px-4 py-2 rounded-lg border border-gray-300 bg-gray-50 focus:ring-2 focus:ring-[#1976D2] placeholder:text-sm"
+              className="w-full px-4 py-2 rounded-lg border border-gray-300 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1976D2] focus:border-[#1976D2] transition"
             />
             {errors.instansi && (
               <p className="mt-2 text-sm text-red-500 flex gap-1"><AlertCircle className="w-4 h-4" /> {errors.instansi}</p>
@@ -186,6 +212,40 @@ export default function SuratPengantarForm() {
             {errors.keperluan && (
               <p className="mt-2 text-sm text-red-500 flex gap-1"><AlertCircle className="w-4 h-4" /> {errors.keperluan}</p>
             )}
+          </div>
+
+          {/* TEMPLATE SURAT */}
+          <div>
+            <h3 className="text-lg font-bold text-[#0A1C56] mb-6">
+              Template Surat
+            </h3>
+
+            {templateLoading ? (
+              <p className="text-sm text-gray-500">Memuat template...</p>
+            ) : templates.length === 0 ? (
+              <p className="text-sm text-gray-500">
+                Template surat belum tersedia.
+              </p>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {templates.map((tpl: any) => (
+                  <LetterCard
+                    key={tpl.id_template}
+                    title={tpl.nama_template}
+                    exampleLink={
+                      tpl.file_contoh
+                        ? `http://localhost:8001/uploads/${tpl.file_contoh}`
+                        : null
+                    }
+                    templateLink={
+                      tpl.file_template
+                        ? `http://localhost:8001/uploads/${tpl.file_template}`
+                        : null
+                    }
+                  />
+                ))}
+              </div>
+            )}  
           </div>
 
           {/* FILE UPLOAD */}
