@@ -1,9 +1,9 @@
 "use client";
 
-import type { Surat } from "../page"; 
+import type { Surat } from "../page";
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Eye } from "lucide-react";
+import { Eye, Edit } from "lucide-react";
 import BadgeStatus from "./BadgeStatus";
 import dynamic from "next/dynamic";
 
@@ -16,8 +16,8 @@ function formatTanggalIndonesia(tgl: string) {
   });
 }
 
-
 const DetailModal = dynamic(() => import("./DetailModal"), { ssr: false });
+const EditSuratForm = dynamic(() => import("./EditSuratForm"), { ssr: false });
 
 interface TableStatusProps {
   suratList: Surat[];
@@ -26,20 +26,23 @@ interface TableStatusProps {
 export default function TableStatus({ suratList }: TableStatusProps) {
   const [selectedSurat, setSelectedSurat] = useState<Surat | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
 
-  const handleDetailClick = (surat: Surat) => {
+  const handleActionClick = (surat: Surat) => {
     setSelectedSurat(surat);
+    setIsEditMode(surat.status === "Ditangguhkan");
     setIsModalOpen(true);
   };
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
-   
+    setIsEditMode(false);
     setTimeout(() => setSelectedSurat(null), 300);
   };
 
   return (
     <>
+      {/* ================= DESKTOP ================= */}
       <div className="hidden md:block bg-white rounded-2xl shadow-lg overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full" style={{ fontFamily: "Roboto, sans-serif" }}>
@@ -62,6 +65,7 @@ export default function TableStatus({ suratList }: TableStatusProps) {
                 </th>
               </tr>
             </thead>
+
             <tbody className="divide-y divide-gray-200">
               {suratList.map((surat, index) => (
                 <motion.tr
@@ -76,27 +80,42 @@ export default function TableStatus({ suratList }: TableStatusProps) {
                       {surat.nomorSurat}
                     </span>
                   </td>
+
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className="text-sm font-medium" style={{ color: "#0A1C56" }}>
                       {surat.jenisSurat}
                     </span>
                   </td>
+
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="text-sm font-medium"style={{ color: "#0A1C56" }}>{formatTanggalIndonesia(surat.tanggal)}</span>
+                    <span className="text-sm font-medium" style={{ color: "#0A1C56" }}>
+                      {formatTanggalIndonesia(surat.tanggal)}
+                    </span>
                   </td>
+
                   <td className="px-6 py-4 whitespace-nowrap">
                     <BadgeStatus status={surat.status} />
                   </td>
+
                   <td className="px-6 py-4 whitespace-nowrap text-center">
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      onClick={() => handleDetailClick(surat)}
+                      onClick={() => handleActionClick(surat)}
                       className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-white font-medium transition-colors"
                       style={{ backgroundColor: "#1976D2" }}
                     >
-                      <Eye className="w-4 h-4" />
-                      Detail
+                      {surat.status === "Ditangguhkan" ? (
+                        <>
+                          <Edit className="w-4 h-4" />
+                          Edit
+                        </>
+                      ) : (
+                        <>
+                          <Eye className="w-4 h-4" />
+                          Detail
+                        </>
+                      )}
                     </motion.button>
                   </td>
                 </motion.tr>
@@ -112,6 +131,7 @@ export default function TableStatus({ suratList }: TableStatusProps) {
         )}
       </div>
 
+      {/* ================= MOBILE ================= */}
       <div className="md:hidden space-y-4">
         {suratList.map((surat, index) => (
           <motion.div
@@ -142,18 +162,29 @@ export default function TableStatus({ suratList }: TableStatusProps) {
 
               <div>
                 <p className="text-xs text-gray-500 mb-1">Tanggal</p>
-                <p className="text-sm font-medium" style={{ color: "#0A1C56" }}> {formatTanggalIndonesia(surat.tanggal)}</p>
+                <p className="text-sm font-medium" style={{ color: "#0A1C56" }}>
+                  {formatTanggalIndonesia(surat.tanggal)}
+                </p>
               </div>
 
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                onClick={() => handleDetailClick(surat)}
+                onClick={() => handleActionClick(surat)}
                 className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-lg text-white font-medium transition-colors"
                 style={{ backgroundColor: "#1976D2" }}
               >
-                <Eye className="w-4 h-4" />
-                Lihat Detail
+                {surat.status === "Ditangguhkan" ? (
+                  <>
+                    <Edit className="w-4 h-4" />
+                    Edit
+                  </>
+                ) : (
+                  <>
+                    <Eye className="w-4 h-4" />
+                    Lihat Detail
+                  </>
+                )}
               </motion.button>
             </div>
           </motion.div>
@@ -166,7 +197,20 @@ export default function TableStatus({ suratList }: TableStatusProps) {
         )}
       </div>
 
-      <DetailModal surat={selectedSurat} isOpen={isModalOpen} onClose={handleCloseModal} />
+      {/* ================= MODAL ================= */}
+      {isEditMode ? (
+        <EditSuratForm
+          surat={selectedSurat}
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+        />
+      ) : (
+        <DetailModal
+          surat={selectedSurat}
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+        />
+      )}
     </>
   );
 }
