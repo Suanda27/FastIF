@@ -16,12 +16,20 @@ export const pengajuanSurvey = async (req, res) => {
 
     const jenis_surat = "Surat Survey"; // 🔑 KUNCI UTAMA
 
-    // Ambil template BERDASARKAN jenis surat (BUKAN LIKE)
+    // Ambil template BERDASARKAN Nama Template
+    let keyword = jenis_surat.toLowerCase();
+    if (keyword.includes("survey") || keyword.includes("survei")) {
+      keyword = "survei";
+    }
+
     const [rows] = await db
       .promise()
       .query(
-        `SELECT id_template FROM template_surat WHERE nama_template = ? LIMIT 1`,
-        [jenis_surat]
+        `SELECT id_template
+          FROM template_surat
+          WHERE LOWER(nama_template) LIKE ?
+          LIMIT 1`,
+        [`%${keyword}%`]
       );
 
     const id_template = rows.length ? rows[0].id_template : null;

@@ -79,11 +79,14 @@ export default function VerifikasiSuratPage() {
   };
 
   // ==================== VERIFIKASI (PAKAI CATATAN) ====================
-  const handleConfirm = async (catatan: string) => {
-    if (!confirmAction) return;
-
-    const newStatus =
-      confirmAction.type === "accept" ? "diterima" : "ditolak";
+    const handleConfirm = async ({
+      status,
+      catatan,
+    }: {
+      status: string;
+      catatan: string;
+    }) => {
+      if (!confirmAction) return;
 
     try {
       const res = await fetch("http://localhost:8001/api/verifikasi", {
@@ -91,9 +94,9 @@ export default function VerifikasiSuratPage() {
         headers: { "Content-Type": "application/json" },
         credentials: "include",
         body: JSON.stringify({
-          id_surat: confirmAction.row.id,
-          status: newStatus,
-          catatan: catatan || null, // ⬅️ kirim catatan
+        id_surat: confirmAction.row.id,
+        status: status, // ⬅️ dari ConfirmModal
+        catatan: catatan || null,
         }),
       });
 
@@ -103,7 +106,7 @@ export default function VerifikasiSuratPage() {
       setData((prev) =>
         prev.map((r) =>
           r.id === confirmAction.row.id
-            ? { ...r, status: newStatus as Status }
+            ? { ...r, status: status as Status }
             : r
         )
       );
@@ -189,7 +192,7 @@ export default function VerifikasiSuratPage() {
           <ConfirmModal
             action={confirmAction.type}
             onClose={() => closeModal(setConfirmAction)}
-            onConfirm={(catatan) => handleConfirm(catatan)}
+            onConfirm={(data) => handleConfirm(data)}
             closing={closing}
           />,
           document.body

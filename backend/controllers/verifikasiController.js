@@ -10,15 +10,14 @@ import {
 export const verifikasiSurat = async (req, res) => {
   let { id_surat, status, catatan } = req.body;
 
-  // Pastikan user login dan role admin
+  // cek admin
   if (!req.session.user || req.session.user.role !== "admin") {
     return res.status(401).json({
       success: false,
-      message: "Unauthorized: hanya admin yang dapat memverifikasi",
+      message: "Unauthorized",
     });
   }
 
-  // Ambil id admin dari session
   const id_admin = req.session.user.id_user;
 
   if (!id_surat || !status) {
@@ -29,33 +28,43 @@ export const verifikasiSurat = async (req, res) => {
   }
 
   status = status.toLowerCase();
-  const allowed = ["diproses", "diterima", "ditolak"];
+
+  // ✅ STATUS BARU YANG VALID
+  const allowed = ["diterima", "ditolak", "ditangguhkan", ];
   if (!allowed.includes(status)) {
     return res.status(400).json({
       success: false,
-      message: "Status tidak valid",
+      message: "Status verifikasi tidak valid",
     });
   }
 
   try {
-    // UPDATE STATUS
+    // log verifikasi
+    await insertVerifikasiLog(
+      id_surat,
+      id_admin,
+      status,
+      catatan || null
+    );
+
+    // update status surat
     await updateSuratStatus(id_surat, status);
 
-    // UPDATE KETERANGAN SURAT (AMBIL DARI CATATAN ADMIN)
-    await updateSuratKeterangan(id_surat, catatan || null);
-
-    // INSERT LOG VERIFIKASI
-    await insertVerifikasiLog(id_surat, id_admin, status, catatan || null);
+    // update keterangan (opsional)
+    if (catatan) {
+      await updateSuratKeterangan(id_surat, catatan);
+    }
 
     res.json({
       success: true,
-      message: "Status berhasil diubah & log tercatat",
+      message: "Verifikasi surat berhasil",
+      status,
     });
   } catch (err) {
     console.error("Error verifikasi:", err);
     res.status(500).json({
       success: false,
-      message: "Gagal mengubah status",
+      message: "Gagal memverifikasi surat",
     });
   }
 };
