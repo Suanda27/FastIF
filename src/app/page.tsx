@@ -8,58 +8,58 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 const layananSurat = [
   {
-    title: "Surat Aktif Kuliah",
-    desc: "Digunakan untuk keperluan administrasi dan beasiswa.",
+    title: "Izin Kehadiran",
+    desc: "Digunakan untuk mengajukan izin tidak mengikuti perkuliahan karena alasan tertentu.",
     detail:
-      "Surat Aktif Kuliah digunakan sebagai bukti bahwa mahasiswa masih terdaftar aktif pada semester berjalan.",
+      "Surat izin kehadiran digunakan untuk mengajukan izin tidak mengikuti perkuliahan karena alasan tertentu dalam jangka waktu tertentu.",
     img: "/card-1.jpg",
     badge: "Akademik",
-    icon: GraduationCap,
+    icon: FileText,
   },
   {
-    title: "Surat Penelitian",
-    desc: "Izin resmi penelitian mahasiswa tingkat akhir.",
+    title: "Surat Survei",
+    desc: "Surat pengantar resmi untuk keperluan pengambilan data atau survei.",
     detail:
-      "Surat ini digunakan sebagai izin resmi bagi mahasiswa untuk melakukan penelitian di instansi terkait.",
+      "Surat pengantar resmi untuk keperluan pengambilan data atau survei ke instansi terkait.",
     img: "/card-2.jpg",
     badge: "Akademik",
     icon: FileText,
   },
   {
-    title: "Surat Magang",
-    desc: "Persyaratan magang dan kerja praktik.",
+    title: "Surat Pengantar",
+    desc: "Surat pengantar resmi mahasiswa kepada instansi atau pihak tertentu.",
     detail:
-      "Surat pengantar magang digunakan untuk mahasiswa yang akan melaksanakan kerja praktik atau magang.",
+      "Digunakan sebagai surat pengantar resmi mahasiswa kepada instansi atau pihak tertentu.",
     img: "/card-3.jpg",
     badge: "Layanan",
-    icon: Briefcase,
-  },
-  {
-    title: "Surat Cuti",
-    desc: "Pengajuan cuti akademik mahasiswa.",
-    detail:
-      "Surat cuti akademik digunakan ketika mahasiswa ingin menghentikan studi sementara.",
-    img: "/card-4.jpg",
-    badge: "Administrasi",
     icon: FileText,
   },
   {
-    title: "Surat Rekomendasi",
-    desc: "Surat rekomendasi dosen atau fakultas.",
+    title: "Surat Beasiswa",
+    desc: "Surat keterangan resmi untuk pengajuan beasiswa.",
     detail:
-      "Surat rekomendasi diperlukan untuk beasiswa, pertukaran pelajar, atau keperluan profesional.",
-    img: "/card-5.jpg",
+      "Surat keterangan resmi yang digunakan sebagai syarat administrasi pengajuan beasiswa.",
+    img: "/card-4.jpg",
     badge: "Administrasi",
     icon: GraduationCap,
   },
   {
-    title: "Surat Keterangan Lulus",
-    desc: "Digunakan setelah mahasiswa dinyatakan lulus.",
+    title: "Surat Izin Magang",
+    desc: "Surat izin resmi untuk mengikuti kegiatan magang.",
     detail:
-      "Surat keterangan lulus digunakan sebelum ijazah resmi diterbitkan.",
+      "Surat izin resmi untuk mengikuti kegiatan magang dalam periode waktu yang telah ditentukan.",
+    img: "/card-5.jpg",
+    badge: "Administrasi",
+    icon: Briefcase,
+  },
+  {
+    title: "Surat Keterangan Lulus",
+    desc: "Surat resmi bahwa mahasiswa telah dinyatakan lulus.",
+    detail:
+      "Surat resmi yang menyatakan bahwa mahasiswa telah dinyatakan lulus dari program studi.",
     img: "/card-6.jpg",
     badge: "Akademik",
-    icon: FileText,
+    icon: GraduationCap,
   },
 ];
 
