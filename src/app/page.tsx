@@ -1,14 +1,11 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import Link from "next/link";
-import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { FileText, GraduationCap, Briefcase } from "lucide-react";
+import Image from 'next/image';
+import Link from 'next/link';
+import { FileText, CheckCircle, BarChart3, Archive, GraduationCap, Briefcase } from 'lucide-react';
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
-/* =========================
-   DATA LAYANAN SURAT
-========================= */
 const layananSurat = [
   {
     title: "Surat Aktif Kuliah",
@@ -66,42 +63,6 @@ const layananSurat = [
   },
 ];
 
-/* =========================
-   HEADER
-========================= */
-function Header() {
-  return (
-    <header className="bg-[#0A1A4A] py-4 px-6 md:px-12">
-      <div className="max-w-7xl mx-auto">
-        <Link href="/">
-          <Image
-            src="/logo-fastif-white.png"
-            alt="FastIF Logo"
-            width={120}
-            height={40}
-            className="h-10 w-auto"
-            priority
-          />
-        </Link>
-      </div>
-    </header>
-  );
-}
-
-/* =========================
-   FOOTER
-========================= */
-function Footer() {
-  return (
-    <footer className="bg-[#0A1A4A] py-6 text-center">
-      <p className="text-white text-sm">© 2025 Fasilitas Surat Informatika</p>
-    </footer>
-  );
-}
-
-/* =========================
-   MODAL DETAIL SURAT
-========================= */
 function ModalDetail({ data, onClose }: any) {
   return (
     <AnimatePresence>
@@ -154,110 +115,213 @@ function ModalDetail({ data, onClose }: any) {
   );
 }
 
-/* =========================
-   HOME PAGE
-========================= */
+function Header() {
+  return (
+    <header className="bg-[#0A1A4A] py-4 px-6 md:px-12">
+      <div className="max-w-7xl mx-auto">
+        <Link href="/">
+          <Image
+            src="/logo-fastif-white.png"
+            alt="FastIF Logo"
+            width={120}
+            height={40}
+            className="h-10 w-auto"
+            priority
+          />
+        </Link>
+      </div>
+    </header>
+  );
+}
+
 export default function Home() {
   const [selected, setSelected] = useState<any>(null);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen flex flex-col bg-gray-50">
       <Header />
 
-      {/* =========================
-          HERO SECTION (ORIGINAL)
-      ========================= */}
-      <section className="max-w-7xl mx-auto px-6 md:px-12 py-20">
-        <div className="grid md:grid-cols-2 gap-12 items-center">
-          <motion.div
-            initial={{ x: -60, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            transition={{ duration: 0.8 }}
-            className="space-y-6"
-          >
-            <h1 className="text-4xl md:text-6xl font-bold text-[#0A1C56]">
-              FASILITAS SURAT INFORMATIKA
-            </h1>
+      <main className="flex-1">
+        {/* ===== HERO SECTION ===== */}
+        <section className="flex items-center">
+          <div className="max-w-7xl mx-auto px-6 md:px-12 py-12 md:py-20 w-full">
+            <div className="grid md:grid-cols-2 gap-12 items-center">
+              <div className="space-y-6">
+                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0A1C56] leading-tight">
+                  FASILITAS SURAT INFORMATIKA
+                </h1>
 
-            <p className="text-lg text-gray-700">
-              Sistem digital pengelolaan surat mahasiswa yang cepat, transparan,
-              dan terintegrasi.
-            </p>
+                <p className="text-lg md:text-xl text-gray-700 leading-relaxed">
+                  Kelola pengajuan dan status surat mahasiswa dengan cepat, mudah, dan terintegrasi.
+                </p>
 
-            <Link
-              href="/login"
-              className="inline-block bg-[#0A1C56] hover:bg-[#00aeff] text-white px-8 py-3 rounded-lg transition"
-            >
-              Masuk
-            </Link>
-          </motion.div>
+                <Link
+                  href="/login"
+                  className="inline-block bg-[#0A1C56] text-white px-8 py-3 rounded-lg font-medium text-lg hover:bg-[#1E3A8A] transition-colors shadow-md"
+                >
+                  Masuk
+                </Link>
+              </div>
 
-          <motion.div
-            initial={{ x: 60, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            transition={{ duration: 0.8 }}
-          >
-            <Image
-              src="/banner-homepage.png"
-              alt="Banner"
-              width={600}
-              height={450}
-              className="rounded-xl"
-              priority
-            />
-          </motion.div>
-        </div>
-      </section>
+              <div className="relative">
+                <Image
+                  src="/banner-homepage.png"
+                  alt="FastIF Banner"
+                  width={600}
+                  height={400}
+                  className="w-full h-auto"
+                  priority
+                />
+              </div>
+            </div>
+          </div>
+        </section>
 
-      {/* =========================
-          CARD LAYANAN
-      ========================= */}
-      <section className="py-24 px-6 md:px-12">
-        <h2 className="text-4xl font-bold text-center text-[#0A1C56] mb-14">
-          Layanan & Informasi
-        </h2>
+        {/* ===== LAYANAN & INFORMASI ===== */}
+        <section className="py-24 px-6 md:px-12">
+          <h2 className="text-4xl font-bold text-center text-[#0A1C56] mb-14">
+            Layanan & Informasi
+          </h2>
 
-        <div className="max-w-7xl mx-auto grid md:grid-cols-3 gap-10">
-          {layananSurat.map((item, i) => {
-            const Icon = item.icon;
-            return (
-              <motion.div
-                key={i}
-                whileHover={{ y: -10 }}
-                onClick={() => setSelected(item)}
-                className="group cursor-pointer bg-white rounded-2xl overflow-hidden shadow-xl"
-              >
-                <div className="relative h-60">
-                  <Image
-                    src={item.img}
-                    alt={item.title}
-                    fill
-                    className="object-cover transition-transform duration-500 group-hover:scale-110"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-                </div>
-
-                <div className="p-6">
-                  <span className="inline-block mb-2 text-xs font-semibold px-3 py-1 rounded-full bg-[#00aeff]/10 text-[#00aeff]">
-                    {item.badge}
-                  </span>
-
-                  <div className="flex items-center gap-3 mb-2">
-                    <Icon size={22} className="text-[#0A1C56]" />
-                    <h3 className="text-lg font-semibold text-[#0A1C56]">
-                      {item.title}
-                    </h3>
+          <div className="max-w-7xl mx-auto grid md:grid-cols-3 gap-10">
+            {layananSurat.map((item, i) => {
+              const Icon = item.icon;
+              return (
+                <motion.div
+                  key={i}
+                  whileHover={{ y: -10 }}
+                  onClick={() => setSelected(item)}
+                  className="group cursor-pointer bg-white rounded-2xl overflow-hidden shadow-xl"
+                >
+                  <div className="relative h-60">
+                    <Image
+                      src={item.img}
+                      alt={item.title}
+                      fill
+                      className="object-cover transition-transform duration-500 group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
                   </div>
 
-                  <p className="text-gray-600 text-sm">{item.desc}</p>
-                </div>
-              </motion.div>
-            );
-          })}
-        </div>
-      </section>
+                  <div className="p-6">
+                    <span className="inline-block mb-2 text-xs font-semibold px-3 py-1 rounded-full bg-[#00aeff]/10 text-[#00aeff]">
+                      {item.badge}
+                    </span>
 
-      <Footer />
+                    <div className="flex items-center gap-3 mb-2">
+                      <Icon size={22} className="text-[#0A1C56]" />
+                      <h3 className="text-lg font-semibold text-[#0A1C56]">
+                        {item.title}
+                      </h3>
+                    </div>
+
+                    <p className="text-gray-600 text-sm">{item.desc}</p>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* ===== TENTANG FASTIF ===== */}
+        <section className="bg-white py-20">
+          <div className="max-w-7xl mx-auto px-6 md:px-12">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl md:text-4xl font-bold text-[#0A1C56] mb-4">
+                Tentang FASTIF
+              </h2>
+              <p className="text-lg text-gray-700 max-w-3xl mx-auto leading-relaxed">
+                FASTIF adalah platform digital yang dirancang khusus untuk mempermudah proses pengajuan surat bagi mahasiswa Informatika. Dengan sistem yang transparan dan real-time, kami memberikan pengalaman administratif yang lebih efisien dan terpercaya.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* ===== CARA KERJA ===== */}
+        <section className="py-20">
+          <div className="max-w-7xl mx-auto px-6 md:px-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-[#0A1C56] text-center mb-16">
+              Cara Kerja FASTIF
+            </h2>
+
+            <div className="grid md:grid-cols-3 gap-8">
+              {/* Step 1 */}
+              <div className="flex flex-col items-center text-center">
+                <div className="w-16 h-16 bg-[#0A1C56] text-white rounded-full flex items-center justify-center text-2xl font-bold mb-6">
+                  1
+                </div>
+                <h3 className="text-xl font-semibold text-[#0A1C56] mb-3">
+                  Ajukan Surat
+                </h3>
+                <p className="text-gray-700 leading-relaxed">
+                  Pilih jenis surat yang diperlukan dan isi formulir pengajuan dengan data yang lengkap.
+                </p>
+              </div>
+
+              {/* Step 2 */}
+              <div className="flex flex-col items-center text-center">
+                <div className="w-16 h-16 bg-[#0A1C56] text-white rounded-full flex items-center justify-center text-2xl font-bold mb-6">
+                  2
+                </div>
+                <h3 className="text-xl font-semibold text-[#0A1C56] mb-3">
+                  Verifikasi Admin
+                </h3>
+                <p className="text-gray-700 leading-relaxed">
+                  Admin akan memverifikasi dokumen dan data yang Anda kirimkan dengan teliti.
+                </p>
+              </div>
+
+              {/* Step 3 */}
+              <div className="flex flex-col items-center text-center">
+                <div className="w-16 h-16 bg-[#0A1C56] text-white rounded-full flex items-center justify-center text-2xl font-bold mb-6">
+                  3
+                </div>
+                <h3 className="text-xl font-semibold text-[#0A1C56] mb-3">
+                  Proses & Selesai
+                </h3>
+                <p className="text-gray-700 leading-relaxed">
+                  Surat diproses dan siap diambil. Anda dapat melacak status pengajuan kapan saja.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ===== FITUR UTAMA ===== */}
+        <section className="bg-white py-20">
+          <div className="max-w-7xl mx-auto px-6 md:px-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-[#0A1C56] text-center mb-16">
+              Fitur Utama FASTIF
+            </h2>
+          </div>
+        </section>
+
+        {/* ===== CALL TO ACTION ===== */}
+        <section className="bg-gradient-to-r from-[#0A1C56] to-[#1E3A8A] py-24">
+          <div className="max-w-7xl mx-auto px-6 md:px-12 text-center">
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
+              Siap Memulai?
+            </h2>
+            <p className="text-lg text-gray-200 mb-10 max-w-2xl mx-auto">
+              Bergabunglah dengan ribuan mahasiswa Informatika yang telah mempermudah proses administrasi mereka melalui FASTIF.
+            </p>
+            <Link
+              href="/login"
+              className="inline-block bg-white text-[#0A1C56] px-10 py-4 rounded-lg font-semibold text-lg hover:bg-gray-100 transition-colors shadow-lg"
+            >
+              Ajukan Surat Sekarang
+            </Link>
+          </div>
+        </section>
+      </main>
+
+      <footer className="bg-[#0A1C56] text-white py-6">
+        <div className="max-w-7xl mx-auto px-6 md:px-12 text-center">
+          <p className="text-sm md:text-base">
+            © 2025 Fasilitas Surat Informatika. All rights reserved.
+          </p>
+        </div>
+      </footer>
 
       <ModalDetail data={selected} onClose={() => setSelected(null)} />
     </div>
