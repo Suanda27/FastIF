@@ -17,6 +17,7 @@ export default function ConfirmModal({
 }) {
   const [catatan, setCatatan] = useState("");
   const [isTangguhkan, setIsTangguhkan] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const finalStatus =
   action === "accept"
@@ -71,18 +72,32 @@ export default function ConfirmModal({
 
         <div className="flex justify-center gap-3">
           <button
-            onClick={() =>
-              onConfirm({
-                status: finalStatus,
-                catatan: catatan,
-              })
-            }
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg shadow transition text-white ${
-              action === "reject" && !isTangguhkan
-                ? "bg-red-600 hover:bg-red-700"
-                : "bg-blue-600 hover:bg-blue-700"
-            }`}
-          >
+            disabled={loading}
+            onClick={async () => {
+              try {
+                setLoading(true);
+                
+                await onConfirm({
+                  status: finalStatus,
+                  catatan,
+                });
+
+                onClose();
+              } catch (error) {
+                 console.error(error);
+              } finally {
+                setLoading(false);
+              }
+            }}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg shadow transition text-white
+              ${
+                action === "reject" && !isTangguhkan
+                  ? "bg-red-600 hover:bg-red-700"
+                  : "bg-blue-600 hover:bg-blue-700"
+              }
+              ${loading ? "opacity-70 cursor-not-allowed" : ""}
+            `}
+          > 
             <CheckCircle /> Ya, lanjutkan
           </button>
 

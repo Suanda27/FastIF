@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { createPortal } from "react-dom";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 import { SuratRow, Status } from "./data";
 import FilterBar from "./components/FilterBar";
@@ -27,7 +27,24 @@ export default function VerifikasiSuratPage() {
   const [closing, setClosing] = useState(false);
   const [mounted, setMounted] = useState(false);
 
+  // TOAST STATE
+  const [toast, setToast] = useState<{
+    type: "success" | "error";
+    message: string;
+  } | null>(null);
+
   useEffect(() => setMounted(true), []);
+
+  // ==================== AUTO DISMISS TOAST ====================
+  useEffect(() => {
+    if (!toast) return;
+
+    const timer = setTimeout(() => {
+      setToast(null);
+    }, 3000); // ⏱️ 3 detik
+
+    return () => clearTimeout(timer);
+  }, [toast]);
 
   // ==================== FETCH DATA ====================
   useEffect(() => {
@@ -36,7 +53,6 @@ export default function VerifikasiSuratPage() {
     })
       .then((res) => res.json())
       .then((result) => {
-        console.log("Data dari backend:", result.data);
         setData(
           (result.data || []).map((item: any) => ({
             id: item.id_surat,
@@ -78,43 +94,58 @@ export default function VerifikasiSuratPage() {
     }, 250);
   };
 
-  // ==================== VERIFIKASI (PAKAI CATATAN) ====================
-    const handleConfirm = async ({
-      status,
-      catatan,
-    }: {
-      status: string;
-      catatan: string;
-    }) => {
-      if (!confirmAction) return;
+  // ==================== VERIFIKASI SURAT ====================
+  const handleConfirm = async ({
+    status,
+    catatan,
+  }: {
+    status: string;
+    catatan: string;
+  }) => {
+    if (!confirmAction) throw new Error("Tidak ada surat");
 
-    try {
-      const res = await fetch("http://localhost:8001/api/verifikasi", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({
+    const res = await fetch("http://localhost:8001/api/verifikasi", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({
         id_surat: confirmAction.row.id,
-        status: status, // ⬅️ dari ConfirmModal
+        status,
         catatan: catatan || null,
-        }),
+      }),
+    });
+
+    if (!res.ok) {
+      setToast({
+        type: "error",
+        message: "Gagal memproses verifikasi surat",
       });
-
-      if (!res.ok) throw new Error("Gagal update database");
-
-      // Update UI
-      setData((prev) =>
-        prev.map((r) =>
-          r.id === confirmAction.row.id
-            ? { ...r, status: status as Status }
-            : r
-        )
-      );
-    } catch (err) {
-      console.error("Error verifikasi:", err);
+      throw new Error("Gagal update database");
     }
 
+    setData((prev) =>
+      prev.map((r) =>
+        r.id === confirmAction.row.id
+          ? { ...r, status: status as Status }
+          : r
+      )
+    );
+
+    // Tutup modal dulu
     closeModal(setConfirmAction);
+
+    // Toast muncul setelah modal hilang
+    setTimeout(() => {
+      setToast({
+        type: "success",
+        message:
+          status === "diterima"
+            ? "Surat berhasil diterima"
+            : status === "ditangguhkan"
+            ? "Surat berhasil ditangguhkan"
+            : "Surat berhasil ditolak",
+      });
+    }, 300);
   };
 
   // ==================== FILTER DATA ====================
@@ -155,11 +186,9 @@ export default function VerifikasiSuratPage() {
       transition={{ duration: 0.5 }}
       className="space-y-6"
     >
-      <div className="flex items-center gap-3">
-        <h1 className="text-2xl font-semibold text-gray-800">
-          Verifikasi Surat Mahasiswa
-        </h1>
-      </div>
+      <h1 className="text-2xl font-semibold text-gray-800">
+        Verifikasi Surat Mahasiswa
+      </h1>
 
       <FilterBar
         query={query}
@@ -191,9 +220,9 @@ export default function VerifikasiSuratPage() {
         createPortal(
           <ConfirmModal
             action={confirmAction.type}
-            onClose={() => closeModal(setConfirmAction)}
-            onConfirm={(data) => handleConfirm(data)}
             closing={closing}
+            onClose={() => closeModal(setConfirmAction)}
+            onConfirm={handleConfirm}
           />,
           document.body
         )}
@@ -202,11 +231,28 @@ export default function VerifikasiSuratPage() {
         createPortal(
           <PreviewModal
             row={previewRow}
-            onClose={() => closeModal(setPreviewRow)}
             closing={closing}
+            onClose={() => closeModal(setPreviewRow)}
           />,
           document.body
         )}
+
+      {/* ================= TOAST (TOP) ================= */}
+      <AnimatePresence>
+        {toast && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
+            className={`fixed top-20 right-6 z-[9999] px-5 py-3 rounded-xl shadow-xl text-white text-sm
+              ${toast.type === "success" ? "bg-green-600" : "bg-red-600"}
+            `}
+          >
+            {toast.message}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }
