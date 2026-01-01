@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Upload, FileCheck, X, AlertCircle, Send } from "lucide-react";
+import { Upload, FileCheck, X, AlertCircle, Send, CheckCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import LetterCard from '../../../components/LetterCardMhs';
 import TextAreaField from "../../SuratPengantar/components/TextAreaField";
@@ -18,6 +18,7 @@ export default function SuratPengantarForm() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [templates, setTemplates] = useState<any[]>([]);
+  const [showSuccess, setShowSuccess] = useState(false);
   const [templateLoading, setTemplateLoading] = useState(true);
 
   // Profil user
@@ -131,6 +132,7 @@ export default function SuratPengantarForm() {
   // SUBMIT KE BACKEND
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSubmitting || showSuccess) return;
     if (!validateForm()) return;
     setIsSubmitting(true);
 
@@ -148,9 +150,11 @@ export default function SuratPengantarForm() {
 
       const data = await res.json();
       if (data.success) {
-        router.push("/mahasiswa/StatusSurat");
-      } else {
-        alert(data.message ?? "Gagal mengajukan surat.");
+        setShowSuccess(true);
+
+        setTimeout(() => {
+          redirectToStatus();
+        }, 3000);
       }
     } catch (err) {
       console.error(err);
@@ -158,6 +162,10 @@ export default function SuratPengantarForm() {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const redirectToStatus = () => {
+  router.push("/mahasiswa/StatusSurat");
   };
 
   return (
@@ -325,6 +333,39 @@ export default function SuratPengantarForm() {
           </motion.button>
         </form>
       </div>
+      {showSuccess && (
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+      >
+        <motion.div
+          initial={{ scale: 0.8, y: 20 }}
+          animate={{ scale: 1, y: 0 }}
+          className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full text-center"
+        >
+          <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <CheckCircle className="w-10 h-10 text-green-500" />
+          </div>
+
+          <h3 className="text-2xl font-bold text-[#0A1C56] mb-2">
+            Berhasil!
+          </h3>
+
+          <p className="text-gray-600 mb-6">
+            Pengajuan Surat Pengantar berhasil dikirim dan akan diproses.
+          </p>
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={redirectToStatus}
+            className="px-6 py-2 bg-[#0A1C56] text-white rounded-lg font-semibold hover:bg-[#1976D2] transition"
+          >
+            OK
+          </motion.button>
+        </motion.div>
+      </motion.div>
+    )}
     </motion.div>
   );
 }

@@ -58,7 +58,7 @@ export default function PreviewModal({
         </h2>
 
         {/* Konten Preview */}
-        <div className="w-full h-[70vh] bg-gray-50 border border-gray-200 rounded overflow-hidden">
+        <div className="w-full h-[70vh] bg-gray-50 border border-gray-200 rounded overflow-hidden flex items-center justify-center">
           {isPdf ? (
             <iframe
               title={file}
@@ -74,7 +74,7 @@ export default function PreviewModal({
               style={{ border: "none" }}
             />
           ) : (
-            <div className="text-center p-6">
+            <div className="text-center space-y-4">
               <p className="mb-3 text-sm text-gray-600">
                 Tidak dapat menampilkan preview untuk tipe file ini.
               </p>

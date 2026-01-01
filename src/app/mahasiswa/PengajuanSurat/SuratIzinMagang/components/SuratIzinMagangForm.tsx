@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Upload, FileCheck, X, AlertCircle, Send } from "lucide-react";
+import { Upload, FileCheck, X, AlertCircle, Send, CheckCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import LetterCard from '../../../components/LetterCardMhs';
 import TextAreaField from "../../SuratPengantar/components/TextAreaField";
@@ -30,7 +30,9 @@ export default function SuratIzinMagangForm() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
+  const [closeTimeout, setCloseTimeout] = useState<any>(null);
 
   useEffect(() => {
     let mounted = true;
@@ -163,7 +165,12 @@ export default function SuratIzinMagangForm() {
         return;
       }
 
-      router.push("/mahasiswa/StatusSurat");
+      setShowSuccess(true);
+
+      const timeout = setTimeout(() => {
+        router.push("/mahasiswa/StatusSurat");
+        }, 3000);
+      setCloseTimeout(timeout);
     } catch (err) {
       console.error(err);
       alert("Terjadi kesalahan saat mengirim. Periksa koneksi atau server.");
@@ -350,6 +357,39 @@ export default function SuratIzinMagangForm() {
           </motion.button>
         </form>
       </div>
+      {showSuccess && (
+  <motion.div
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+  >
+    <motion.div
+      initial={{ scale: 0.9 }}
+      animate={{ scale: 1 }}
+      className="bg-white rounded-xl p-8 max-w-sm w-full text-center shadow-xl"
+    >
+      <CheckCircle className="w-12 h-12 text-green-500 mx-auto mb-4" />
+      <h2 className="text-lg font-bold text-gray-900 mb-2">
+        Berhasil!
+      </h2>
+      <p className="text-gray-600">
+        Pengajuan Surat Izin Magang berhasil dikirim dan akan diproses.
+      </p>
+
+      <button
+        onClick={() => {
+          if (closeTimeout) clearTimeout(closeTimeout);
+          setShowSuccess(false);
+          router.push("/mahasiswa/StatusSurat");
+        }}
+        className="mt-6 px-6 py-2 rounded-lg bg-[#0A1C56] text-white font-semibold hover:bg-[#1976D2]"
+      >
+        OK
+      </button>
+    </motion.div>
+  </motion.div>
+)}
+
     </motion.div>
   );
 }

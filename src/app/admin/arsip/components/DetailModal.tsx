@@ -149,13 +149,12 @@ function LampiranItem({ file, onPreview }: { file: string; onPreview: () => void
       </div>
 
       <div className="flex gap-2">
-        <a
-          href={`http://localhost:8001/uploads/${file}`}
-          download
+        <button
+          onClick={onPreview}
           className="text-xs px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition"
         >
-          Download
-        </a>
+          Cetak
+        </button>
 
         <button
           onClick={onPreview}

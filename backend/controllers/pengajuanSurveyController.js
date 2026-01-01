@@ -13,13 +13,12 @@ export const pengajuanSurvey = async (req, res) => {
     const id_user = req.session.user.id_user;
     const { keperluan, instansi } = req.body;
     const file_surat = req.file ? req.file.filename : null;
-
-    const jenis_surat = "Surat Survey"; // 🔑 KUNCI UTAMA
+    const jenis_surat = "Surat Survey";
 
     // Ambil template BERDASARKAN Nama Template
     let keyword = jenis_surat.toLowerCase();
-    if (keyword.includes("survey") || keyword.includes("survei")) {
-      keyword = "survei";
+    if (keyword.includes("surat survey") || keyword.includes("surat survei")) {
+      keyword = "surat survei";
     }
 
     const [rows] = await db

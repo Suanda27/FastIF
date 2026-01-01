@@ -2,16 +2,19 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { useRouter } from "next/navigation";
 import { UserCircle, Send, CheckCircle } from 'lucide-react';
 import SidebarMhs from '../../components/SidebarMhs';
 import TextAreaField from '../SuratPengantar/components/TextAreaField';
 import StudentHeader from '../../components/StudentHeader';
+
 
 interface FormData {
   keperluan: string;
 }
 
 export default function SuratKeteranganLulusPage() {
+  const router = useRouter();
   const [formData, setFormData] = useState<FormData>({
     keperluan: '',
   });
@@ -52,6 +55,7 @@ export default function SuratKeteranganLulusPage() {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [closeTimeout, setCloseTimeout] = useState<any>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -82,9 +86,10 @@ export default function SuratKeteranganLulusPage() {
       setShowSuccess(true);
       setFormData({ keperluan: "" });
 
-      setTimeout(() => {
-        setShowSuccess(false);
-      }, 2000);
+      const timeout = setTimeout(() => {
+        router.push("/mahasiswa/StatusSurat");
+      }, 3000);
+      setCloseTimeout(timeout);
     } catch (error) {
       console.error(error);
       alert("Gagal menghubungi server");
@@ -217,8 +222,18 @@ export default function SuratKeteranganLulusPage() {
               Berhasil!
             </h3>
             <p className="text-gray-600">
-              Pengajuan surat keterangan lulus Anda telah berhasil dikirim dan akan segera diproses.
+              Pengajuan Surat Keterangan Lulus berhasil dikirim dan akan diproses.
             </p>
+            <button
+              onClick={() => {
+                if (closeTimeout) clearTimeout(closeTimeout);
+                setShowSuccess(false);
+                router.push("/mahasiswa/StatusSurat");
+              }}
+              className="mt-6 px-6 py-2 rounded-lg bg-[#0A1C56] text-white font-semibold hover:bg-[#1976D2]"
+            >
+              OK
+            </button>
           </motion.div>
         </motion.div>
       )}

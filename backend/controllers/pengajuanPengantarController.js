@@ -13,19 +13,26 @@ export const pengajuanPengantar = async (req, res) => {
     const id_user = req.session.user.id_user;
     const { keperluan, instansi } = req.body;
     const file_surat = req.file ? req.file.filename : null;
-
-    // 🔑 IDENTITAS SURAT (WAJIB & EKSPLISIT)
     const jenis_surat = "Surat Pengantar";
 
     // Ambil template berdasarkan jenis surat (BUKAN LIKE)
+    let keyword = jenis_surat.toLowerCase();
+    if (keyword.includes("surat pengantar") || keyword.includes("pengantar")) {
+      keyword = "surat pengantar";
+    }
+
     const [rows] = await db
       .promise()
       .query(
-        `SELECT id_template FROM template_surat WHERE nama_template = ? LIMIT 1`,
-        [jenis_surat]
+        `SELECT id_template
+          FROM template_surat
+          WHERE LOWER(nama_template) LIKE ?
+          LIMIT 1`,
+        [`%${keyword}%`]
       );
 
     const id_template = rows.length ? rows[0].id_template : null;
+
 
     // Insert ke tabel surat (GENERIC MODEL)
     const id_surat = await insertSurat({

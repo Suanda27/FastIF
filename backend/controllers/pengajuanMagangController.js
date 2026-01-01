@@ -13,19 +13,26 @@ export const pengajuanMagang = async (req, res) => {
     const id_user = req.session.user.id_user;
     const { keperluan, instansi } = req.body;
     const file_surat = req.file ? req.file.filename : null;
-
-    // 🔑 IDENTITAS SURAT (WAJIB)
     const jenis_surat = "Surat Izin Magang";
 
     // 🎯 Ambil template BERDASARKAN NAMA PASTI
+    let keyword = jenis_surat.toLowerCase();
+    if (keyword.includes("surat izin magang") || keyword.includes("surat magang")) {
+      keyword = "magang";
+    }
+
     const [rows] = await db
       .promise()
       .query(
-        `SELECT id_template FROM template_surat WHERE nama_template = ? LIMIT 1`,
-        [jenis_surat]
+        `SELECT id_template
+          FROM template_surat
+          WHERE LOWER(nama_template) LIKE ?
+          LIMIT 1`,
+        [`%${keyword}%`]
       );
 
     const id_template = rows.length ? rows[0].id_template : null;
+
 
     // INSERT surat (generic)
     const id_surat = await insertSurat({

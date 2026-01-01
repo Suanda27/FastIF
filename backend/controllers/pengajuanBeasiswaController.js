@@ -1,4 +1,4 @@
-import { insertSurat } from "../models/pengajuanSurveyModel.js";
+import { insertSurat,insertPengajuanSurat } from "../models/pengajuanSurveyModel.js";
 
 export const pengajuanBeasiswa = async (req, res) => {
   try {
@@ -9,18 +9,23 @@ export const pengajuanBeasiswa = async (req, res) => {
     const id_user = req.session.user.id_user;
     const { keperluan } = req.body;
 
-    // 🔑 IDENTITAS SURAT (WAJIB & EKSPLISIT)
     const jenis_surat = "Surat Beasiswa";
-
-    // ❌ TANPA template
     const id_template = null;
 
-    // Insert ke tabel surat
+    // INSERT ke tabel surat
     const id_surat = await insertSurat({
       id_user,
       id_template,
       jenis_surat,
       keperluan,
+      file_surat: null,
+    });
+
+    // INSERT ke tabel pengajuan_surat
+    await insertPengajuanSurat({
+      id_surat,
+      keperluan,
+      instansi_tujuan: null,
       file_surat: null,
     });
 
