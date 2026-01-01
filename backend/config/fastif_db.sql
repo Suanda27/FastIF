@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 26, 2025 at 08:29 AM
+-- Generation Time: Jan 01, 2026 at 10:55 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -53,7 +53,8 @@ INSERT INTO `form_surat_izin` (`id_form_izin`, `id_surat`, `nama_orangtua`, `noh
 (16, 49, 'tes', 'tes', 'tes', 'tes', 'Izin Sakit', '2025-12-01', '2025-12-16', '1765884143579-BPJS_Ketenagakerjaan.jpg', '1765884143582-KK.jpg', '1765884143584-CV_dan_Permohonan_Lamaran_Kerja_.pdf', '1765884143560-CV_dan_Permohonan_Lamaran_Kerja_.pdf', '2025-12-16 18:22:23'),
 (17, 54, 'tes', 'tes', 'tes', 'tes', 'Izin Keperluan Keluarga', '2025-12-18', '2025-12-18', '1766043673058-Ijazah_page-0001.jpg', '1766043673063-Ijazah_page-0001.jpg', '1766043673067-ERD_UML_(1).jpg', '1766043673035-Tranksrip_Nilai_page-0001.jpg', '2025-12-18 14:41:13'),
 (18, 55, 'tes', 'tes', 'tes', 'tes', 'Izin Sakit', '2026-01-06', '2025-12-27', '1766044062320-Use_Case.jpg', '1766044062321-ERD_UML_(1).jpg', '1766044062322-Use_Case_(1).jpg', '1766044062319-ERD_UML_(1).jpg', '2025-12-18 14:47:42'),
-(19, 56, 'tes', 'tes', 'tes', 'tes', 'Izin Shift Kerja', '2025-12-30', '2026-01-08', '1766044311654-Use_Case.jpg', '1766044311655-Use_Case_(3).jpg', '1766044311655-ERD_UML_(1).jpg', '1766044311652-Use_Case.jpg', '2025-12-18 14:51:51');
+(19, 56, 'tes', 'tes', 'tes', 'tes', 'Izin Shift Kerja', '2025-12-30', '2026-01-08', '1766044311654-Use_Case.jpg', '1766044311655-Use_Case_(3).jpg', '1766044311655-ERD_UML_(1).jpg', '1766044311652-Use_Case.jpg', '2025-12-18 14:51:51'),
+(20, 69, 'tes alur izin', '082391189882', 'tes alur izin', 'tes alur izin', 'Izin Keperluan Keluarga', '2025-12-30', '2025-12-30', '1767098368629-Foto.jpg', '1767098368630-KTP.jpg', '1767098368632-Tranksrip_Nilai.pdf', '1767100608661-KTP.pdf', '2025-12-30 20:16:48');
 
 -- --------------------------------------------------------
 
@@ -83,14 +84,17 @@ INSERT INTO `pengajuan_surat` (`id_pengajuan`, `id_surat`, `keperluan`, `file_su
 (15, 48, 'tes', '1765738192372-KTP.pdf', NULL, '2025-12-15 01:49:52'),
 (16, 50, 'tes1', '1765971393673-CV.docx', NULL, '2025-12-17 18:36:33'),
 (17, 51, 'tes', '1765975419569-CV.docx', NULL, '2025-12-17 19:43:39'),
-(18, 52, 'ini keperluan', '1766025852265-Ijazah.pdf', NULL, '2025-12-18 09:44:12'),
+(18, 52, 'ini keperluan', '1767097470122-Tranksrip_Nilai.pdf', NULL, '2025-12-30 19:24:30'),
 (19, 53, 'ini keperluan1', '1766028391001-skck.pdf', 'ini instasi tujuan', '2025-12-18 10:26:31'),
 (20, 57, 'tes', '1766044325665-CamScanner_29-11-2025_05.31.pdf', 'tes', '2025-12-18 14:52:05'),
 (21, 58, 'tes', '1766045949620-cv_(1).pdf', 'tes', '2025-12-18 15:19:09'),
-(22, 59, 'tes', '1766054719148-1765296205901-CV_dan_Permohonan_Lamaran_Kerja_.docx', 'tes', '2025-12-18 17:45:19'),
+(22, 59, 'tes', '1767097298934-Vaksin.pdf', 'tes', '2025-12-30 19:21:38'),
 (23, 60, 'tes', '1766054768640-1765296205901-CV_dan_Permohonan_Lamaran_Kerja_.docx', 'tes', '2025-12-18 17:46:08'),
-(24, 61, 'tes tanggal', '1766391537842-Ijazah.pdf', 'tes tanggal', '2025-12-22 15:18:57'),
-(25, 62, 'tes tanggal survey', '1766391587427-Ijazah.pdf', 'tes tanggal survey', '2025-12-22 15:19:47');
+(24, 61, 'tes update lagi dan lagi', NULL, 'tes tanggal', '2025-12-30 19:18:50'),
+(25, 62, 'tes update di file tidak diubah', NULL, 'tes tanggal survey', '2025-12-30 19:21:06'),
+(26, 63, 'ini pengantar', '1766911129376-Ijazah.pdf', 'ini pengantar', '2025-12-28 15:38:49'),
+(27, 65, 'ini magang', '1766911177288-CV.docx', 'ini magang', '2025-12-28 15:39:37'),
+(28, 68, 'tes alur ini keperluan', '1767098059028-Vaksin.pdf', 'tes alur ini instansi', '2025-12-30 19:34:19');
 
 -- --------------------------------------------------------
 
@@ -126,17 +130,24 @@ INSERT INTO `surat` (`id_surat`, `id_user`, `id_template`, `jenis_surat`, `tangg
 (49, 6, 13, 'Surat Izin Kehadiran', '2025-12-16 18:22:23', 'ditolak', NULL, '2025-12-16 18:22:23', 'Izin Sakit', '1765884143560-CV_dan_Permohonan_Lamaran_Kerja_.pdf'),
 (50, 4, 12, 'Surat Survey', '2025-12-17 18:36:33', 'diterima', NULL, '2025-12-17 18:36:33', 'tes1', '1765971393673-CV.docx'),
 (51, 4, 12, 'Surat Survey', '2025-12-17 19:43:39', 'diterima', NULL, '2025-12-17 19:43:39', 'tes', '1765975419569-CV.docx'),
-(52, 4, 12, 'Surat Survey', '2025-12-18 09:44:12', 'ditolak', 'tes tolak', '2025-12-18 09:44:12', 'ini keperluan', '1766025852265-Ijazah.pdf'),
+(52, 4, 12, 'Surat Survey', '2025-12-18 09:44:12', 'diproses', '', '2025-12-18 09:44:12', 'ini keperluan', '1767097470122-Tranksrip_Nilai.pdf'),
 (53, 4, 12, 'Surat Survey', '2025-12-18 10:26:31', 'diterima', 'tes acc\n', '2025-12-18 10:26:31', 'ini keperluan1', '1766028391001-skck.pdf'),
 (54, 4, 13, 'Surat Izin Kehadiran', '2025-12-18 14:41:13', 'diterima', 'tes acc lagi', '2025-12-18 14:41:13', 'Izin Keperluan Keluarga', '1766043673035-Tranksrip_Nilai_page-0001.jpg'),
 (55, 4, 13, 'Surat Izin Kehadiran', '2025-12-18 14:47:42', 'diproses', NULL, '2025-12-18 14:47:42', 'Izin Sakit', '1766044062319-ERD_UML_(1).jpg'),
 (56, 4, 13, 'Surat Izin Kehadiran', '2025-12-18 14:51:51', 'diproses', NULL, '2025-12-18 14:51:51', 'Izin Shift Kerja', '1766044311652-Use_Case.jpg'),
 (57, 4, 12, 'Surat Survey', '2025-12-18 14:52:05', 'diproses', NULL, '2025-12-18 14:52:05', 'tes', '1766044325665-CamScanner_29-11-2025_05.31.pdf'),
 (58, 4, 12, 'Surat Survey', '2025-12-18 15:19:09', 'diproses', NULL, '2025-12-18 15:19:09', 'tes', '1766045949620-cv_(1).pdf'),
-(59, 4, 12, 'Surat Survey', '2025-12-18 17:45:19', 'diproses', NULL, '2025-12-18 17:45:19', 'tes', '1766054719148-1765296205901-CV_dan_Permohonan_Lamaran_Kerja_.docx'),
-(60, 6, 12, 'Surat Survey', '2025-12-18 17:46:08', 'diproses', NULL, '2025-12-18 17:46:08', 'tes', '1766054768640-1765296205901-CV_dan_Permohonan_Lamaran_Kerja_.docx'),
-(61, 4, 12, 'Surat Survey', '2025-12-22 15:18:57', 'diproses', NULL, '2025-12-22 15:18:57', 'tes tanggal', '1766391537842-Ijazah.pdf'),
-(62, 4, 12, 'Surat Survey', '2025-12-22 15:19:47', 'diproses', NULL, '2025-12-22 15:19:47', 'tes tanggal survey', '1766391587427-Ijazah.pdf');
+(59, 4, 12, 'Surat Survey', '2025-12-18 17:45:19', 'diproses', '', '2025-12-18 17:45:19', 'tes', '1767097298934-Vaksin.pdf'),
+(60, 6, 12, 'Surat Survey', '2025-12-18 17:46:08', 'ditolak', 'ditolak', '2025-12-18 17:46:08', 'tes', '1766054768640-1765296205901-CV_dan_Permohonan_Lamaran_Kerja_.docx'),
+(61, 4, 12, 'Surat Survey', '2025-12-22 15:18:57', 'diproses', '', '2025-12-22 15:18:57', 'tes update lagi dan lagi', '1767096534176-SKCK.pdf'),
+(62, 4, 12, 'Surat Survey', '2025-12-22 15:19:47', 'diproses', '', '2025-12-22 15:19:47', 'tes update di file tidak diubah', '1767095233495-Vaksin.pdf'),
+(63, 4, 16, 'Surat Pengantar', '2025-12-28 15:38:49', 'ditolak', 'ditangguhkan', '2025-12-28 15:38:49', 'ini pengantar', '1766911129376-Ijazah.pdf'),
+(64, 4, NULL, 'Surat Beasiswa', '2025-12-28 15:39:01', 'ditolak', 'ditolak', '2025-12-28 15:39:01', NULL, NULL),
+(65, 4, 15, 'Surat Izin Magang', '2025-12-28 15:39:37', 'ditolak', NULL, '2025-12-28 15:39:37', 'ini magang', '1766911177288-CV.docx'),
+(66, 4, NULL, 'Surat Keterangan Lulus', '2025-12-28 15:39:46', 'ditolak', NULL, '2025-12-28 15:39:46', 'ini lulus', NULL),
+(67, 4, NULL, 'Surat Beasiswa', '2025-12-28 15:41:28', 'ditolak', NULL, '2025-12-28 15:41:28', NULL, NULL),
+(68, 4, 12, 'Surat Survey', '2025-12-30 19:31:02', 'ditangguhkan', 'tes tangguhkan ke dua kali', '2025-12-30 19:31:02', 'tes alur ini keperluan', '1767098059028-Vaksin.pdf'),
+(69, 4, 13, 'Surat Izin Kehadiran', '2025-12-30 19:39:28', 'diproses', '', '2025-12-30 19:39:28', 'Izin Keperluan Keluarga', '1767100608661-KTP.pdf');
 
 -- --------------------------------------------------------
 
@@ -226,7 +237,24 @@ INSERT INTO `verifikasi` (`id_verifikasi`, `id_surat`, `id_user`, `tanggal_verif
 (20, 49, 5, '2025-12-17 19:51:01', 'tolak1', 'ditolak'),
 (21, 53, 5, '2025-12-18 10:51:44', 'tes acc\n', 'diterima'),
 (22, 54, 5, '2025-12-18 14:41:37', 'tes acc lagi', 'diterima'),
-(23, 52, 5, '2025-12-18 14:41:43', 'tes tolak', 'ditolak');
+(23, 52, 5, '2025-12-18 14:41:43', 'tes tolak', 'ditolak'),
+(24, 61, 5, '2025-12-28 21:02:22', 'ini ditangguhkan', 'ditolak'),
+(25, 64, 5, '2025-12-28 22:10:58', 'ditolak', 'ditolak'),
+(26, 63, 5, '2025-12-28 22:11:47', 'ditangguhkan', 'ditolak'),
+(27, 62, 5, '2025-12-28 22:12:07', 'ditolak', 'ditolak'),
+(28, 60, 5, '2025-12-28 22:12:45', 'ditolak', 'ditolak'),
+(29, 59, 5, '2025-12-28 22:13:14', 'ditangguhkan', 'ditolak'),
+(30, 58, 5, '2025-12-28 22:23:44', 'ditolak', 'ditolak'),
+(31, 58, 5, '2025-12-28 22:24:21', 'ditangguhkan', 'ditolak'),
+(32, 58, 5, '2025-12-28 22:58:25', 'ini fix tolak', 'ditolak'),
+(33, 62, 5, '2025-12-30 19:17:15', 'tes tangguhkan lagi', 'ditangguhkan'),
+(34, 61, 5, '2025-12-30 19:17:35', 'tes tangguhkan more', 'ditangguhkan'),
+(35, 68, 5, '2025-12-30 19:32:15', 'tes alur ini ditangguhkan', 'ditangguhkan'),
+(36, 68, 5, '2025-12-30 19:36:41', 'tes tangguhkan ke dua kali', 'ditangguhkan'),
+(37, 69, 5, '2025-12-30 19:40:04', 'tes tangguh izin', 'ditangguhkan'),
+(38, 69, 5, '2025-12-30 19:51:47', 'tes tangguhkan untuk ngecek file berubah apa ngga', 'ditangguhkan'),
+(39, 69, 5, '2025-12-30 19:54:18', 'tes ngecek file harusnya jadi vaksin', 'ditangguhkan'),
+(40, 69, 5, '2025-12-30 20:15:40', 'tes tangguhkan izin lagi dan lagi dan lagi', 'ditangguhkan');
 
 --
 -- Indexes for dumped tables
@@ -285,19 +313,19 @@ ALTER TABLE `verifikasi`
 -- AUTO_INCREMENT for table `form_surat_izin`
 --
 ALTER TABLE `form_surat_izin`
-  MODIFY `id_form_izin` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id_form_izin` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `pengajuan_surat`
 --
 ALTER TABLE `pengajuan_surat`
-  MODIFY `id_pengajuan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+  MODIFY `id_pengajuan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 
 --
 -- AUTO_INCREMENT for table `surat`
 --
 ALTER TABLE `surat`
-  MODIFY `id_surat` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=63;
+  MODIFY `id_surat` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=70;
 
 --
 -- AUTO_INCREMENT for table `template_surat`
@@ -315,7 +343,7 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT for table `verifikasi`
 --
 ALTER TABLE `verifikasi`
-  MODIFY `id_verifikasi` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `id_verifikasi` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
 
 --
 -- Constraints for dumped tables
