@@ -12,7 +12,7 @@ const layananSurat = [
     desc: "Digunakan untuk mengajukan izin tidak mengikuti perkuliahan karena alasan tertentu.",
     detail:
       "Surat izin kehadiran digunakan untuk mengajukan izin tidak mengikuti perkuliahan karena alasan tertentu dalam jangka waktu tertentu.",
-    img: "/card-1.jpg",
+    img: "/izin kehadiran.png",
     badge: "Akademik",
     icon: FileText,
   },
@@ -21,7 +21,7 @@ const layananSurat = [
     desc: "Surat pengantar resmi untuk keperluan pengambilan data atau survei.",
     detail:
       "Surat pengantar resmi untuk keperluan pengambilan data atau survei ke instansi terkait.",
-    img: "/card-2.jpg",
+    img: "/Survey.png",
     badge: "Akademik",
     icon: FileText,
   },
@@ -30,7 +30,7 @@ const layananSurat = [
     desc: "Surat pengantar resmi mahasiswa kepada instansi atau pihak tertentu.",
     detail:
       "Digunakan sebagai surat pengantar resmi mahasiswa kepada instansi atau pihak tertentu.",
-    img: "/card-3.jpg",
+    img: "/Pengantar.png",
     badge: "Layanan",
     icon: FileText,
   },
@@ -39,7 +39,7 @@ const layananSurat = [
     desc: "Surat keterangan resmi untuk pengajuan beasiswa.",
     detail:
       "Surat keterangan resmi yang digunakan sebagai syarat administrasi pengajuan beasiswa.",
-    img: "/card-4.jpg",
+    img: "/beasiswa.png",
     badge: "Administrasi",
     icon: GraduationCap,
   },
@@ -48,7 +48,7 @@ const layananSurat = [
     desc: "Surat izin resmi untuk mengikuti kegiatan magang.",
     detail:
       "Surat izin resmi untuk mengikuti kegiatan magang dalam periode waktu yang telah ditentukan.",
-    img: "/card-5.jpg",
+    img: "/magang.svg",
     badge: "Administrasi",
     icon: Briefcase,
   },
@@ -57,7 +57,7 @@ const layananSurat = [
     desc: "Surat resmi bahwa mahasiswa telah dinyatakan lulus.",
     detail:
       "Surat resmi yang menyatakan bahwa mahasiswa telah dinyatakan lulus dari program studi.",
-    img: "/card-6.jpg",
+    img: "/lulus.png",
     badge: "Akademik",
     icon: GraduationCap,
   },
@@ -291,7 +291,7 @@ export default function Home() {
         <section className="bg-white py-20">
           <div className="max-w-7xl mx-auto px-6 md:px-12">
             <h2 className="text-3xl md:text-4xl font-bold text-[#0A1C56] text-center mb-16">
-              Fitur Utama FASTIF
+              Bergabunglah Bersama FASTIF
             </h2>
           </div>
         </section>
