@@ -1,4 +1,33 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+Nama Tim : Kelompok 1 Aplikasi Tata Usaha - Pengajuan Surat Menyurat Jurusan IF FASTIF
+
+Ketua Kelompok : Muhammad Faiz Difa Suanda 3312411018
+
+Anngota Kelompok :
+Muhammad Ilham Tri Adi Putra 3312411003
+Muhammad Rizky Raapi Ramadhan : 3312411060
+Josepine Stevie Hia : 3312411044
+
+Link Laporam : https://drive.google.com/drive/folders/1bK8baRy27ZV_NL4pibPNjI8yYq2KZQ5f?usp=sharing
+Link Youtube Presentasi : https://www.youtube.com/watch?v=Q5OkZCkZzTw
+Link Demo Advertise : https://www.youtube.com/watch?v=cD9LKHuFw3w 
+
+## Source Code Aplikasi 
+https://github.com/Suanda27/FastIF
+
+## Cara Menjalankan Aplikasi
+1. Clone repository
+2. Install dependencies
+3. Jalankan aplikasi
+
+
+
+
+
+
+
+
+
 
 ## Getting Started
 
